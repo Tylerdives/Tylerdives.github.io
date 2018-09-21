@@ -32,6 +32,8 @@ function setup() {
   dy = random(15, 25);
 
   numberOfPlayers = 0;
+  gameMusic.setVolume(0.50);
+  gameMusic.loop();
 
   // timer = 200;
 }
@@ -39,18 +41,10 @@ function setup() {
 function draw() {
   background(255);
   moveComputer();
-
-  // if (timer <= 120) {
-  //   fill(161, 237, 229, 200);
-  //   ellipse(mouseX, mouseY, 50, 50);
-  //   timer = second();
-
-
   }
 
-  // gameMusic.play()
 
-}
+
 
 function movePlayerRandomly(){
   dx = random(-25, 25);
