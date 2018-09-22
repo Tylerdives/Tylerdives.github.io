@@ -9,7 +9,9 @@ let playerX, playerY;
 let dx, dy;
 
 let gameMusic;
+let menuMusic;
 let circleSound;
+let player1winSound;
 let bounceSound;
 
 let numberOfPlayers;
@@ -23,6 +25,8 @@ let cooldown;
 function preload(){
   gameMusic = loadSound("assets/catchyGameBeat.flac");
   bounceSound = loadSound("assets/bounce.wav");
+  menuMusic = loadSound("assets/menumusic.wav");
+  player1winSound = loadSound("assets/player1wins.wav")
 
 }
 
@@ -39,7 +43,7 @@ function setup() {
 
   bounceSound.setVolume(0.50);
   gameMusic.setVolume(0.60);
-  gameMusic.loop();
+
 
   finalTime = 0;
   playerClicked = false;
@@ -48,20 +52,22 @@ function setup() {
 
 function draw() {
   if (numberOfPlayers === 0) {
-
+    //stuff goes here
   }
-  background(255);
-  moveComputer();
-  if (playerClicked && (finalTime - initialTime) <= 1000) {
-    fill(145, 200, 242);
-    ellipse(mouseX, mouseY, 100, 100);
-    finalTime = millis();
-    cooldown = true;
-  }
-  else {
-    playerClicked = false;
-    finalTime = 0;
-    cooldown = false;
+    else {
+    background(255);
+    moveComputer();
+    if (playerClicked && (finalTime - initialTime) <= 1000) {
+      fill(145, 200, 242);
+      ellipse(mouseX, mouseY, 100, 100);
+      finalTime = millis();
+      cooldown = true;
+    }
+    else {
+      playerClicked = false;
+      finalTime = 0;
+      cooldown = false;
+    }
   }
 
 }
@@ -131,4 +137,10 @@ function keyPressed(){
         movePlayerRandomly();
       }
     )
+  }
+
+
+  function playMusic() {
+    if ()
+    //other stuff goes here
   }
