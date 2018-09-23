@@ -160,6 +160,7 @@ function draw() {
       finalTime = 100;
       cooldown = false;
     }
+    
     // if (numberOfPlayers === 2) {
     //   pvpTimer = pvpTimer - floor((millis()/1000));
     //   timeLeft = 60 - pvpTimer;
@@ -167,6 +168,7 @@ function draw() {
     //
     //   text(timeLeft, width - 100, 50);
     // }
+
     if (numberOfPlayers === 1) {
       if (dx <= 15 && dx >= -15) {
         movePlayerRandomly();
