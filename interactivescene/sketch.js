@@ -50,8 +50,8 @@ function preload(){
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  playerX = random(0, width);
-  playerY = random(height/2, height);
+  playerX = random(10, width - 10);
+  playerY = random(height/2, height - 10);
 
   dx = random(15, 25);
   dy = random(15, 25);
@@ -77,12 +77,12 @@ function setup() {
 
   buttonCoordinates = width/2 - startButtonsOffset;
 
-  trapSizeIncrease = 0;
+  trapSizeIncrease = 25;
 
   easyBox = false;
   medBox = false;
   hardBox = false;
-  levelDifficulty = "N/A";
+  levelDifficulty = "EASY";
   menuMusic.loop();
 }
 
@@ -156,7 +156,7 @@ function draw() {
     text("In player vs player mode, one person controlls the dot, and the other tries to trap the the other player.", width/2, 160);
     text("The dot's controls are WASD for movement and SPACE for a random direction, but, every time you hit space, the trap gets bigger!", width/2, 200);
     text("When trying to catch the dot, move the mouse over the dot, then click to trap it, if you miss, the dot will move in a new pattern!", width/2, 240);
-    text("Good Luck!", width/2, 310);
+    text("The difficulty relates to the trap size. Good Luck!", width/2, 310);
     text("By: Tyler B.", width/2, 360);
 
     textSize(55);
@@ -194,7 +194,7 @@ function draw() {
       easyBox = true;
       if (mouseIsPressed) {
         levelDifficulty = "EASY"
-        trapSizeIncrease = 20;
+        trapSizeIncrease = 25;
       }
     }
     else {
@@ -216,7 +216,7 @@ function draw() {
       hardBox = true;
       if (mouseIsPressed) {
         levelDifficulty = "HARD";
-        trapSizeIncrease = 0;
+        trapSizeIncrease = -5;
       }
     }
     else {
@@ -251,12 +251,10 @@ function draw() {
     //   text(timeLeft, width - 100, 50);
     // }
 
-    if (numberOfPlayers === 1) {
-      trapSizeIncrease = 4;
+
       if (dx <= 5 && dx >= -5) {
         movePlayerRandomly();
       }
-    }
   }
 }
 
@@ -325,7 +323,6 @@ function keyPressed(){
           finalTime = 0;
           initialTime = millis();
           gameMusic.stop();
-          trapSizeIncrease = 0;
           numberOfPlayers = 0;
           menuMusic.loop();
         }
