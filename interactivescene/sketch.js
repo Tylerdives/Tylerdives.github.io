@@ -14,6 +14,8 @@ let circleSound;
 let player1winSound;
 let bounceSound;
 
+let backgroundImage;
+
 let numberOfPlayers;
 
 let initialTime;
@@ -26,18 +28,22 @@ let box1ColourChange, box2ColourChange;
 let startButtonsOffset;
 
 let buttonCoordinates;
+let pvpTimer;
+let timeLeft;
+let trapSizeIncrease;
 
 
 function preload(){
   gameMusic = loadSound("assets/catchyGameBeat.flac");
   bounceSound = loadSound("assets/bounce.wav");
   menuMusic = loadSound("assets/menumusic.wav");
-  player1winSound = loadSound("assets/player1wins.wav")
+  player1winSound = loadSound("assets/player1wins.wav");
+  circleSound = loadSound("assets/trapclick.wav");
 
+  backgroundImage = loadImage("assets/cloudbackground.JPG");
 }
 
 function setup() {
-
   createCanvas(windowWidth, windowHeight);
 
   playerX = random(0, width);
@@ -48,9 +54,12 @@ function setup() {
 
   numberOfPlayers = 0;
 
-  bounceSound.setVolume(0.50);
-  gameMusic.setVolume(0.60);
+  pvpTimer = 0;
 
+  bounceSound.setVolume(0.30);
+  gameMusic.setVolume(0.60);
+  menuMusic.setVolume(0.50);
+  circleSound.setVolume(0.55);
 
   finalTime = 0;
   playerClicked = false;
@@ -62,12 +71,13 @@ function setup() {
   startButtonsOffset = 150;
   buttonCoordinates = width/2 - startButtonsOffset;
 
-  textAlign(CENTER);
-  textSize(25);
+  trapSizeIncrease = 0;
+
+  menuMusic.loop();
 }
 
 function draw() {
-  background(255);
+  image(backgroundImage, 0, 0, width, height);
   if (numberOfPlayers === 0) {
 
 
@@ -90,11 +100,31 @@ function draw() {
     rect(buttonCoordinates, 550, 300, 100)
 
     fill(0)
+    textStyle(NORMAL);
+    textAlign(CENTER);
+    textSize(25);
     text("Player vs Computer", buttonCoordinates, 435, 300, 100);
     text("Player vs Player", buttonCoordinates, 585, 300, 100);
 
+    fill(250, 70, 50);
+    text("In player vs computer, the dot flies around the screen, and you have to try to trap it by clicking!", width/2, 120);
+    text("In player vs player mode, one person controlls the dot, and the other tries to trap the the other player.", width/2, 160);
+    text("The dot's controls are WASD for movement and SPACE for a random direction, but, every time you hit space, the trap gets bigger!", width/2, 200);
+    text("When trying to catch the dot, move the mouse over the dot, then click to trap it, if you miss, the dot will move in a new pattern!", width/2, 240);
+    text("Good Luck!", width/2, 310);
+    text("By: Tyler B.", width/2, 360);
+
+    textSize(55);
+    textStyle(BOLD);
+    text("CLICK THE DOT", width/2, 60);
+
     if (collidePointRect(mouseX, mouseY, buttonCoordinates, 400, 300, 100)) {
       box1ColourChange = true;
+      if (mouseIsPressed) {
+        menuMusic.stop();
+        gameMusic.loop();
+        numberOfPlayers = 1;
+      }
     }
     else {
       box1ColourChange = false;
@@ -102,25 +132,45 @@ function draw() {
 
     if (collidePointRect(mouseX, mouseY, buttonCoordinates, 550, 300, 100)) {
       box2ColourChange = true;
+      if (mouseIsPressed) {
+        menuMusic.stop();
+        gameMusic.loop();
+        // pvpTimer = floor((millis()/1000));
+        numberOfPlayers = 2;
+      }
     }
     else {
       box2ColourChange = false;
     }
 
   }
+
   else {
-    background(255);
+    cooldown = true;
+
     moveComputer();
     if (playerClicked && (finalTime - initialTime) <= 1000) {
-      fill(145, 200, 242);
-      ellipse(mouseX, mouseY, 100, 100);
+      fill(255, 90, 70);
+      ellipse(mouseX, mouseY, 40 + trapSizeIncrease, 40 + trapSizeIncrease);
       finalTime = millis();
       cooldown = true;
     }
     else {
       playerClicked = false;
-      finalTime = 0;
+      finalTime = 100;
       cooldown = false;
+    }
+    // if (numberOfPlayers === 2) {
+    //   pvpTimer = pvpTimer - floor((millis()/1000));
+    //   timeLeft = 60 - pvpTimer;
+    //   timeLeft = str(timeLeft);
+    //
+    //   text(timeLeft, width - 100, 50);
+    // }
+    if (numberOfPlayers === 1) {
+      if (dx <= 15 && dx >= -15) {
+        movePlayerRandomly();
+      }
     }
   }
 
@@ -175,26 +225,27 @@ function keyPressed(){
 
     if (keyCode === 32) {
       movePlayerRandomly();
+      trapSizeIncrease += 1;
     }
   }
 }
 
   function mouseClicked(){
-    if (numberOfPlayers === 1) {
+    if (numberOfPlayers === 1 || numberOfPlayers === 2) {
       if (!cooldown) {
+        circleSound.play();
         initialTime = millis();
         playerClicked = true;
-        if(collidePointCircle(playerX, playerY, mouseX, mouseY, 200)) {
+        if(collidePointCircle(playerX, playerY, mouseX, mouseY, 80 + (trapSizeIncrease * 2))) {
+          player1winSound.play();
+          finalTime = 0;
+          initialTime = millis();
           gameMusic.stop();
-          noLoop();
+          trapSizeIncrease = 0;
+          numberOfPlayers = 0;
+          menuMusic.loop();
         }
         movePlayerRandomly();
       }
     }
   }
-
-
-  // function playMusic() {
-  //   if ()
-  //   //other stuff goes here
-  // }
