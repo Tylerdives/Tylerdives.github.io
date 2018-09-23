@@ -27,6 +27,10 @@ let cooldown;
 let box1ColourChange, box2ColourChange;
 let startButtonsOffset;
 
+let levelButtonOffet;
+let easyBox, medBox, hardBox;
+let levelDifficulty;
+
 let buttonCoordinates;
 let pvpTimer;
 let timeLeft;
@@ -69,10 +73,16 @@ function setup() {
   box2ColourChange = false;
 
   startButtonsOffset = 150;
+  levelButtonOffet = height - 200;
+
   buttonCoordinates = width/2 - startButtonsOffset;
 
   trapSizeIncrease = 0;
 
+  easyBox = false;
+  medBox = false;
+  hardBox = false;
+  levelDifficulty = "N/A";
   menuMusic.loop();
 }
 
@@ -80,8 +90,7 @@ function draw() {
   image(backgroundImage, 0, 0, width, height);
   if (numberOfPlayers === 0) {
 
-
-
+    strokeWeight(2);
 
     if (box1ColourChange) {
       fill(96, 41, 80);
@@ -89,6 +98,7 @@ function draw() {
     else {
       fill(181, 12, 43);
     }
+
     rect(buttonCoordinates, 400, 300, 100);
 
     if (box2ColourChange) {
@@ -97,12 +107,46 @@ function draw() {
     else {
       fill(181, 12, 43);
     }
+
     rect(buttonCoordinates, 550, 300, 100);
+
+    strokeWeight(5);
+
+    if (easyBox || levelDifficulty === "EASY") {
+      fill(96, 41, 80);
+    }
+    else {
+      fill(181, 12, 43);
+    }
+
+    rect(100, levelButtonOffet, 110, 60);
+
+    if (medBox || levelDifficulty === "MEDIUM") {
+      fill(96, 41, 80);
+    }
+    else {
+      fill(181, 12, 43);
+    }
+
+    rect(220, levelButtonOffet, 110, 60);
+
+    if (hardBox || levelDifficulty === "HARD") {
+      fill(96, 41, 80);
+    }
+    else {
+      fill(181, 12, 43);
+    }
+    rect(340, levelButtonOffet, 110, 60);
 
     fill(0);
     textStyle(NORMAL);
     textAlign(CENTER);
     textSize(25);
+
+    text("EASY", 155, levelButtonOffet + 40);
+    text("MEDIUM", 275, levelButtonOffet + 40);
+    text("HARD", 395, levelButtonOffet + 40);
+
     text("Player vs Computer", buttonCoordinates, 435, 300, 100);
     text("Player vs Player", buttonCoordinates, 585, 300, 100);
 
@@ -119,6 +163,7 @@ function draw() {
     textStyle(BOLD);
     text("CLICK THE DOT", width/2, 60);
 
+    //Checks if the player is hovering/clicking on the PVC box
     if (collidePointRect(mouseX, mouseY, buttonCoordinates, 400, 300, 100)) {
       box1ColourChange = true;
       if (mouseIsPressed) {
@@ -130,7 +175,7 @@ function draw() {
     else {
       box1ColourChange = false;
     }
-
+    //Checks if the player is hovering/clicking the PVP box
     if (collidePointRect(mouseX, mouseY, buttonCoordinates, 550, 300, 100)) {
       box2ColourChange = true;
       if (mouseIsPressed) {
@@ -143,10 +188,46 @@ function draw() {
     else {
       box2ColourChange = false;
     }
+    //Difficulty box detection of the mouseButton
+    //EASY
+    if (collidePointRect(mouseX, mouseY, 100, levelButtonOffet, 110, 60)) {
+      easyBox = true;
+      if (mouseIsPressed) {
+        levelDifficulty = "EASY"
+        trapSizeIncrease = 20;
+      }
+    }
+    else {
+      easyBox = false;
+    }
+    //MEDIUM
+    if (collidePointRect(mouseX, mouseY, 220, levelButtonOffet, 110, 60)) {
+      medBox = true;
+      if (mouseIsPressed) {
+        levelDifficulty = "MEDIUM"
+        trapSizeIncrease = 10;
+      }
+    }
+    else {
+      medBox = false;
+    }
+    //HARD
+    if (collidePointRect(mouseX, mouseY, 340, levelButtonOffet, 110, 60)) {
+      hardBox = true;
+      if (mouseIsPressed) {
+        levelDifficulty = "HARD";
+        trapSizeIncrease = 0;
+      }
+    }
+    else {
+      hardBox = false;
+    }
+
 
   }
 
   else {
+    strokeWeight(1);
     cooldown = true;
 
     moveComputer();
@@ -172,20 +253,19 @@ function draw() {
 
     if (numberOfPlayers === 1) {
       trapSizeIncrease = 4;
-      if (dx <= 15 && dx >= -15) {
+      if (dx <= 5 && dx >= -5) {
         movePlayerRandomly();
       }
     }
   }
-
 }
 
 
 
 
 function movePlayerRandomly(){
-  dx = random(-30, 30);
-  dy = random(-30, 30);
+  dx = random(-25, 25);
+  dy = random(-25, 25);
 }
 
 function moveComputer(){
