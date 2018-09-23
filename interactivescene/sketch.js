@@ -83,7 +83,7 @@ function setup() {
   medBox = false;
   hardBox = false;
   levelDifficulty = "EASY";
-  menuMusic.loop();
+  gameMusic.loop();
 }
 
 function draw() {
@@ -167,8 +167,6 @@ function draw() {
     if (collidePointRect(mouseX, mouseY, buttonCoordinates, 400, 300, 100)) {
       box1ColourChange = true;
       if (mouseIsPressed) {
-        menuMusic.stop();
-        gameMusic.loop();
         numberOfPlayers = 1;
       }
     }
@@ -179,8 +177,6 @@ function draw() {
     if (collidePointRect(mouseX, mouseY, buttonCoordinates, 550, 300, 100)) {
       box2ColourChange = true;
       if (mouseIsPressed) {
-        menuMusic.stop();
-        gameMusic.loop();
         // pvpTimer = floor((millis()/1000));
         numberOfPlayers = 2;
       }
@@ -322,9 +318,7 @@ function keyPressed(){
           player1winSound.play();
           finalTime = 0;
           initialTime = millis();
-          gameMusic.stop();
           numberOfPlayers = 0;
-          menuMusic.loop();
         }
         movePlayerRandomly();
       }
