@@ -97,15 +97,16 @@ function draw() {
     else {
       fill(181, 12, 43);
     }
-    rect(buttonCoordinates, 550, 300, 100)
+    rect(buttonCoordinates, 550, 300, 100);
 
-    fill(0)
+    fill(0);
     textStyle(NORMAL);
     textAlign(CENTER);
     textSize(25);
     text("Player vs Computer", buttonCoordinates, 435, 300, 100);
     text("Player vs Player", buttonCoordinates, 585, 300, 100);
 
+    textSize(20);
     fill(250, 70, 50);
     text("In player vs computer, the dot flies around the screen, and you have to try to trap it by clicking!", width/2, 120);
     text("In player vs player mode, one person controlls the dot, and the other tries to trap the the other player.", width/2, 160);
@@ -160,7 +161,7 @@ function draw() {
       finalTime = 100;
       cooldown = false;
     }
-    
+
     // if (numberOfPlayers === 2) {
     //   pvpTimer = pvpTimer - floor((millis()/1000));
     //   timeLeft = 60 - pvpTimer;
@@ -170,6 +171,7 @@ function draw() {
     // }
 
     if (numberOfPlayers === 1) {
+      trapSizeIncrease = 4;
       if (dx <= 15 && dx >= -15) {
         movePlayerRandomly();
       }
