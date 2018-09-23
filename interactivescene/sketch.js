@@ -22,6 +22,12 @@ let finalTime;
 let playerClicked;
 let cooldown;
 
+let box1ColourChange, box2ColourChange;
+let startButtonsOffset;
+
+let buttonCoordinates;
+
+
 function preload(){
   gameMusic = loadSound("assets/catchyGameBeat.flac");
   bounceSound = loadSound("assets/bounce.wav");
@@ -31,10 +37,11 @@ function preload(){
 }
 
 function setup() {
+
   createCanvas(windowWidth, windowHeight);
 
   playerX = random(0, width);
-  playerY = random(height/2, height)
+  playerY = random(height/2, height);
 
   dx = random(15, 25);
   dy = random(15, 25);
@@ -48,13 +55,60 @@ function setup() {
   finalTime = 0;
   playerClicked = false;
   cooldown = false;
+
+  box1ColourChange = false;
+  box2ColourChange = false;
+
+  startButtonsOffset = 150;
+  buttonCoordinates = width/2 - startButtonsOffset;
+
+  textAlign(CENTER);
+  textSize(25);
 }
 
 function draw() {
+  background(255);
   if (numberOfPlayers === 0) {
-    //stuff goes here
-  }
+
+
+
+
+    if (box1ColourChange) {
+      fill(96, 41, 80);
+    }
     else {
+      fill(181, 12, 43);
+    }
+    rect(buttonCoordinates, 400, 300, 100);
+
+    if (box2ColourChange) {
+      fill(96, 41, 80);
+    }
+    else {
+      fill(181, 12, 43);
+    }
+    rect(buttonCoordinates, 550, 300, 100)
+
+    fill(0)
+    text("Player vs Computer", buttonCoordinates, 435, 300, 100);
+    text("Player vs Player", buttonCoordinates, 585, 300, 100);
+
+    if (collidePointRect(mouseX, mouseY, buttonCoordinates, 400, 300, 100)) {
+      box1ColourChange = true;
+    }
+    else {
+      box1ColourChange = false;
+    }
+
+    if (collidePointRect(mouseX, mouseY, buttonCoordinates, 550, 300, 100)) {
+      box2ColourChange = true;
+    }
+    else {
+      box2ColourChange = false;
+    }
+
+  }
+  else {
     background(255);
     moveComputer();
     if (playerClicked && (finalTime - initialTime) <= 1000) {
@@ -136,11 +190,11 @@ function keyPressed(){
         }
         movePlayerRandomly();
       }
-    )
+    }
   }
 
 
-  function playMusic() {
-    if ()
-    //other stuff goes here
-  }
+  // function playMusic() {
+  //   if ()
+  //   //other stuff goes here
+  // }
