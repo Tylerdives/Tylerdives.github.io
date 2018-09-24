@@ -3,155 +3,179 @@
 //
 //
 // Extra for Experts:
-// - timers, sounds, collide2d
+// - timers, sounds, collide2d, millis(), text
+//--------------------------------------------------
 
+//All dot coordinates and movement variables
 let playerX, playerY;
 let dx, dy;
 
+//Music and sounds
 let gameMusic;
-let menuMusic;
 let circleSound;
 let player1winSound;
 let bounceSound;
 
+//The backdrop
 let backgroundImage;
 
+//A variable that determines if the game is PvP or PvC and starts the games
 let numberOfPlayers;
 
+//These time variables are used for the trap animation of drawing the circle
 let initialTime;
 let finalTime;
-
-let playerClicked;
 let cooldown;
 
-let box1ColourChange, box2ColourChange;
-let startButtonsOffset;
+//A varable that makes the circle animation happen
+let playerClicked;
 
+//Variables for the starting buttons position and colour changes
+let pvcColourChange, pvpColourChange;
+let startButtonsOffset;
+let buttonCoordinates;
+
+//Starting position and detection for the difficulty buttons
 let levelButtonOffet;
 let easyBox, medBox, hardBox;
 let levelDifficulty;
-
-let buttonCoordinates;
-let pvpTimer;
-let timeLeft;
+//How big the trap gets depending on the difficulty
 let trapSizeIncrease;
 
 
 function preload(){
+  //My music and sounds loaded
   gameMusic = loadSound("assets/catchyGameBeat.flac");
   bounceSound = loadSound("assets/bounce.wav");
-  menuMusic = loadSound("assets/menumusic.wav");
   player1winSound = loadSound("assets/player1wins.wav");
   circleSound = loadSound("assets/trapclick.wav");
-
+  //Loading the background image
   backgroundImage = loadImage("assets/cloudbackground.JPG");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  playerX = random(10, width - 10);
-  playerY = random(height/2, height - 10);
-
+  //sets the dot's x and y
+  playerX = random(5, 10);
+  playerY = random(5, 10);
   dx = random(15, 25);
   dy = random(15, 25);
 
   numberOfPlayers = 0;
 
-  pvpTimer = 0;
 
   bounceSound.setVolume(0.30);
-  gameMusic.setVolume(0.60);
-  menuMusic.setVolume(0.50);
+  gameMusic.setVolume(0.40);
   circleSound.setVolume(0.55);
 
   finalTime = 0;
   playerClicked = false;
   cooldown = false;
 
-  box1ColourChange = false;
-  box2ColourChange = false;
-
+  pvcColourChange = false;
+  pvpColourChange = false;
   startButtonsOffset = 150;
-  levelButtonOffet = height - 200;
-
   buttonCoordinates = width/2 - startButtonsOffset;
 
-  trapSizeIncrease = 25;
 
-  easyBox = false;
+  levelButtonOffet = height - 200;
+  //Starts at easy difficulty as default
+  trapSizeIncrease = 25;
+  //None of the buttons are selected except for Easy
+  easyBox = true;
   medBox = false;
   hardBox = false;
   levelDifficulty = "EASY";
+
+  //Starts the music
   gameMusic.loop();
 }
 
 function draw() {
+  //Draws the image in the background first
   image(backgroundImage, 0, 0, width, height);
+  //If the player hasn't chosen the gamemode yet, the player count is at none, which makes the starting screen
   if (numberOfPlayers === 0) {
-
     strokeWeight(2);
 
-    if (box1ColourChange) {
+    //If the mouse is hovering over a box, then that box will change colour, each box has a corresponding variable-
+    //-That will come back as true when the mouse is over it and change it's colour here
+    //PVC button
+    if (pvcColourChange) {
       fill(96, 41, 80);
     }
     else {
       fill(181, 12, 43);
     }
-
+    //Draws the button with the selected fill
     rect(buttonCoordinates, 400, 300, 100);
 
-    if (box2ColourChange) {
+    //PVP button
+    if (pvpColourChange) {
       fill(96, 41, 80);
     }
     else {
       fill(181, 12, 43);
     }
-
+    //Draws the button with it's fill
     rect(buttonCoordinates, 550, 300, 100);
 
+    //Thicker edges for this button for style
     strokeWeight(5);
 
+    //If a player selects/hovers button for difficulty, it will stay a different colour
+    //Easy button logic
     if (easyBox || levelDifficulty === "EASY") {
       fill(96, 41, 80);
     }
     else {
       fill(181, 12, 43);
     }
-
+    //Drawx EASY button
     rect(100, levelButtonOffet, 110, 60);
 
+    //Medium button logic
     if (medBox || levelDifficulty === "MEDIUM") {
       fill(96, 41, 80);
     }
     else {
       fill(181, 12, 43);
     }
-
+    //Draws MEDIUM button
     rect(220, levelButtonOffet, 110, 60);
 
+    //HARD button logic
     if (hardBox || levelDifficulty === "HARD") {
       fill(96, 41, 80);
     }
     else {
       fill(181, 12, 43);
     }
+    //draws HARD button
     rect(340, levelButtonOffet, 110, 60);
 
+    //Changes the colour to black to put text in the boxes
     fill(0);
     textStyle(NORMAL);
+    //No bold from later in the loop
     textAlign(CENTER);
     textSize(25);
 
+    //Shows easy, medium, or hard in the box
     text("EASY", 155, levelButtonOffet + 40);
     text("MEDIUM", 275, levelButtonOffet + 40);
     text("HARD", 395, levelButtonOffet + 40);
 
+    //Displays the mode of the game in the box
     text("Player vs Computer", buttonCoordinates, 435, 300, 100);
     text("Player vs Player", buttonCoordinates, 585, 300, 100);
 
+    //Changes the text to the instructions text
+    textStyle(BOLD);
     textSize(20);
     fill(250, 70, 50);
+
     text("In player vs computer, the dot flies around the screen, and you have to try to trap it by clicking!", width/2, 120);
     text("In player vs player mode, one person controlls the dot, and the other tries to trap the the other player.", width/2, 160);
     text("The dot's controls are WASD for movement and SPACE for a random direction, but, every time you hit space, the trap gets bigger!", width/2, 200);
@@ -160,29 +184,31 @@ function draw() {
     text("By: Tyler B.", width/2, 360);
 
     textSize(55);
-    textStyle(BOLD);
+    //heading size
     text("CLICK THE DOT", width/2, 60);
 
     //Checks if the player is hovering/clicking on the PVC box
     if (collidePointRect(mouseX, mouseY, buttonCoordinates, 400, 300, 100)) {
-      box1ColourChange = true;
+      pvcColourChange = true;
       if (mouseIsPressed) {
         numberOfPlayers = 1;
+        //Starts the game in the PVC mode
       }
     }
     else {
-      box1ColourChange = false;
+      pvcColourChange = false;
     }
+
     //Checks if the player is hovering/clicking the PVP box
     if (collidePointRect(mouseX, mouseY, buttonCoordinates, 550, 300, 100)) {
-      box2ColourChange = true;
+      pvpColourChange = true;
       if (mouseIsPressed) {
-        // pvpTimer = floor((millis()/1000));
         numberOfPlayers = 2;
+        //Starts the game in the PVP mode
       }
     }
     else {
-      box2ColourChange = false;
+      pvpColourChange = false;
     }
     //Difficulty box detection of the mouseButton
     //EASY
@@ -227,6 +253,7 @@ function draw() {
     cooldown = true;
 
     moveComputer();
+
     if (playerClicked && (finalTime - initialTime) <= 1000) {
       fill(255, 90, 70);
       ellipse(mouseX, mouseY, 40 + trapSizeIncrease, 40 + trapSizeIncrease);
@@ -248,7 +275,7 @@ function draw() {
     // }
 
 
-      if (dx <= 5 && dx >= -5) {
+      if (dx <= 5 && dx >= -5 && numberOfPlayers === 1) {
         movePlayerRandomly();
       }
   }
@@ -263,17 +290,17 @@ function movePlayerRandomly(){
 }
 
 function moveComputer(){
-  fill(0)
-  ellipse(playerX, playerY, 9, 9)
-  if (playerX + 5 > width || playerX < 0) {
+  fill(35, 252, 57);
+  ellipse(playerX, playerY, 15, 15)
+  if (playerX + 7.5 > width || playerX < 0) {
     bounceSound.play()
     dx = dx * -1;
   }
-  if (playerY + 5 > height || playerY < 0) {
+  if (playerY + 7.5 > height || playerY < 0) {
     bounceSound.play()
     dy = dy * -1;
-
   }
+
   playerX += dx;
   playerY += dy;
 }
@@ -303,7 +330,7 @@ function keyPressed(){
 
     if (keyCode === 32) {
       movePlayerRandomly();
-      trapSizeIncrease += 1;
+      trapSizeIncrease += 2;
     }
   }
 }
@@ -319,6 +346,17 @@ function keyPressed(){
           finalTime = 0;
           initialTime = millis();
           numberOfPlayers = 0;
+          if (numberOfPlayers === 2) {
+            if (levelDifficulty === "EASY") {
+              trapSizeIncrease = 25;
+            }
+            if (levelDifficulty === "MEDIUM") {
+              trapSizeIncrease = 10;
+            }
+            if (levelDifficulty === "HARD") {
+              trapSizeIncrease = -5;
+            }
+          }
         }
         movePlayerRandomly();
       }
