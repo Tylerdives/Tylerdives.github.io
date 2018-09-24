@@ -37,7 +37,7 @@ let buttonCoordinates;
 
 //Starting position and detection for the difficulty buttons
 let levelButtonOffet;
-let easyBox, medBox, hardBox;
+let easyBox, medBox, hardBox, extremeBox;
 let levelDifficulty;
 //How big the trap gets depending on the difficulty
 let trapSizeIncrease;
@@ -56,7 +56,7 @@ function preload(){
 function setup() {
   createCanvas(windowWidth, windowHeight);
 
-  //sets the dot's x and y
+  //sets the dot's x and y and speed
   playerX = random(5, 10);
   playerY = random(5, 10);
   dx = random(15, 25);
@@ -64,7 +64,7 @@ function setup() {
 
   numberOfPlayers = 0;
 
-
+  //sets the volume of the music/sounds
   bounceSound.setVolume(0.30);
   gameMusic.setVolume(0.40);
   circleSound.setVolume(0.55);
@@ -72,9 +72,10 @@ function setup() {
   finalTime = 0;
   playerClicked = false;
   cooldown = false;
-
+  //sets my detection variables to false/0
   pvcColourChange = false;
   pvpColourChange = false;
+  //Giving my offset values, values
   startButtonsOffset = 150;
   buttonCoordinates = width/2 - startButtonsOffset;
 
@@ -86,6 +87,7 @@ function setup() {
   easyBox = true;
   medBox = false;
   hardBox = false;
+  extremeBox = false;
   levelDifficulty = "EASY";
 
   //Starts the music
@@ -155,27 +157,38 @@ function draw() {
     //draws HARD button
     rect(340, levelButtonOffet, 110, 60);
 
+    //Extreme button logic
+    if (extremeBox || levelDifficulty === "EXTREME") {
+      fill(96, 41, 80);
+    }
+    else {
+      fill(181, 12, 43);
+    }
+    //draws EXTREME button
+    rect(width - 360, levelButtonOffet, 110, 60);
+
     //Changes the colour to black to put text in the boxes
     fill(0);
     textStyle(NORMAL);
     //No bold from later in the loop
     textAlign(CENTER);
-    textSize(25);
+    textSize(20);
 
     //Shows easy, medium, or hard in the box
     text("EASY", 155, levelButtonOffet + 40);
     text("MEDIUM", 275, levelButtonOffet + 40);
     text("HARD", 395, levelButtonOffet + 40);
-
+    text("EXTREME", width - 305, levelButtonOffet + 40);
     //Displays the mode of the game in the box
-    text("Player vs Computer", buttonCoordinates, 435, 300, 100);
-    text("Player vs Player", buttonCoordinates, 585, 300, 100);
+    text("Player vs Computer", buttonCoordinates, 440, 300, 100);
+    text("Player vs Player", buttonCoordinates, 590, 300, 100);
 
     //Changes the text to the instructions text
     textStyle(BOLD);
     textSize(20);
-    fill(250, 70, 50);
+    fill(0, 20, 0);
 
+    //text of the game
     text("In player vs computer, the dot flies around the screen, and you have to try to trap it by clicking!", width/2, 120);
     text("In player vs player mode, one person controlls the dot, and the other tries to trap the the other player.", width/2, 160);
     text("The dot's controls are WASD for movement and SPACE for a random direction, but, every time you hit space, the trap gets bigger!", width/2, 200);
@@ -245,6 +258,16 @@ function draw() {
       hardBox = false;
     }
 
+    if (collidePointRect(mouseX, mouseY, width - 360, levelButtonOffet, 110, 60)) {
+      extremeBox = true;
+      if (mouseIsPressed) {
+        levelDifficulty = "EXTREME";
+        trapSizeIncrease = -20;
+      }
+    }
+    else {
+      extremeBox = false;
+    }
 
   }
 
@@ -266,22 +289,11 @@ function draw() {
       cooldown = false;
     }
 
-    // if (numberOfPlayers === 2) {
-    //   pvpTimer = pvpTimer - floor((millis()/1000));
-    //   timeLeft = 60 - pvpTimer;
-    //   timeLeft = str(timeLeft);
-    //
-    //   text(timeLeft, width - 100, 50);
-    // }
-
-
       if (dx <= 5 && dx >= -5 && numberOfPlayers === 1) {
         movePlayerRandomly();
       }
   }
 }
-
-
 
 
 function movePlayerRandomly(){
@@ -355,6 +367,9 @@ function keyPressed(){
             }
             if (levelDifficulty === "HARD") {
               trapSizeIncrease = -5;
+            }
+            if (levelDifficulty === "EXTREME") {
+              trapSizeIncrease = -20;
             }
           }
         }
