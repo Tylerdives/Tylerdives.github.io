@@ -347,7 +347,7 @@ function keyPressed(){
   }
 }
 
-  function mouseClicked(){
+  function mousePressed(){
     if (numberOfPlayers === 1 || numberOfPlayers === 2) {
       if (!cooldown) {
         circleSound.play();
