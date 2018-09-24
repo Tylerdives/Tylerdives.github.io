@@ -257,7 +257,7 @@ function draw() {
     else {
       hardBox = false;
     }
-
+    //EXTREME
     if (collidePointRect(mouseX, mouseY, width - 360, levelButtonOffet, 110, 60)) {
       extremeBox = true;
       if (mouseIsPressed) {
