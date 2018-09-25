@@ -3,7 +3,7 @@
 //
 //
 // Extra for Experts:
-// - timers, sounds, collide2d, millis(), text
+// - timers, sounds, collide2d, millis(), text, buttons, mobile compatible
 //--------------------------------------------------
 
 //All dot coordinates and movement variables
@@ -13,7 +13,7 @@ let dx, dy;
 //Music and sounds
 let gameMusic;
 let circleSound;
-let player1winSound;
+let playerWinSound;
 let bounceSound;
 
 //The backdrop
@@ -47,7 +47,7 @@ function preload(){
   //My music and sounds loaded
   gameMusic = loadSound("assets/catchyGameBeat.flac");
   bounceSound = loadSound("assets/bounce.wav");
-  player1winSound = loadSound("assets/player1wins.wav");
+  playerWinSound = loadSound("assets/player1wins.wav");
   circleSound = loadSound("assets/trapclick.wav");
   //Loading the background image
   backgroundImage = loadImage("assets/cloudbackground.JPG");
@@ -97,6 +97,7 @@ function setup() {
 function draw() {
   //Draws the image in the background first
   image(backgroundImage, 0, 0, width, height);
+
   //If the player hasn't chosen the gamemode yet, the player count is at none, which makes the starting screen
   if (numberOfPlayers === 0) {
     strokeWeight(2);
@@ -180,6 +181,7 @@ function draw() {
     text("HARD", 395, levelButtonOffet + 40);
     text("EXTREME", width - 305, levelButtonOffet + 40);
     //Displays the mode of the game in the box
+
     text("Player vs Computer", buttonCoordinates, 440, 300, 100);
     text("Player vs Player", buttonCoordinates, 590, 300, 100);
 
@@ -190,10 +192,15 @@ function draw() {
 
     //text of the game
     text("In player vs computer, the dot flies around the screen, and you have to try to trap it by clicking!", width/2, 120);
-    text("In player vs player mode, one person controlls the dot, and the other tries to trap the the other player.", width/2, 160);
-    text("The dot's controls are WASD for movement and SPACE for a random direction, but, every time you hit space, the trap gets bigger!", width/2, 200);
+
+    text("In player vs player mode, one person controls the dot, and the other tries to trap them, the dot's controls are the following:", width/2, 160);
+
+    text("The dot's controls are WASD for movement and SPACE for a random direction, but every time you hit space, the trap gets bigger!", width/2, 200);
+
     text("When trying to catch the dot, move the mouse over the dot, then click to trap it, if you miss, the dot will move in a new pattern!", width/2, 240);
+
     text("The difficulty relates to the trap size. Good Luck!", width/2, 310);
+
     text("By: Tyler B.", width/2, 360);
 
     textSize(55);
@@ -223,6 +230,7 @@ function draw() {
     else {
       pvpColourChange = false;
     }
+
     //Difficulty box detection of the mouseButton
     //EASY
     if (collidePointRect(mouseX, mouseY, 100, levelButtonOffet, 110, 60)) {
@@ -235,6 +243,7 @@ function draw() {
     else {
       easyBox = false;
     }
+
     //MEDIUM
     if (collidePointRect(mouseX, mouseY, 220, levelButtonOffet, 110, 60)) {
       medBox = true;
@@ -246,6 +255,7 @@ function draw() {
     else {
       medBox = false;
     }
+
     //HARD
     if (collidePointRect(mouseX, mouseY, 340, levelButtonOffet, 110, 60)) {
       hardBox = true;
@@ -257,6 +267,7 @@ function draw() {
     else {
       hardBox = false;
     }
+
     //EXTREME
     if (collidePointRect(mouseX, mouseY, width - 360, levelButtonOffet, 110, 60)) {
       extremeBox = true;
@@ -268,27 +279,33 @@ function draw() {
     else {
       extremeBox = false;
     }
-
   }
 
   else {
+    //Starts the game
     strokeWeight(1);
     cooldown = true;
 
-    moveComputer();
+    //moves the dot around the screen
+    moveDot();
 
+    //If the player did click, and the ellipse will be visible for 1 second aka 1000 miliseconds
     if (playerClicked && (finalTime - initialTime) <= 1000) {
       fill(255, 90, 70);
       ellipse(mouseX, mouseY, 40 + trapSizeIncrease, 40 + trapSizeIncrease);
+      //Draws the trap to catch the dot
       finalTime = millis();
       cooldown = true;
     }
+
     else {
+      //Resets the parameters to before a click
       playerClicked = false;
       finalTime = 100;
       cooldown = false;
     }
 
+      //This conditional makes sure that on single mode, the dot doesn't move too slowely
       if (dx <= 5 && dx >= -5 && numberOfPlayers === 1) {
         movePlayerRandomly();
       }
@@ -297,29 +314,39 @@ function draw() {
 
 
 function movePlayerRandomly(){
+  //Moves the player in a random direction with random speed
   dx = random(-25, 25);
   dy = random(-25, 25);
 }
 
-function moveComputer(){
+function moveDot(){
+  //Moves the dot, and makes it bounce when it hits a wall
   fill(35, 252, 57);
+  //Draws the dot
   ellipse(playerX, playerY, 15, 15)
+  //If the dot hits the horizontal border, makes it reflect off the surface
   if (playerX + 7.5 > width || playerX < 0) {
     bounceSound.play()
+    //Plays the bounce sound
     dx = dx * -1;
   }
+
+  //If the dot hits the vertical border, has it bounce off that surface
   if (playerY + 7.5 > height || playerY < 0) {
     bounceSound.play()
+    //Plays the bounce sound again
     dy = dy * -1;
   }
 
   playerX += dx;
   playerY += dy;
+  //Moves the player accordingly
 }
 
 function keyPressed(){
   //Moves the dot aka player when someone plays 2 player mode
   if (numberOfPlayers === 2) {
+    //Moves the player according to the WASD control they hit with a little variablility on the other direction
     if (key === "w" || key === "W") {
       dx = 3;
       dy = random(-20, -28);
@@ -340,6 +367,7 @@ function keyPressed(){
       dy = 3;
     }
 
+    //32 is the SPACEBAR, and it will make the player move randomly, but also increase the trap size
     if (keyCode === 32) {
       movePlayerRandomly();
       trapSizeIncrease += 2;
@@ -347,18 +375,30 @@ function keyPressed(){
   }
 }
 
+  //If the mouse is pressed, this will happen
   function mousePressed(){
+    //Checks the number of players, so that this doesn't happen in the menu
     if (numberOfPlayers === 1 || numberOfPlayers === 2) {
       if (!cooldown) {
+        //A cooldown so the player cannot spam
         circleSound.play();
+        //Plays the laser sound
         initialTime = millis();
+        //Starts the timer for the cooldown
         playerClicked = true;
+
         if(collidePointCircle(playerX, playerY, mouseX, mouseY, 80 + (trapSizeIncrease * 2))) {
-          player1winSound.play();
+          //If the player clicks, and the dot is inside the trap, this will happen
+          playerWinSound.play();
+          //Plays the winning sound
           finalTime = 0;
+          //Resets the timer
           initialTime = millis();
           numberOfPlayers = 0;
+          //This will send you back to the menu
+
           if (numberOfPlayers === 2) {
+            //Just incase the trap size increased in two player mode, this resets it
             if (levelDifficulty === "EASY") {
               trapSizeIncrease = 25;
             }
@@ -374,6 +414,7 @@ function keyPressed(){
           }
         }
         movePlayerRandomly();
+        //If the player doesn't hit the dot, the dot moves randomly again
       }
     }
   }
