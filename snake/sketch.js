@@ -11,7 +11,7 @@ let xSpeed, ySpeed;
 let middleX;
 let middleY;
 
-let movementTimer = 500;
+let movementTimer = 250;
 
 let xValuesList;
 let yValuesList;
@@ -20,6 +20,7 @@ let directionState;
 let gameState;
 
 let elapsedTime;
+let snakeSize;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -34,53 +35,82 @@ function setup() {
 
   elapsedTime = 0;
 
+  gameState = 1;
 }
 
 function draw() {
   if (gameState === 0) {
-    menu();
+    // menu();
+  }
+  else if (gameState === 2) {
+    background(0);
+    // drawFood();
+    // moveSnake();
+    drawSnakeCubes();
+    // hitSnake();
+    // touchingFood();
+  }
+  else if (gameState === 3) {
+    //pause stuffs
   }
   else {
-    background(0);
-    drawFood();
-    moveSnake();
-    drawSnakeCubes();
-    hitSnake();
-    touchingFood();
+    //Game over stuffs
   }
 }
 
-function menu() {
-
-}
-function moveSnake() {
-
-}
+// function menu() {
+//
+// }
+//
+// function moveSnake() {
+//
+// }
 
 function drawSnakeCubes() {
-
+  rect(200, 200, 50, 50);
 }
 
-function drawFood() {
+// function drawFood() {
+//
+// }
+//
+// function touchingFood() {
+//
+// }
+//
+// function hitSnake() {
+//
+// }
+//
+// function addSnake() {
+//
+// }
 
-}
 
-function touchingFood() {
-
-}
-
-function hitSnake() {
-
-}
-
-function addSnake() {
-
-}
-
-function drawCube() {
-
-}
-
-function keyIsPressed() {
-
+function keyPressed() {
+  //LEFT
+  if (keyCode === 37) {
+    directionState = 1;
+  }
+  //UP
+  else if (keyCode === 38) {
+    directionState = 2;
+  }
+  //RIGHT
+  else if (keyCode === 39) {
+    directionState = 3;
+  }
+  //DOWN
+  else if (keyCode === 40) {
+    directionState = 4;
+  }
+  //Pausing
+  if (key === "p" || key === "P") {
+    if (gameState === 2) {
+      gameState = 3;
+    }
+    else if (gameState === 3) {
+      gameState = 2;
+    }
+  }
 }
