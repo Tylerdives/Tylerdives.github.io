@@ -20,6 +20,7 @@ let gameState;
 
 let initialTime;
 let snakeSize;
+let numberOfCubes;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -29,9 +30,10 @@ function setup() {
   xValuesList = [middleX];
   yValuesList = [middleY];
 
-  directionState = 3;
+  directionState = 1;
   snakeSize = 33;
   snakeSpeed = 35;
+  numberOfCubes = 1;
 
   initialTime = 0;
 
@@ -45,9 +47,9 @@ function draw() {
   else if (gameState === 2) {
     background(0);
     // drawFood();
-
-    drawSnakeCubes();
     moveSnake();
+    drawSnakeCubes();
+
     // hitSnake();
     // touchingFood();
   }
@@ -65,7 +67,7 @@ function menu() {
 
 function moveSnake() {
   let elapsedTime = millis() - initialTime;
-  
+
   if (directionState === 1 && elapsedTime >= movementTimer) {
     xValuesList = append(xValuesList, xValuesList[0] - snakeSpeed);
     xValuesList = shorten(xValuesList);
@@ -91,10 +93,8 @@ function moveSnake() {
 
 function drawSnakeCubes() {
   fill(0, 255, 0);
-  for (let snakeX of xValuesList) {
-    for(let snakeY of yValuesList) {
-      rect(snakeX, snakeY, snakeSize, snakeSize);
-    }
+  for (let listSpot = 0; listSpot < numberOfCubes; listSpot ++) {
+    rect(xValuesList[listSpot], yValuesList[listSpot], snakeSize, snakeSize);
   }
 }
 
