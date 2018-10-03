@@ -10,7 +10,7 @@ let snakeSpeed;
 let middleX;
 let middleY;
 
-let movementTimer = 250;
+let movementTimer = 1000;
 
 let xValuesList;
 let yValuesList;
@@ -30,7 +30,7 @@ function setup() {
   xValuesList = [middleX];
   yValuesList = [middleY];
 
-  directionState = 1;
+  directionState = 5;
   snakeSize = 33;
   snakeSpeed = 35;
   numberOfCubes = 1;
@@ -69,31 +69,45 @@ function moveSnake() {
   let elapsedTime = millis() - initialTime;
 
   if (directionState === 1 && elapsedTime >= movementTimer) {
-    xValuesList = append(xValuesList, xValuesList[0] - snakeSpeed);
+    xValuesList.splice(0 , 0, xValuesList[0] - snakeSpeed);
+    yValuesList = append(yValuesList, yValuesList[0]);
+
     xValuesList = shorten(xValuesList);
+    yValuesList = shorten(yValuesList);
   }
 
   else if (directionState === 2 && elapsedTime >= movementTimer) {
-    yValuesList = append(yValuesList, yValuesList[0] - snakeSpeed);
+    yValuesList.splice(0 , 0, yValuesList[0] - snakeSpeed);
+    xValuesList = append(xValuesList, xValuesList[0]);
+
+    xValuesList = shorten(xValuesList);
     yValuesList = shorten(yValuesList);
   }
 
   else if (directionState === 3 && elapsedTime >= movementTimer) {
     xValuesList = append(xValuesList, xValuesList[0] + snakeSpeed);
+    xValuesList.splice(0 , 0, xValuesList[0] + snakeSpeed);
+    yValuesList = append(yValuesList, yValuesList[0]);
+
     xValuesList = shorten(xValuesList);
+    yValuesList = shorten(yValuesList);
   }
 
   else if (directionState === 4 && elapsedTime >= movementTimer) {
-    yValuesList = append(yValuesList, yValuesList[0] + snakeSpeed);
+    yValuesList.splice(0 , 0, yValuesList[0] + snakeSpeed);
+    xValuesList = append(xValuesList, xValuesList[0]);
+
+    xValuesList = shorten(xValuesList);
     yValuesList = shorten(yValuesList);
   }
 
   initialTime = millis();
+
 }
 
 function drawSnakeCubes() {
   fill(0, 255, 0);
-  for (let listSpot = 0; listSpot < numberOfCubes; listSpot ++) {
+  for (let listSpot = 0; listSpot < xValuesList.length; listSpot ++) {
     rect(xValuesList[listSpot], yValuesList[listSpot], snakeSize, snakeSize);
   }
 }
@@ -115,21 +129,21 @@ function addSnake() {
 }
 
 
-function keyPressed() {
+function keyIsPressed() {
   //LEFT
   if (key === "a" || key === "A") {
     directionState = 1;
   }
   //UP
-  else if (keyCode === 38) {
+  else if (key === "w" || key === "W") {
     directionState = 2;
   }
   //RIGHT
-  else if (keyCode === 39) {
+  else if (key === "d" || key === "D") {
     directionState = 3;
   }
   //DOWN
-  else if (keyCode === 40) {
+  else if (key === "s" || key === "S") {
     directionState = 4;
   }
   //Pausing
