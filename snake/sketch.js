@@ -4,36 +4,32 @@
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
-
-let snakeSpeed;
+let snake;
 
 let middleX;
 let middleY;
 
 let movementTimer = 1000;
 
-let xValuesList;
-let yValuesList;
-
 let directionState;
 let gameState;
 
 let initialTime;
-let snakeSize;
-let numberOfCubes;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   middleX = width/2;
   middleY = height/2;
 
-  xValuesList = [middleX];
-  yValuesList = [middleY];
+  snake = {
+    xValuesList: [middleX, middleX += 35],
+    yValuesList: [middleY, middleY],
+    size: 33,
+    speed: 35,
+  };
+
 
   directionState = 5;
-  snakeSize = 33;
-  snakeSpeed = 35;
-  numberOfCubes = 1;
 
   initialTime = 0;
 
@@ -42,10 +38,14 @@ function setup() {
 
 function draw() {
   if (gameState === 1) {
+    frameRate(60);
     menu();
   }
   else if (gameState === 2) {
+    frameRate(4);
     background(0);
+    fill(220);
+    // rect(width , 100, width - 200, 500)
     // drawFood();
     moveSnake();
     drawSnakeCubes();
@@ -54,9 +54,11 @@ function draw() {
     // touchingFood();
   }
   else if (gameState === 3) {
+    frameRate(60);
     //pause stuffs
   }
   else {
+    frameRate(60);
     //Game over stuffs
   }
 }
@@ -66,49 +68,56 @@ function menu() {
 }
 
 function moveSnake() {
-  let elapsedTime = millis() - initialTime;
+  // let elapsedTime = millis() - initialTime;
 
-  if (directionState === 1 && elapsedTime >= movementTimer) {
-    xValuesList.splice(0 , 0, xValuesList[0] - snakeSpeed);
-    yValuesList = append(yValuesList, yValuesList[0]);
+  if (directionState === 1) {
+    //LEFT
+    // && elapsedTime >= movementTimer) {
+    snake.xValuesList.splice(0 , 0, snake.xValuesList[0] - snake.speed);
+    snake.yValuesList = append(snake.yValuesList, snake.yValuesList[0]);
 
-    xValuesList = shorten(xValuesList);
-    yValuesList = shorten(yValuesList);
+    snake.xValuesList = shorten(snake.xValuesList);
+    snake.yValuesList = shorten(snake.yValuesList);
   }
 
-  else if (directionState === 2 && elapsedTime >= movementTimer) {
-    yValuesList.splice(0 , 0, yValuesList[0] - snakeSpeed);
-    xValuesList = append(xValuesList, xValuesList[0]);
+  else if (directionState === 2) {
+    //UP
+  // && elapsedTime >= movementTimer) {
+    snake.yValuesList.splice(0 , 0, snake.yValuesList[0] - snake.speed);
+    snake.xValuesList = append(snake.xValuesList, snake.xValuesList[snake.xValuesList.length - 1]);
 
-    xValuesList = shorten(xValuesList);
-    yValuesList = shorten(yValuesList);
+    snake.xValuesList = shorten(snake.xValuesList);
+    snake.yValuesList = shorten(snake.yValuesList);
   }
 
-  else if (directionState === 3 && elapsedTime >= movementTimer) {
-    xValuesList = append(xValuesList, xValuesList[0] + snakeSpeed);
-    xValuesList.splice(0 , 0, xValuesList[0] + snakeSpeed);
-    yValuesList = append(yValuesList, yValuesList[0]);
+  else if (directionState === 3) {
+    //RIGHT
+    // && elapsedTime >= movementTimer) {
+    snake.xValuesList.splice(0 , 0, snake.xValuesList[0] + snake.speed);
+    snake.yValuesList = append(snake.yValuesList, snake.yValuesList[0]);
 
-    xValuesList = shorten(xValuesList);
-    yValuesList = shorten(yValuesList);
+    snake.xValuesList = shorten(snake.xValuesList);
+    snake.yValuesList = shorten(snake.yValuesList);
   }
 
-  else if (directionState === 4 && elapsedTime >= movementTimer) {
-    yValuesList.splice(0 , 0, yValuesList[0] + snakeSpeed);
-    xValuesList = append(xValuesList, xValuesList[0]);
+  else if (directionState === 4) {
+    //DOWN
+    // && elapsedTime >= movementTimer) {
+    snake.yValuesList.splice(0 , 0, snake.yValuesList[0] + snake.speed);
+    snake.xValuesList = append(snake.xValuesList, snake.xValuesList[0]);
 
-    xValuesList = shorten(xValuesList);
-    yValuesList = shorten(yValuesList);
+    snake.xValuesList = shorten(snake.xValuesList);
+    snake.yValuesList = shorten(snake.yValuesList);
   }
 
-  initialTime = millis();
+  // initialTime = millis();
 
 }
 
 function drawSnakeCubes() {
   fill(0, 255, 0);
-  for (let listSpot = 0; listSpot < xValuesList.length; listSpot ++) {
-    rect(xValuesList[listSpot], yValuesList[listSpot], snakeSize, snakeSize);
+  for (let listSpot = 0; listSpot < snake.xValuesList.length; listSpot ++) {
+    rect(snake.xValuesList[listSpot], snake.yValuesList[listSpot], snake.size, snake.size);
   }
 }
 
@@ -129,7 +138,7 @@ function addSnake() {
 }
 
 
-function keyIsPressed() {
+function keyTyped() {
   //LEFT
   if (key === "a" || key === "A") {
     directionState = 1;
