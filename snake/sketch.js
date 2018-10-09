@@ -47,8 +47,8 @@ function draw() {
     fill(220);
     // rect(width , 100, width - 200, 500)
     // drawFood();
-    moveSnake();
     drawSnakeCubes();
+    moveSnake();
 
     // hitSnake();
     // touchingFood();
