@@ -29,7 +29,7 @@ function setup() {
   };
 
 
-  directionState = 5;
+  directionState = 3;
 
   initialTime = 0;
 
@@ -74,7 +74,7 @@ function moveSnake() {
     //LEFT
     // && elapsedTime >= movementTimer) {
     snake.xValuesList.splice(0 , 0, snake.xValuesList[0] - snake.speed);
-    snake.yValuesList = append(snake.yValuesList, snake.yValuesList[0]);
+    snake.yValuesList.splice(0, 0, snake.yValuesList[0]);
 
     snake.xValuesList = shorten(snake.xValuesList);
     snake.yValuesList = shorten(snake.yValuesList);
@@ -83,8 +83,9 @@ function moveSnake() {
   else if (directionState === 2) {
     //UP
   // && elapsedTime >= movementTimer) {
+
+    snake.xValuesList.splice(0, 0, snake.xValuesList[0]);
     snake.yValuesList.splice(0 , 0, snake.yValuesList[0] - snake.speed);
-    snake.xValuesList = append(snake.xValuesList, snake.xValuesList[snake.xValuesList.length - 1]);
 
     snake.xValuesList = shorten(snake.xValuesList);
     snake.yValuesList = shorten(snake.yValuesList);
@@ -94,7 +95,7 @@ function moveSnake() {
     //RIGHT
     // && elapsedTime >= movementTimer) {
     snake.xValuesList.splice(0 , 0, snake.xValuesList[0] + snake.speed);
-    snake.yValuesList = append(snake.yValuesList, snake.yValuesList[0]);
+    snake.yValuesList.splice(0, 0, snake.yValuesList[0]);
 
     snake.xValuesList = shorten(snake.xValuesList);
     snake.yValuesList = shorten(snake.yValuesList);
@@ -104,7 +105,7 @@ function moveSnake() {
     //DOWN
     // && elapsedTime >= movementTimer) {
     snake.yValuesList.splice(0 , 0, snake.yValuesList[0] + snake.speed);
-    snake.xValuesList = append(snake.xValuesList, snake.xValuesList[0]);
+    snake.xValuesList.splice(0, 0, snake.xValuesList[0]);
 
     snake.xValuesList = shorten(snake.xValuesList);
     snake.yValuesList = shorten(snake.yValuesList);
