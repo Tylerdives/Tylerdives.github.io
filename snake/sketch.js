@@ -15,15 +15,24 @@ let directionState;
 let gameState;
 
 let initialTime;
+let foodPresent;
+
+let foodX, foodY;
+let heightCubes;
+let widthCubes;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   middleX = width/2;
   middleY = height/2;
+  foodPresent = false;
+
+  heightCubes = height/35;
+  widthCubes = width/35;
 
   snake = {
-    xValuesList: [middleX, middleX += 35],
-    yValuesList: [middleY, middleY],
+    xValuesList: [0, 35],
+    yValuesList: [0, 0],
     size: 33,
     speed: 35,
   };
@@ -42,7 +51,7 @@ function draw() {
     menu();
   }
   else if (gameState === 2) {
-    frameRate(4);
+    frameRate(5);
     background(0);
     fill(220);
     // rect(width , 100, width - 200, 500)
@@ -113,6 +122,22 @@ function moveSnake() {
 
   // initialTime = millis();
 
+  if (snake.xValuesList[0] < 0) {
+    snake.xValuesList.splice(0, 0, width - snake.speed);
+    snake.xValuesList = shorten(snake.xValuesList);
+  }
+  else if(snake.xValuesList[0] > width - snake.speed) {
+    snake.xValuesList.splice(0, 0, 0);
+    snake.xValuesList = shorten(snake.xValuesList);
+  }
+  else if(snake.yValuesList[0] < 0) {
+    snake.yValuesList.splice(0, 0, height - snake.speed);
+    snake.yValuesList = shorten(snake.yValuesList);
+  }
+  else if(snake.yValuesList[0] > height - snake.speed) {
+    snake.yValuesList.splice(0, 0, 0);
+    snake.yValuesList = shorten(snake.yValuesList);
+  }
 }
 
 function drawSnakeCubes() {
@@ -123,7 +148,14 @@ function drawSnakeCubes() {
 }
 
 function drawFood() {
+  if (!foodPresent) {
 
+    foodX = random(widthCubes);
+    foodY = random(heightCubes);
+    //Make it so it can't spawn in the snake
+  }
+  fill("red");
+  ellipse(foodX * 35 + 335/2, foodX * 35 + 335/2, 5, 5);
 }
 
 function touchingFood() {
