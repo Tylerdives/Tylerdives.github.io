@@ -84,7 +84,7 @@ function moveSnake() {
     //UP
   // && elapsedTime >= movementTimer) {
     snake.yValuesList.splice(0 , 0, snake.yValuesList[0] - snake.speed);
-    snake.xValuesList = append(snake.xValuesList, snake.xValuesList[snake.xValuesList.length - 1]);
+    snake.xValuesList = append(snake.xValuesList, snake.xValuesList[0]);
 
     snake.xValuesList = shorten(snake.xValuesList);
     snake.yValuesList = shorten(snake.yValuesList);
