@@ -27,8 +27,7 @@ function setup() {
   middleY = height/2;
   foodPresent = false;
 
-  heightCubes = height/35;
-  widthCubes = width/35;
+
 
   snake = {
     xValuesList: [0, 35],
@@ -37,7 +36,8 @@ function setup() {
     speed: 35,
   };
 
-
+  heightCubes = floor(height/snake.speed);
+  widthCubes = floor(width/snake.speed);
   directionState = 3;
 
   initialTime = 0;
@@ -51,11 +51,12 @@ function draw() {
     menu();
   }
   else if (gameState === 2) {
-    frameRate(5);
+    frameRate(6);
     background(0);
-    fill(220);
+    // fill(220);
     // rect(width , 100, width - 200, 500)
-    // drawFood();
+    drawGrid();
+    drawFood();
     drawSnakeCubes();
     moveSnake();
 
@@ -74,6 +75,16 @@ function draw() {
 
 function menu() {
 
+}
+
+function drawGrid() {
+  stroke(30);
+  for(let i = 1; i <= floor(width/snake.speed) - 1; i++) {
+    line(snake.speed * i, 0, snake.speed * i, height - floor(height/snake.speed) - 4);
+  }
+  for(let j = 1; j <= floor(height/snake.speed); j++) {
+    line(0 , snake.speed * j, width - 1.5 * floor(width/snake.speed) - 2, snake.speed * j);
+  }
 }
 
 function moveSnake() {
@@ -95,10 +106,6 @@ function moveSnake() {
 
     snake.xValuesList.splice(0, 0, snake.xValuesList[0]);
     snake.yValuesList.splice(0 , 0, snake.yValuesList[0] - snake.speed);
-<<<<<<< HEAD
-    snake.xValuesList = append(snake.xValuesList, snake.xValuesList[0]);
-=======
->>>>>>> aaba1e9316ea021322454ed85b784e2de8317dfe
 
     snake.xValuesList = shorten(snake.xValuesList);
     snake.yValuesList = shorten(snake.yValuesList);
@@ -127,18 +134,18 @@ function moveSnake() {
   // initialTime = millis();
 
   if (snake.xValuesList[0] < 0) {
-    snake.xValuesList.splice(0, 0, width - snake.speed);
+    snake.xValuesList.splice(0, 0, width - 1.5 * floor(width/snake.speed) - 35);
     snake.xValuesList = shorten(snake.xValuesList);
   }
-  else if(snake.xValuesList[0] > width - snake.speed) {
+  else if(snake.xValuesList[0] > width -  1.5 * floor(width/snake.speed) - 70) {
     snake.xValuesList.splice(0, 0, 0);
     snake.xValuesList = shorten(snake.xValuesList);
   }
   else if(snake.yValuesList[0] < 0) {
-    snake.yValuesList.splice(0, 0, height - snake.speed);
+    snake.yValuesList.splice(0, 0, height - floor(height/snake.speed) - 2 * snake.speed);
     snake.yValuesList = shorten(snake.yValuesList);
   }
-  else if(snake.yValuesList[0] > height - snake.speed) {
+  else if(snake.yValuesList[0] > height - floor(height/snake.speed) - 2 * snake.speed) {
     snake.yValuesList.splice(0, 0, 0);
     snake.yValuesList = shorten(snake.yValuesList);
   }
@@ -154,12 +161,15 @@ function drawSnakeCubes() {
 function drawFood() {
   if (!foodPresent) {
 
-    foodX = random(widthCubes);
-    foodY = random(heightCubes);
+    foodX = random(1, widthCubes - 1);
+    foodY = random(1, heightCubes - 1);
     //Make it so it can't spawn in the snake
+
+    foodPresent = true;
   }
   fill("red");
-  ellipse(foodX * 35 + 335/2, foodX * 35 + 335/2, 5, 5);
+  ellipse(foodX * snake.speed, foodX, 15, 15);
+
 }
 
 function touchingFood() {
