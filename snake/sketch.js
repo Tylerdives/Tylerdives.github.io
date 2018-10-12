@@ -4,46 +4,49 @@
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
-let snake;
+let snake1;
+let snake2;
 
-let middleX;
-let middleY;
-
-let movementTimer = 1000;
-
-let directionState;
 let gameState;
 
-let initialTime;
-let foodPresent;
+let food1Present, food2Present;
 
-let foodX, foodY;
+let foodX1, foodY1;
+let foodX2, foodY2;
+
 let heightCubes;
 let widthCubes;
 
-let addSnake;
+let addSnake1, addSnake2;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  middleX = width/2;
-  middleY = height/2;
-  foodPresent = false;
-  addSnake = false;
 
+  food1Present = false;
+  food2Present = false;
+  addSnake1 = false;
+  addSnake2 = false;
 
-  snake = {
-    xValuesList: [0, 35],
-    yValuesList: [0, 0],
+  snake1 = {
+    xValuesList: [0],
+    yValuesList: [0],
     size: 38,
     speed: 40,
+    directionState: 3,
   };
 
-  heightCubes = floor(height/snake.speed);
-  widthCubes = floor(width/snake.speed);
+  snake2 = {
+    xValuesList: [35],
+    yValuesList: [0],
+    size: 38,
+    speed: 40,
+    directionState: 1,
+  };
 
-  directionState = 3;
+  heightCubes = floor(height/snake1.speed);
+  widthCubes = floor(width/snake1.speed);
 
-  initialTime = 0;
+
 
   gameState = 2;
 }
@@ -56,23 +59,26 @@ function draw() {
   else if (gameState === 2) {
     frameRate(6);
     background(0);
-    // fill(220);
-    // rect(width , 100, width - 200, 500)
+
     drawGrid();
     drawFood();
-    drawSnakeCubes();
-    moveSnake();
+
+    drawSnakeCubes(snake1);
+    drawSnakeCubes(snake2);
+
+    moveSnake(snake1);
+    moveSnake(snake2);
 
     // hitSnake();
     // touchingFood();
   }
   else if (gameState === 3) {
     frameRate(60);
-    //pause stuffs
   }
+
   else {
     frameRate(60);
-    //Game over stuffs
+    gameState = 0;
   }
 }
 
@@ -82,159 +88,213 @@ function menu() {
 
 function drawGrid() {
   stroke(30);
-  for(let i = 1; i <= floor(width/snake.speed); i++) {
-    line(i * snake.speed, 0, i * snake.speed, floor(height/snake.speed) * snake.speed);
+  for(let i = 1; i <= floor(width/snake1.speed); i++) {
+    line(i * snake1.speed, 0, i * snake1.speed, floor(height/snake1.speed) * snake1.speed);
   }
-  for(let j = 1; j <= floor(height/snake.speed); j++) {
-    line(0, j * snake.speed, floor(width/snake.speed) * snake.speed, j * snake.speed);
+  for(let j = 1; j <= floor(height/snake1.speed); j++) {
+    line(0, j * snake1.speed, floor(width/snake1.speed) * snake1.speed, j * snake1.speed);
   }
 }
 
-function moveSnake() {
+function moveSnake(snakeNumber) {
   // let elapsedTime = millis() - initialTime;
 
-  if (directionState === 1) {
+  if (snakeNumber.directionState === 1) {
     //LEFT
     // && elapsedTime >= movementTimer) {
-    snake.xValuesList.splice(0 , 0, snake.xValuesList[0] - snake.speed);
-    snake.yValuesList.splice(0, 0, snake.yValuesList[0]);
+    snakeNumber.xValuesList.splice(0 , 0, snakeNumber.xValuesList[0] - snake1.speed);
+    snakeNumber.yValuesList.splice(0, 0, snakeNumber.yValuesList[0]);
 
-    snake.xValuesList = shorten(snake.xValuesList);
-    snake.yValuesList = shorten(snake.yValuesList);
+    snakeNumber.xValuesList = shorten(snakeNumber.xValuesList);
+    snakeNumber.yValuesList = shorten(snakeNumber.yValuesList);
   }
 
-  else if (directionState === 2) {
+  else if (snakeNumber.directionState === 2) {
     //UP
   // && elapsedTime >= movementTimer) {
 
-    snake.xValuesList.splice(0, 0, snake.xValuesList[0]);
-    snake.yValuesList.splice(0 , 0, snake.yValuesList[0] - snake.speed);
+    snakeNumber.xValuesList.splice(0, 0, snakeNumber.xValuesList[0]);
+    snakeNumber.yValuesList.splice(0 , 0, snakeNumber.yValuesList[0] - snake1.speed);
 
-    snake.xValuesList = shorten(snake.xValuesList);
-    snake.yValuesList = shorten(snake.yValuesList);
+    snakeNumber.xValuesList = shorten(snakeNumber.xValuesList);
+    snakeNumber.yValuesList = shorten(snakeNumber.yValuesList);
   }
 
-  else if (directionState === 3) {
+  else if (snakeNumber.directionState === 3) {
     //RIGHT
     // && elapsedTime >= movementTimer) {
-    snake.xValuesList.splice(0 , 0, snake.xValuesList[0] + snake.speed);
-    snake.yValuesList.splice(0, 0, snake.yValuesList[0]);
+    snakeNumber.xValuesList.splice(0 , 0, snakeNumber.xValuesList[0] + snake1.speed);
+    snakeNumber.yValuesList.splice(0, 0, snakeNumber.yValuesList[0]);
 
-    snake.xValuesList = shorten(snake.xValuesList);
-    snake.yValuesList = shorten(snake.yValuesList);
+    snakeNumber.xValuesList = shorten(snakeNumber.xValuesList);
+    snakeNumber.yValuesList = shorten(snakeNumber.yValuesList);
   }
 
-  else if (directionState === 4) {
+  else if (snakeNumber.directionState === 4) {
     //DOWN
     // && elapsedTime >= movementTimer) {
-    snake.yValuesList.splice(0 , 0, snake.yValuesList[0] + snake.speed);
-    snake.xValuesList.splice(0, 0, snake.xValuesList[0]);
+    snakeNumber.yValuesList.splice(0 , 0, snakeNumber.yValuesList[0] + snake1.speed);
+    snakeNumber.xValuesList.splice(0, 0, snakeNumber.xValuesList[0]);
 
-    snake.xValuesList = shorten(snake.xValuesList);
-    snake.yValuesList = shorten(snake.yValuesList);
+    snakeNumber.xValuesList = shorten(snakeNumber.xValuesList);
+    snakeNumber.yValuesList = shorten(snakeNumber.yValuesList);
   }
 
   // initialTime = millis();
-  if (addSnake) {
-    if (directionState === 1) {
-      snake.xValuesList.splice(0 , 0, snake.xValuesList[0] - snake.speed);
-      snake.yValuesList.splice(0, 0, snake.yValuesList[0]);
+  if (addSnake1 && snakeNumber === snake1 || addSnake2 && snakeNumber === snake2) {
+    if (snakeNumber.directionState === 1) {
+      snakeNumber.xValuesList.splice(0 , 0, snakeNumber.xValuesList[0] - snake1.speed);
+      snakeNumber.yValuesList.splice(0, 0, snakeNumber.yValuesList[0]);
     }
-    else if (directionState === 2) {
-      snake.xValuesList.splice(0, 0, snake.xValuesList[0]);
-      snake.yValuesList.splice(0 , 0, snake.yValuesList[0] - snake.speed);
+    else if (snakeNumber.directionState === 2) {
+      snakeNumber.xValuesList.splice(0, 0, snakeNumber.xValuesList[0]);
+      snakeNumber.yValuesList.splice(0 , 0, snakeNumber.yValuesList[0] - snakeNumber.speed);
     }
-    else if (directionState === 3) {
-      snake.xValuesList.splice(0 , 0, snake.xValuesList[0] + snake.speed);
-      snake.yValuesList.splice(0, 0, snake.yValuesList[0]);
+    else if (snakeNumber.directionState === 3) {
+      snakeNumber.xValuesList.splice(0 , 0, snakeNumber.xValuesList[0] + snake1.speed);
+      snakeNumber.yValuesList.splice(0, 0, snakeNumber.yValuesList[0]);
     }
-    else if (directionState === 4) {
-      snake.yValuesList.splice(0 , 0, snake.yValuesList[0] + snake.speed);
-      snake.xValuesList.splice(0, 0, snake.xValuesList[0]);
+    else if (snakeNumber.directionState === 4) {
+      snakeNumber.yValuesList.splice(0 , 0, snakeNumber.yValuesList[0] + snake1.speed);
+      snakeNumber.xValuesList.splice(0, 0, snakeNumber.xValuesList[0]);
     }
-    addSnake = false;
+    if (addSnake1) {
+      addSnake1 = false;
+    }
+    if (addSnake2) {
+      addSnake2 = false;
+    }
   }
 
-  if (snake.xValuesList[0] < 0) {
-    snake.xValuesList.splice(0, 0, floor(width/snake.speed) * snake.speed - snake.speed);
-    snake.xValuesList = shorten(snake.xValuesList);
+  if (snakeNumber.xValuesList[0] < 0) {
+    snakeNumber.xValuesList.splice(0, 0, floor(width/snake1.speed) * snake1.speed - snake1.speed);
+    snakeNumber.xValuesList = shorten(snakeNumber.xValuesList);
   }
 
-  else if(snake.xValuesList[0] > floor(width/snake.speed) * snake.speed - snake.speed) {
-    snake.xValuesList.splice(0, 0, 0);
-    snake.xValuesList = shorten(snake.xValuesList);
+  else if(snakeNumber.xValuesList[0] > floor(width/snake1.speed) * snake1.speed - snake1.speed) {
+    snakeNumber.xValuesList.splice(0, 0, 0);
+    snakeNumber.xValuesList = shorten(snakeNumber.xValuesList);
   }
 
-  else if(snake.yValuesList[0] < 0) {
-    snake.yValuesList.splice(0, 0, floor(height/snake.speed) * snake.speed - snake.speed);
-    snake.yValuesList = shorten(snake.yValuesList);
+  else if(snakeNumber.yValuesList[0] < 0) {
+    snakeNumber.yValuesList.splice(0, 0, floor(height/snake1.speed) * snake1.speed - snake1.speed);
+    snakeNumber.yValuesList = shorten(snakeNumber.yValuesList);
   }
 
-  else if(snake.yValuesList[0] > floor(height/snake.speed) * snake.speed - 2 * snake.speed) {
-    snake.yValuesList.splice(0, 0, 0);
-    snake.yValuesList = shorten(snake.yValuesList);
+  else if(snakeNumber.yValuesList[0] > floor(height/snake1.speed) * snake1.speed - 2 * snake1.speed) {
+    snakeNumber.yValuesList.splice(0, 0, 0);
+    snakeNumber.yValuesList = shorten(snakeNumber.yValuesList);
   }
 }
 
-function drawSnakeCubes() {
-  fill(0, 255, 0);
-  for (let listSpot = 0; listSpot < snake.xValuesList.length; listSpot ++) {
-    rect(snake.xValuesList[listSpot], snake.yValuesList[listSpot], snake.size, snake.size);
+function drawSnakeCubes(snakeNumber) {
+  if (snakeNumber === snake1) {
+    fill(0, 255, 0);
+  }
+  else if (snakeNumber === snake2) {
+    fill(0, 0, 255);
+  }
+  for (let listSpot = 0; listSpot < snakeNumber.xValuesList.length; listSpot ++) {
+    rect(snakeNumber.xValuesList[listSpot], snakeNumber.yValuesList[listSpot], snake1.size, snake1.size);
   }
 }
 
 function drawFood() {
-  if (!foodPresent) {
+  if (!food1Present) {
 
-    foodX = random(widthCubes);
-    foodY = random(heightCubes);
-    foodY = round(foodY);
-    foodX = round(foodX);
+    foodX1 = random(1, widthCubes);
+    foodY1 = random(1, heightCubes);
+    foodY1 = round(foodY1);
+    foodX1 = round(foodX1);
     //Make it so it can't spawn in the snake
 
-    foodPresent = true;
+    food1Present = true;
   }
-  if (touchingFood()) {
-    foodPresent = false;
-  }
-  fill("red");
-  ellipse(foodX * snake.speed - snake.speed/2, foodY * snake.speed  - snake.speed/2, 15, 15);
 
+  if (!food2Present) {
+
+    foodX2 = random(1, widthCubes);
+    foodY2 = random(1, heightCubes);
+    foodY2 = round(foodY2);
+    foodX2 = round(foodX2);
+    //Make it so it can't spawn in the snake
+
+    food2Present = true;
+  }
+
+  touchingFood();
+
+  //FOOD1
+  fill(200, 0, 0);
+  ellipse(foodX1 * snake1.speed - snake1.speed/2, foodY1 * snake1.speed  - snake1.speed/2, 15, 15);
+
+  //FOOD2
+  fill(200, 0, 0);
+  ellipse(foodX2 * snake2.speed - snake2.speed/2, foodY2 * snake2.speed  - snake2.speed/2, 15, 15);
 }
 
 function touchingFood() {
-  if ((foodX - 1) * snake.speed === snake.xValuesList[0]) {
-    addSnake = true;
-    foodPresent = false;
+  if ((foodX1 - 1) * snake1.speed === snake1.xValuesList[0] && (foodY1 - 1) * snake1.speed === snake1.yValuesList[0]) {
+    addSnake1 = true;
+    food1Present = false;
+  }
+  if ((foodX2 - 1) * snake2.speed === snake2.xValuesList[0] && (foodY2 - 1) * snake2.speed === snake2.yValuesList[0]) {
+    addSnake2 = true;
+    food2Present = false;
+  }
+  if ((foodX1 - 1) * snake2.speed === snake2.xValuesList[0] && (foodY1 - 1) * snake2.speed === snake2.yValuesList[0]) {
+    addSnake2 = true;
+    food1Present = false;
+  }
+  if ((foodX2 - 1) * snake1.speed === snake1.xValuesList[0] && (foodY2 - 1) * snake1.speed === snake1.yValuesList[0]) {
+    addSnake1 = true;
+    food2Present = false;
   }
 }
 
 function hitSnake() {
-
+  // if (snake1.xValuesList.includes(snake2.xValuesList) && snake1.yValuesList.includes(snake2.yValuesList)) {
+  //   gameState ++;
+  // }
 }
 
-// function addSnake() {
-//
-// }
+
 
 
 function keyTyped() {
   //LEFT
   if (key === "a" || key === "A") {
-    directionState = 1;
+    snake1.directionState = 1;
   }
   //UP
   else if (key === "w" || key === "W") {
-    directionState = 2;
+    snake1.directionState = 2;
   }
   //RIGHT
   else if (key === "d" || key === "D") {
-    directionState = 3;
+    snake1.directionState = 3;
   }
   //DOWN
   else if (key === "s" || key === "S") {
-    directionState = 4;
+    snake1.directionState = 4;
   }
+  //--------------------------------------------------------------
+  if (key === "j" || key === "J") {
+    snake2.directionState = 1;
+  }
+  //UP
+  else if (key === "i" || key === "I") {
+    snake2.directionState = 2;
+  //RIGHT
+  }
+  else if (key === "l" || key === "L") {
+    snake2.directionState = 3;
+  }
+  //DOWN
+  else if (key === "k" || key === "K") {
+    snake2.directionState = 4;
+  }
+
   //Pausing
   if (key === "p" || key === "P") {
     if (gameState === 2) {
