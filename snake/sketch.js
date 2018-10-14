@@ -41,16 +41,16 @@ function setup() {
     yValuesList: [0],
     size: 38,
     speed: 40,
-    directionState: 3,
+    directionState: 1,
     win: false,
   };
 
   snake2 = {
-    xValuesList: [35],
+    xValuesList: [80],
     yValuesList: [0],
     size: 38,
     speed: 40,
-    directionState: 1,
+    directionState: 3,
     win: false,
   };
 
@@ -470,6 +470,14 @@ function keyTyped() {
       snake1.win = false;
       snake2.win = false;
       gameState = 1;
+      snake1.xValuesList = [0];
+      snake1.yValuesList = [0];
+      snake1.directionState = 1;
+
+      snake2.xValuesList = [80];
+      snake2.xValuesList = [0];
+      snake2.directionState = 3;
+
       music.loop();
     }
   }
