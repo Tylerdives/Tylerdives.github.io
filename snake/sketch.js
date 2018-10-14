@@ -19,10 +19,13 @@ let widthCubes;
 
 let addSnake1, addSnake2;
 let hoveringButton;
+
 let music;
+let eatSound;
 
 function preload() {
-  music = loadSound("assets/snakemenu");
+  music = loadSound("assets/snakemenu.mp3");
+  eatSound = loadSound("assets/eatfoodsound.mp3");
 }
 
 function setup() {
@@ -58,17 +61,21 @@ function setup() {
 
   textAlign(CENTER);
 
+  music.setVolume(0.2);
+  eatSound.setVolume(0.3);
   music.loop();
 }
 
 function draw() {
+  //MENU
   if (gameState === 1) {
     frameRate(60);
     menu();
   }
 
+  //GAME
   else if (gameState === 2) {
-    frameRate(5);
+    frameRate(6);
     background(0);
 
     drawGrid();
@@ -82,24 +89,35 @@ function draw() {
     moveSnake(snake1);
     moveSnake(snake2);
   }
+
+  //PAUSE
   else if (gameState === 3) {
     frameRate(60);
+    fill(255);
+    text("PAUSED", width/2, height/2);
   }
 
+  //GAME OVER
   else if (gameState === 4) {
     frameRate(60);
     gameOver();
   }
 }
 
+
 function menu() {
-  background(20);
+  background(10);
+  drawGrid();
+
+
+  backgroundSnakes();
+
   fill(0, 255, 0);
   textSize(55);
   text("TWO PLAYER SNAKE", width/2, 100);
   textSize(20);
   text("There are two snakes in a battle.", width/2, 150);
-  text("A green one (WASD controls), and a blue one (IJKL constols)", width/2, 200);
+  text("A green one (WASD controls), and a blue one (IJKL controls)", width/2, 200);
   text("Eat the red food to get longer", width/2, 250);
   text("If you hit your tail, or the tail of the other snake, you lose", width/2, 300);
   text("Press P to pause and have fun", width/2, 350);
@@ -126,12 +144,64 @@ function menu() {
 
   rect(width/2, 500, 300, 100);
   rectMode(CORNER);
+
   fill(255);
   textSize(35);
   text("START", width/2, 510);
 }
 
+
+function backgroundSnakes() {
+
+  fill(0, 255, 0);
+  rect(snake1.speed * 6, snake1.speed * 3, snake1.size, snake1.size);
+  //TRYING to make less of an eyesore
+  rect(snake1.speed * 7, snake1.speed * 3, snake1.size, snake1.size);
+
+  rect(snake1.speed * 7, snake1.speed * 4, snake1.size, snake1.size);
+
+  rect(snake1.speed * 8, snake1.speed * 4, snake1.size, snake1.size);
+
+  rect(snake1.speed * 9, snake1.speed * 4, snake1.size, snake1.size);
+
+  rect(snake1.speed * 10, snake1.speed * 4, snake1.size, snake1.size);
+
+  rect(snake1.speed * 10, snake1.speed * 4, snake1.size, snake1.size);
+
+  rect(snake1.speed * 10, snake1.speed * 5, snake1.size, snake1.size);
+
+  rect(snake1.speed * 10, snake1.speed * 6, snake1.size, snake1.size);
+
+  rect(snake1.speed * 10, snake1.speed * 7, snake1.size, snake1.size);
+
+  rect(snake1.speed * 10, snake1.speed * 8, snake1.size, snake1.size);
+
+  fill(0, 0, 255);
+  rect(snake1.speed * 35, snake1.speed * 3, snake1.size, snake1.size);
+
+  rect(snake1.speed * 35, snake1.speed * 4, snake1.size, snake1.size);
+
+  rect(snake1.speed * 34, snake1.speed * 4, snake1.size, snake1.size);
+
+  rect(snake1.speed * 34, snake1.speed * 5, snake1.size, snake1.size);
+
+  rect(snake1.speed * 34, snake1.speed * 6, snake1.size, snake1.size);
+
+  rect(snake1.speed * 34, snake1.speed * 7, snake1.size, snake1.size);
+
+  rect(snake1.speed * 34, snake1.speed * 8, snake1.size, snake1.size);
+
+  rect(snake1.speed * 34, snake1.speed * 9, snake1.size, snake1.size);
+
+  rect(snake1.speed * 33, snake1.speed * 9, snake1.size, snake1.size);
+
+  rect(snake1.speed * 32, snake1.speed * 9, snake1.size, snake1.size);
+
+  rect(snake1.speed * 31, snake1.speed * 9, snake1.size, snake1.size);
+}
+
 function gameOver() {
+  music.stop();
   textSize(55);
 
   if (snake1.win) {
@@ -300,18 +370,22 @@ function drawFood() {
 
 function touchingFood() {
   if ((foodX1 - 1) * snake1.speed === snake1.xValuesList[0] && (foodY1 - 1) * snake1.speed === snake1.yValuesList[0]) {
+    eatSound.play();
     addSnake1 = true;
     food1Present = false;
   }
   if ((foodX2 - 1) * snake2.speed === snake2.xValuesList[0] && (foodY2 - 1) * snake2.speed === snake2.yValuesList[0]) {
+    eatSound.play();
     addSnake2 = true;
     food2Present = false;
   }
   if ((foodX1 - 1) * snake2.speed === snake2.xValuesList[0] && (foodY1 - 1) * snake2.speed === snake2.yValuesList[0]) {
+    eatSound.play();
     addSnake2 = true;
     food1Present = false;
   }
   if ((foodX2 - 1) * snake1.speed === snake1.xValuesList[0] && (foodY2 - 1) * snake1.speed === snake1.yValuesList[0]) {
+    eatSound.play();
     addSnake1 = true;
     food2Present = false;
   }
@@ -343,6 +417,7 @@ function hitSnake() {
 
 
 function keyTyped() {
+  //Player one controls
   //LEFT
   if (key === "a" || key === "A") {
     snake1.directionState = 1;
@@ -360,6 +435,7 @@ function keyTyped() {
     snake1.directionState = 4;
   }
   //--------------------------------------------------------------
+  //Player 2 controls
   if (key === "j" || key === "J") {
     snake2.directionState = 1;
   }
@@ -380,22 +456,21 @@ function keyTyped() {
   //Pausing
   if (key === "p" || key === "P") {
     if (gameState === 2) {
+      music.setVolume(0.05);
       gameState = 3;
     }
     else if (gameState === 3) {
       gameState = 2;
+      music.setVolume(0.2);
     }
   }
 
   if (gameState === 4) {
     if (key === "r" || key === "R") {
-      reset();
+      snake1.win = false;
+      snake2.win = false;
       gameState = 1;
+      music.loop();
     }
   }
-}
-
-function reset() {
-  snake1.win = false;
-  snake2.win = false;
 }
