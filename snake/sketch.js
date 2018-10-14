@@ -33,6 +33,7 @@ function setup() {
     size: 38,
     speed: 40,
     directionState: 3,
+    win: false,
   };
 
   snake2 = {
@@ -41,14 +42,14 @@ function setup() {
     size: 38,
     speed: 40,
     directionState: 1,
+    win: false,
   };
 
   heightCubes = floor(height/snake1.speed);
   widthCubes = floor(width/snake1.speed);
 
-
-
   gameState = 2;
+
 }
 
 function draw() {
@@ -56,8 +57,9 @@ function draw() {
     frameRate(60);
     menu();
   }
+
   else if (gameState === 2) {
-    frameRate(6);
+    frameRate(5);
     background(0);
 
     drawGrid();
@@ -66,23 +68,26 @@ function draw() {
     drawSnakeCubes(snake1);
     drawSnakeCubes(snake2);
 
+    hitSnake();
+
     moveSnake(snake1);
     moveSnake(snake2);
-
-    // hitSnake();
-    // touchingFood();
   }
   else if (gameState === 3) {
     frameRate(60);
   }
 
-  else {
+  else if (gameState === 4) {
     frameRate(60);
-    gameState = 0;
+    gameOver();
   }
 }
 
 function menu() {
+
+}
+
+function gameOver() {
 
 }
 
@@ -141,9 +146,11 @@ function moveSnake(snakeNumber) {
   }
 
   // initialTime = millis();
+
+  //ADDING SNAKES
   if (addSnake1 && snakeNumber === snake1 || addSnake2 && snakeNumber === snake2) {
     if (snakeNumber.directionState === 1) {
-      snakeNumber.xValuesList.splice(0 , 0, snakeNumber.xValuesList[0] - snake1.speed);
+      snakeNumber.xValuesList.splice(0 , 0, snakeNumber.xValuesList[0] - snakeNumber.speed);
       snakeNumber.yValuesList.splice(0, 0, snakeNumber.yValuesList[0]);
     }
     else if (snakeNumber.directionState === 2) {
@@ -167,21 +174,21 @@ function moveSnake(snakeNumber) {
   }
 
   if (snakeNumber.xValuesList[0] < 0) {
-    snakeNumber.xValuesList.splice(0, 0, floor(width/snake1.speed) * snake1.speed - snake1.speed);
+    snakeNumber.xValuesList.splice(0, 0, floor(width/snakeNumber.speed) * snakeNumber.speed - snakeNumber.speed);
     snakeNumber.xValuesList = shorten(snakeNumber.xValuesList);
   }
 
-  else if(snakeNumber.xValuesList[0] > floor(width/snake1.speed) * snake1.speed - snake1.speed) {
+  else if(snakeNumber.xValuesList[0] > floor(width/snakeNumber.speed) * snakeNumber.speed - snakeNumber.speed) {
     snakeNumber.xValuesList.splice(0, 0, 0);
     snakeNumber.xValuesList = shorten(snakeNumber.xValuesList);
   }
 
   else if(snakeNumber.yValuesList[0] < 0) {
-    snakeNumber.yValuesList.splice(0, 0, floor(height/snake1.speed) * snake1.speed - snake1.speed);
+    snakeNumber.yValuesList.splice(0, 0, floor(height/snakeNumber.speed) * snakeNumber.speed);
     snakeNumber.yValuesList = shorten(snakeNumber.yValuesList);
   }
 
-  else if(snakeNumber.yValuesList[0] > floor(height/snake1.speed) * snake1.speed - 2 * snake1.speed) {
+  else if(snakeNumber.yValuesList[0] > floor(height/snake1.speed) * snakeNumber.speed - snakeNumber.speed) {
     snakeNumber.yValuesList.splice(0, 0, 0);
     snakeNumber.yValuesList = shorten(snakeNumber.yValuesList);
   }
@@ -253,9 +260,25 @@ function touchingFood() {
 }
 
 function hitSnake() {
-  // if (snake1.xValuesList.includes(snake2.xValuesList) && snake1.yValuesList.includes(snake2.yValuesList)) {
-  //   gameState ++;
-  // }
+  //If player one wins
+  if (snake1.xValuesList.includes(snake2.xValuesList[0]) && snake1.yValuesList.includes(snake2.yValuesList[0]) || snake2.xValuesList.includes(snake2.xValuesList[0], 1) && snake2.yValuesList.includes(snake2.yValuesList[0], 1)) {
+    // if(!snake1.xValuesList[0] === snake2.xValuesList[0] && !snake1.yValuesList[0] === snake2.yValuesList[0]) {
+    //Only if the snake's don't have a head on collision
+    snake1.win = true;
+    // }
+    gameState ++;
+  }
+  //If player 2 wins
+  //If player one wins
+  if (snake2.xValuesList.includes(snake1.xValuesList[0]) && snake2.yValuesList.includes(snake1.yValuesList[0]) || snake1.xValuesList.includes(snake1.xValuesList[0], 1) && snake1.yValuesList.includes(snake1.yValuesList[0], 1)) {
+    // if(!snake1.xValuesList[0] === snake2.xValuesList[0] && !snake1.yValuesList[0] === snake2.yValuesList[0]) {
+    //Only if the snake's don't have a head on collision
+    snake2.win = true;
+    // }
+    gameState ++;
+  }
+//   if (snake2.xValuesList.includes(snake1.xValuesList[0]) && snake2.yValuesList.includes(snake1.yValuesList[0]) || )
+
 }
 
 
@@ -295,6 +318,7 @@ function keyTyped() {
     snake2.directionState = 4;
   }
 
+
   //Pausing
   if (key === "p" || key === "P") {
     if (gameState === 2) {
@@ -304,4 +328,16 @@ function keyTyped() {
       gameState = 2;
     }
   }
+
+  if (gameState === 4) {
+    if (key === "r" || key === "R") {
+      reset();
+      gameState = 0;
+    }
+  }
+}
+
+function reset() {
+  snake1.win = false;
+  snake2.win = false;
 }
