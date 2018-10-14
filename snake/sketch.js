@@ -18,6 +18,12 @@ let heightCubes;
 let widthCubes;
 
 let addSnake1, addSnake2;
+let hoveringButton;
+let music;
+
+function preload() {
+  music = loadSound("assets/snakemenu");
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -48,8 +54,11 @@ function setup() {
   heightCubes = floor(height/snake1.speed);
   widthCubes = floor(width/snake1.speed);
 
-  gameState = 2;
+  gameState = 1;
 
+  textAlign(CENTER);
+
+  music.loop();
 }
 
 function draw() {
@@ -84,11 +93,60 @@ function draw() {
 }
 
 function menu() {
+  background(20);
+  fill(0, 255, 0);
+  textSize(55);
+  text("TWO PLAYER SNAKE", width/2, 100);
+  textSize(20);
+  text("There are two snakes in a battle.", width/2, 150);
+  text("A green one (WASD controls), and a blue one (IJKL constols)", width/2, 200);
+  text("Eat the red food to get longer", width/2, 250);
+  text("If you hit your tail, or the tail of the other snake, you lose", width/2, 300);
+  text("Press P to pause and have fun", width/2, 350);
+  text("By: Tyler B.", width/2, 400);
 
+  rectMode(CENTER);
+
+  if (collidePointRect(mouseX, mouseY, width/2 - 150, 450, 300, 100)) {
+    hoveringButton = true;
+    if (mouseIsPressed) {
+      gameState ++;
+    }
+  }
+  else {
+    hoveringButton = false;
+  }
+
+  if (hoveringButton) {
+    fill(60, 0, 0);
+  }
+  else {
+    fill(255, 0, 0);
+  }
+
+  rect(width/2, 500, 300, 100);
+  rectMode(CORNER);
+  fill(255);
+  textSize(35);
+  text("START", width/2, 510);
 }
 
 function gameOver() {
+  textSize(55);
 
+  if (snake1.win) {
+    fill(0, 255, 0);
+    text("PLAYER 1 WINS", width/2, height/2);
+  }
+  else if (snake2.win) {
+    fill(0, 0, 255);
+    text("PLAYER 2 WINS", width/2, height/2);
+  }
+  else {
+    fill(255);
+    text("TIE", width/2, height/2);
+  }
+  text("PRESS R TO RESTART", width/2, height/2 + 200);
 }
 
 function drawGrid() {
@@ -262,20 +320,20 @@ function touchingFood() {
 function hitSnake() {
   //If player one wins
   if (snake1.xValuesList.includes(snake2.xValuesList[0]) && snake1.yValuesList.includes(snake2.yValuesList[0]) || snake2.xValuesList.includes(snake2.xValuesList[0], 1) && snake2.yValuesList.includes(snake2.yValuesList[0], 1)) {
-    // if(!snake1.xValuesList[0] === snake2.xValuesList[0] && !snake1.yValuesList[0] === snake2.yValuesList[0]) {
+    // if(snake1.xValuesList[0] !== snake2.xValuesList[0] && snake1.yValuesList[0] !== snake2.yValuesList[0]) {
     //Only if the snake's don't have a head on collision
     snake1.win = true;
     // }
-    gameState ++;
+    gameState = 4;
   }
   //If player 2 wins
   //If player one wins
   if (snake2.xValuesList.includes(snake1.xValuesList[0]) && snake2.yValuesList.includes(snake1.yValuesList[0]) || snake1.xValuesList.includes(snake1.xValuesList[0], 1) && snake1.yValuesList.includes(snake1.yValuesList[0], 1)) {
-    // if(!snake1.xValuesList[0] === snake2.xValuesList[0] && !snake1.yValuesList[0] === snake2.yValuesList[0]) {
+    // if(snake1.xValuesList[0] !== snake2.xValuesList[0] && snake1.yValuesList[0] !== snake2.yValuesList[0]) {
     //Only if the snake's don't have a head on collision
     snake2.win = true;
     // }
-    gameState ++;
+    gameState  = 4;
   }
 //   if (snake2.xValuesList.includes(snake1.xValuesList[0]) && snake2.yValuesList.includes(snake1.yValuesList[0]) || )
 
@@ -332,7 +390,7 @@ function keyTyped() {
   if (gameState === 4) {
     if (key === "r" || key === "R") {
       reset();
-      gameState = 0;
+      gameState = 1;
     }
   }
 }
