@@ -29,6 +29,8 @@ module.exports = {
         "no-unused-vars": "off"
     },
     "globals": {
+      //collision stuff
+      "collidePointRect": true,
       //allow direct access to the DOM without errors
       "document": true,
       "window": true,

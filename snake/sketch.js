@@ -3,7 +3,16 @@
 // September 28th, 2018
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// Used arrays and objects together to use functions efficiently
+
+//How I needed state Variables:
+//The first state variable that I needed was a gameState variable to keep track of whether the menu-
+//-is being displayed to the pause mode or the actual gameplay. The next variable was a directionState for each snake-
+//1 = left, 2 = up, 3 = right, and 4 = down. It was easier to use a state  because the movement of the snake was a seperate function.
+//The last way that I used state variables was for the menu button.
+
+//Announ
+//The snake objects
 let snake1;
 let snake2;
 
@@ -41,7 +50,7 @@ function setup() {
     yValuesList: [0],
     size: 38,
     speed: 40,
-    directionState: 1,
+    directionState: 3,
     win: false,
   };
 
@@ -50,7 +59,7 @@ function setup() {
     yValuesList: [0],
     size: 38,
     speed: 40,
-    directionState: 3,
+    directionState: 4,
     win: false,
   };
 
@@ -61,7 +70,7 @@ function setup() {
 
   textAlign(CENTER);
 
-  music.setVolume(0.2);
+  music.setVolume(0.3);
   eatSound.setVolume(0.3);
   music.loop();
 }
@@ -394,23 +403,17 @@ function touchingFood() {
 function hitSnake() {
   //If player one wins
   if (snake1.xValuesList.includes(snake2.xValuesList[0]) && snake1.yValuesList.includes(snake2.yValuesList[0]) || snake2.xValuesList.includes(snake2.xValuesList[0], 1) && snake2.yValuesList.includes(snake2.yValuesList[0], 1)) {
-    // if(snake1.xValuesList[0] !== snake2.xValuesList[0] && snake1.yValuesList[0] !== snake2.yValuesList[0]) {
-    //Only if the snake's don't have a head on collision
     snake1.win = true;
-    // }
     gameState = 4;
   }
+  if (snake1.xValuesList.includes(snake1.xValuesList[0], 1) && snake1.yValuesList.includes(snake1.yValuesList[0], 1)) {
+    console.log(snake1.xValuesList);
+  }
   //If player 2 wins
-  //If player one wins
   if (snake2.xValuesList.includes(snake1.xValuesList[0]) && snake2.yValuesList.includes(snake1.yValuesList[0]) || snake1.xValuesList.includes(snake1.xValuesList[0], 1) && snake1.yValuesList.includes(snake1.yValuesList[0], 1)) {
-    // if(snake1.xValuesList[0] !== snake2.xValuesList[0] && snake1.yValuesList[0] !== snake2.yValuesList[0]) {
-    //Only if the snake's don't have a head on collision
     snake2.win = true;
-    // }
     gameState  = 4;
   }
-//   if (snake2.xValuesList.includes(snake1.xValuesList[0]) && snake2.yValuesList.includes(snake1.yValuesList[0]) || )
-
 }
 
 
@@ -461,7 +464,7 @@ function keyTyped() {
     }
     else if (gameState === 3) {
       gameState = 2;
-      music.setVolume(0.2);
+      music.setVolume(0.3);
     }
   }
 
@@ -472,11 +475,11 @@ function keyTyped() {
       gameState = 1;
       snake1.xValuesList = [0];
       snake1.yValuesList = [0];
-      snake1.directionState = 1;
+      snake1.directionState = 3;
 
       snake2.xValuesList = [80];
       snake2.xValuesList = [0];
-      snake2.directionState = 3;
+      snake2.directionState = 4;
 
       music.loop();
     }
