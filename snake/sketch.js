@@ -17,6 +17,7 @@
 //If the snake gets bigger, it just adds another x, y pair for the arrays to cycle through
 
 //Defining various variables
+
 //The snake objects
 let snake1;
 let snake2;
@@ -59,6 +60,7 @@ function setup() {
   //Preseting the booleans for the program
   food1Present = false;
   food2Present = false;
+
   addSnake1 = false;
   addSnake2 = false;
 
@@ -577,7 +579,7 @@ function keyTyped() {
 
       snake1.xValuesList = [0];
       snake1.yValuesList = [0];
-      
+
       snake1.directionState = 3;
 
       snake2.xValuesList = [80];
