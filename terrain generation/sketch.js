@@ -12,7 +12,7 @@ let rects = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  numberOfRects = 10000;
+  numberOfRects = 100;
   rectWidth = width/numberOfRects;
   generateRects();
 }
