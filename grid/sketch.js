@@ -20,7 +20,7 @@ function draw() {
 function displayGrid() {
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
-      if (grid[y][x] === false) {
+      if (grid[y][x] === 0) {
         fill(0);
       }
       else {
@@ -37,14 +37,20 @@ function createRandom2dArray(cols, rows) {
     randomGrid.push([]);
     for (let x = 0; x < cols; x++) {
       if (random(100) < 50) {
-        randomGrid[y].push(false);
+        randomGrid[y].push(0);
       }
       else {
-        randomGrid[y].push(true);
+        randomGrid[y].push(1);
       }
     }
   }
   return randomGrid;
+}
+
+function keyTyped() {
+  if (key === "r") {
+    grid = createRandom2dArray();
+  }
 }
 
 function mouseClicked() {
