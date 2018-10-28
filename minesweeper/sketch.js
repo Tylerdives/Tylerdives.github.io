@@ -9,8 +9,8 @@ let grid;
 
 let underGrid;
 
-let cols = 25;
-let rows = 25;
+let cols = 5;
+let rows = 5;
 
 let cellSize;
 
@@ -24,11 +24,10 @@ function setup() {
     cellSize = windowHeight / cols - 1;
   }
 
-
   grid = generateBlankGrid(cols, rows);
 
   underGrid = generateUnderGrid(cols, rows);
-  underGrid = fillNumbers(cols, rows);
+  // underGrid = fillNumbers(cols, rows);
 }
 
 function draw() {
@@ -69,30 +68,50 @@ function generateUnderGrid(cols, rows) {
 
 function fillNumbers() {
   let numberedGrid = [];
+  let notMine;
   for (let y = 0; y < cols; y++) {
     numberedGrid.push([]);
     for (let x = 0; x < rows; x++) {
 
       let minesAround = 0;
 
-      for (let i = -1; i < 1; i++) {
-        for (let j = -1; j < 1; j++) {
+      for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+
           if (x+i >= 0 && x+i < cols && y+j >= 0 && y+j < rows) {
-            if (underGrid[y+j][x+i] === -1) {
-              minesAround++;
+            if (underGrid[y][x] === 0) {
+              notMine = true;
+              if (underGrid[y+j][x+i] === -1) {
+                minesAround++;
+              }
+
             }
+
+            else {
+              notMine = false;
+            }
+
           }
         }
       }
-      numberedGrid[y].push(minesAround);
+      if (notMine) {
+        numberedGrid[y].push(minesAround);
+      }
+      else {
+        numberedGrid[y].push(-1);
+      }
     }
   }
   return numberedGrid;
 }
 
-function updateGrid() {
+// function updateGrid() {
+//   let xSquare = floor(mouseX/cellSize);
+//   let ySquare = floor(mouseY/cellSize);
+//
+//   grid[ySquare][xSquare] = underGrid[ySquare][xSquare];
+// }
 
-}
 
 
 function drawGrid() {
