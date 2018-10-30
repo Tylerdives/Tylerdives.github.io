@@ -31,7 +31,7 @@ function setup() {
   underGrid = generateUnderGrid(cols, rows);
   underGrid = fillNumbers(cols, rows);
 
-  textSize(cellSize/2);
+  textSize(cellSize/1.9);
 }
 
 function draw() {
@@ -58,7 +58,7 @@ function generateUnderGrid(cols, rows) {
     startUnderGrid.push([]);
     for (let x = 0; x < rows; x++) {
       //mines will be a -1, not a mine will be a 0 for now
-      if (random(100) < 10) {
+      if (random(100) <= 16) {
         startUnderGrid[y].push("x");
       }
       else {
@@ -116,7 +116,7 @@ function updateGrid() {
   grid[ySquare][xSquare] = underGrid[ySquare][xSquare];
 }
 
-function mouseClicked() {
+function mousePressed() {
   updateGrid();
 }
 
@@ -149,42 +149,81 @@ function drawGrid() {
         fill(255);
       }
 
+      else if (grid[y][x] === 4) {
+        number = 4;
+        fill(255);
+      }
+
+      else if (grid[y][x] === 5) {
+        number = 5;
+        fill(255);
+      }
+
+      else if (grid[y][x] === 6) {
+        number = 6;
+        fill(255);
+      }
+
+      else if (grid[y][x] === 7) {
+        number = 7;
+        fill(255);
+      }
+
+      else if (grid[y][x] === 8) {
+        number = 8;
+        fill(255);
+      }
+
       else if (grid[y][x] === "x") {
         fill(0);
       }
 
 
       rect(x * cellSize, y * cellSize, cellSize, cellSize);
+      textStyle(NORMAL);
       fill(0);
       if (number === 1) {
+        fill("blue");
         text("1", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
       }
 
       else if (number === 2) {
+        fill("green");
         text("2", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
       }
 
       else if (number === 3) {
+        fill("red");
         text("3", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
       }
 
       else if (number === 4) {
+        fill(0, 0, 125);
+        textStyle(BOLD);
         text("4", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
       }
 
       else if (number === 5) {
+        fill(130, 0, 10);
+        textStyle(BOLD);
         text("5", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
       }
 
       else if (number === 6) {
+        textStyle(BOLD);
+        fill(126, 177, 186);
         text("6", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
       }
 
       else if (number === 7) {
+        textStyle(BOLD);
+        fill(0);
         text("7", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
       }
 
       else if (number === 8) {
+        textStyle(BOLD);
+        fill(200);
         text("8", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
       }
 
