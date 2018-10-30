@@ -16,6 +16,17 @@ let cellSize;
 
 let numberOffset = 0.09554140127388536;
 
+let mine, flag;
+
+let clickedMine;
+
+let gameState = 1;
+
+function preload() {
+  mine = loadImage("assets/minesweeperbomb.PNG");
+  flag = loadImage("assets/minesweeperflag.PNG");
+}
+
 function setup() {
   if (windowHeight > windowWidth) {
     createCanvas(windowWidth, windowWidth);
@@ -32,11 +43,23 @@ function setup() {
   underGrid = fillNumbers(cols, rows);
 
   textSize(cellSize/1.9);
+
+  clickedMine = false;
 }
 
 function draw() {
-  background(255);
-  drawGrid();
+  if (gameState === 1) {
+    background(255);
+    drawGrid();
+    if (!clickedMine) {
+      deadAnimation();
+    }
+  }
+  //Gameover
+  // else if (gameState === 4) {
+  //
+  // }
+
 }
 
 
@@ -57,7 +80,7 @@ function generateUnderGrid(cols, rows) {
   for (let y = 0; y < cols; y++) {
     startUnderGrid.push([]);
     for (let x = 0; x < rows; x++) {
-      //mines will be a -1, not a mine will be a 0 for now
+      //mines will be a x, not a mine will be a -1 for now
       if (random(100) <= 16) {
         startUnderGrid[y].push("x");
       }
@@ -123,6 +146,7 @@ function mousePressed() {
 function drawGrid() {
   for (let y = 0; y < cols; y++) {
     for (let x = 0; x < rows; x++) {
+      let mineHere = false;
       let number;
 
       if (grid[y][x] === -1) {
@@ -175,11 +199,15 @@ function drawGrid() {
       }
 
       else if (grid[y][x] === "x") {
-        fill(0);
+        mineHere = true;
+        clickedMine = true;
+        image(mine, x * cellSize + 4, y * cellSize + 4, cellSize-5, cellSize-5);
       }
 
+      if (!mineHere) {
+        rect(x * cellSize, y * cellSize, cellSize, cellSize);
+      }
 
-      rect(x * cellSize, y * cellSize, cellSize, cellSize);
       textStyle(NORMAL);
       fill(0);
       if (number === 1) {
@@ -227,6 +255,17 @@ function drawGrid() {
         text("8", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
       }
 
+    }
+  }
+}
+
+function deadAnimation() {
+  for(let i = 0; i < cols; i++) {
+    for(let j = 0; j < rows; j++) {
+      if(underGrid[i][j] === "x") {
+        grid[i][j] = underGrid[i][j];
+        gameState = 4;
+      }
     }
   }
 }
