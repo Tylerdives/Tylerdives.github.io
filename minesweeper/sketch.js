@@ -16,7 +16,7 @@ let cellSize;
 
 let numberOffset = 0.09554140127388536;
 
-let mine, flag, square;
+let mine, flag, square, crossedMine;
 
 let clickedMine;
 
@@ -28,13 +28,14 @@ function preload() {
   mine = loadImage("assets/minesweeperbomb.PNG");
   flag = loadImage("assets/minesweeperflag.PNG");
   square = loadImage("assets/minesweepersquare.PNG");
+  crossedMine = loadImage("assets/minesweepercrossedbomb.PNG");
 }
 
 function setup() {
   if (windowHeight > windowWidth) {
     createCanvas(windowWidth, windowWidth);
     cellSize = floor(windowWidth / cols);
-    rect(0, 0, windowHeight-1, windowHeight-1);
+    rect(0, 0, windowHeight-1 + cellSize, windowHeight-1);
   }
   else {
     createCanvas(windowHeight, windowHeight);
@@ -141,28 +142,45 @@ function fillNumbers() {
   return numberedGrid;
 }
 
+
+
+
+function mousePressed() {
+  if (mouseButton === LEFT) {
+    updateGrid();
+  }
+  else if (mouseButton === RIGHT) {
+    drawFlag();
+  }
+  else {
+    updateGrid();
+  }
+}
+
 function updateGrid() {
   let xSquare = floor(mouseX/cellSize);
   let ySquare = floor(mouseY/cellSize);
 
-  grid[ySquare][xSquare] = "f";
+  if (grid[ySquare][xSquare] !== "f") {
+    grid[ySquare][xSquare] = underGrid[ySquare][xSquare];
+  }
+
+
 }
 
 function drawFlag() {
   let xSquare = floor(mouseX/cellSize);
   let ySquare = floor(mouseY/cellSize);
 
-  grid[ySquare][xSquare] = underGrid[ySquare][xSquare];
+  if (grid[ySquare][xSquare] !== "f") {
+    grid[ySquare][xSquare] = "f";
+  }
+  else {
+    grid[ySquare][xSquare] = -1;
+  }
+  
 }
 
-function mousePressed() {
-  if (mouseButton === RIGHT) {
-    updateGrid();
-  }
-  else if (mouseButton === LEFT) {
-    drawFlag();
-  }
-}
 
 function drawGrid() {
   for (let y = 0; y < cols; y++) {
@@ -226,7 +244,16 @@ function drawGrid() {
         drawRect = false;
         clickedMine = true;
         rect(x * cellSize, y * cellSize, cellSize, cellSize);
-        image(mine, x * cellSize + 4, y * cellSize + 4, cellSize-5, cellSize-5);
+        image(mine, x * cellSize + 1, y * cellSize + 1, cellSize-1, cellSize-1);
+
+      }
+
+      else if (grid[y][x] === "xf") {
+        fill(255);
+        drawRect = false;
+        clickedMine = true;
+        rect(x * cellSize, y * cellSize, cellSize, cellSize);
+        image(crossedMine, x * cellSize, y * cellSize, cellSize, cellSize);
 
       }
 
@@ -298,7 +325,13 @@ function deadAnimation() {
   for(let i = 0; i < cols; i++) {
     for(let j = 0; j < rows; j++) {
       if(underGrid[i][j] === "x") {
-        grid[i][j] = underGrid[i][j];
+        if (grid[i][j] !== "f") {
+          grid[i][j] = underGrid[i][j];
+        }
+        else {
+          grid[i][j] = "xf";
+        }
+
         gameState = 4;
       }
     }
@@ -310,7 +343,8 @@ function openSquares(x, y) {
   for(let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
       if(x+i >= 0 && x+i < cols && y+j >= 0 && y+j < rows){
-        if (underGrid[y+j][x+i] !== "x" || underGrid[y+j][x+i] !== "f") {
+        if (underGrid[y+j][x+i] !== "x" && grid[y+j][x+i] !== "f") {
+          //Does a flag act as a mine with fill?
           grid[y+j][x+i] = underGrid[y+j][x+i];
           // openSquares(x+i, y+j);
         }
