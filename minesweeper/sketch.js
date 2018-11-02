@@ -16,7 +16,7 @@ let cellSize;
 
 let numberOffset = 0.09554140127388536;
 
-let mine, flag, square, crossedMine;
+let mine, flag, square, crossedMine, redMine;
 
 let clickedMine;
 
@@ -24,11 +24,14 @@ let gameState = 1;
 
 let totalMines;
 
+let mineX, mineY;
+
 function preload() {
   mine = loadImage("assets/minesweeperbomb.PNG");
   flag = loadImage("assets/minesweeperflag.PNG");
   square = loadImage("assets/minesweepersquare.PNG");
   crossedMine = loadImage("assets/minesweepercrossedbomb.PNG");
+  redMine = loadImage("assets/minesweeperclickedbomb.PNG");
 }
 
 function setup() {
@@ -36,11 +39,13 @@ function setup() {
     createCanvas(windowWidth, windowWidth);
     cellSize = floor(windowWidth / cols);
     rect(0, 0, windowHeight-1 + cellSize, windowHeight-1);
+
   }
   else {
     createCanvas(windowHeight, windowHeight);
     cellSize = floor(windowHeight / cols);
     rect(0, 0, windowHeight-1, windowHeight-1);
+
   }
 
   grid = generateBlankGrid(cols, rows);
@@ -51,12 +56,13 @@ function setup() {
   textSize(cellSize/1.9);
 
   clickedMine = false;
+
 }
 
 function draw() {
   if (gameState === 1) {
     background(255);
-    drawGrid(false);
+    drawGrid();
     if (clickedMine) {
       deadAnimation();
     }
@@ -157,6 +163,7 @@ function mousePressed() {
   }
 }
 
+
 function updateGrid() {
   let xSquare = floor(mouseX/cellSize);
   let ySquare = floor(mouseY/cellSize);
@@ -165,6 +172,8 @@ function updateGrid() {
     grid[ySquare][xSquare] = underGrid[ySquare][xSquare];
   }
 
+  mineX = xSquare;
+  mineY = ySquare;
 
 }
 
@@ -172,13 +181,13 @@ function drawFlag() {
   let xSquare = floor(mouseX/cellSize);
   let ySquare = floor(mouseY/cellSize);
 
-  if (grid[ySquare][xSquare] !== "f") {
+  if (grid[ySquare][xSquare] === -1) {
     grid[ySquare][xSquare] = "f";
   }
-  else {
+  else if (grid[ySquare][xSquare] === "f"){
     grid[ySquare][xSquare] = -1;
   }
-  
+
 }
 
 
@@ -245,7 +254,9 @@ function drawGrid() {
         clickedMine = true;
         rect(x * cellSize, y * cellSize, cellSize, cellSize);
         image(mine, x * cellSize + 1, y * cellSize + 1, cellSize-1, cellSize-1);
-
+        if (x === mineX && y === mineY) {
+          image(redMine, x * cellSize, y * cellSize, cellSize, cellSize);
+        }
       }
 
       else if (grid[y][x] === "xf") {
@@ -253,7 +264,7 @@ function drawGrid() {
         drawRect = false;
         clickedMine = true;
         rect(x * cellSize, y * cellSize, cellSize, cellSize);
-        image(crossedMine, x * cellSize, y * cellSize, cellSize, cellSize);
+        image(crossedMine, x * cellSize + 1, y * cellSize + 1, cellSize-1, cellSize-1);
 
       }
 
@@ -317,6 +328,10 @@ function drawGrid() {
 
     }
   }
+
+//   push()
+//   translate(width/2, 0);
+//   pop()
 }
 
 
@@ -336,7 +351,7 @@ function deadAnimation() {
       }
     }
   }
-  drawGrid(true);
+  drawGrid();
 }
 
 function openSquares(x, y) {
