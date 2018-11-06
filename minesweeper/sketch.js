@@ -22,7 +22,7 @@ let clickedMine;
 
 let gameState = 1;
 
-let totalMines;
+let totalMines = 0;
 
 let mineX, mineY;
 
@@ -35,18 +35,21 @@ function preload() {
 }
 
 function setup() {
-  if (windowHeight > windowWidth) {
-    createCanvas(windowWidth, windowWidth);
-    cellSize = floor(windowWidth / cols);
-    rect(0, 0, windowHeight-1 + cellSize, windowHeight-1);
+  // if (windowHeight > windowWidth) {
+  //   createCanvas(windowWidth, windowWidth);
+  //   cellSize = floor(windowWidth / cols);
+  //   rect(0, 0, windowHeight-1 + cellSize, windowHeight-1);
+  //
+  // }
+  // else {
+  //   createCanvas(windowHeight, windowHeight);
+  //   cellSize = floor(windowHeight / cols);
+  //   rect(0, 0, windowHeight-1, windowHeight-1);
+  //
+  // }
 
-  }
-  else {
-    createCanvas(windowHeight, windowHeight);
-    cellSize = floor(windowHeight / cols);
-    rect(0, 0, windowHeight-1, windowHeight-1);
-
-  }
+  createCanvas(windowWidth, windowHeight);
+  cellSize = 30;
 
   grid = generateBlankGrid(cols, rows);
 
@@ -54,23 +57,37 @@ function setup() {
   underGrid = fillNumbers(cols, rows);
 
   textSize(cellSize/1.9);
+  textAlign(LEFT);
 
   clickedMine = false;
 
+  translate(width/2 - cols/2 * cellSize, 0);
 }
 
 function draw() {
   if (gameState === 1) {
     background(255);
     drawGrid();
+    if(didWin()) {
+      gameState = 2;
+      textAlign(CENTER);
+      textSize(50);
+      fill(0, 255, 0);
+      text("YOU WIN!", width/1.8, height/3);
+    }
     if (clickedMine) {
       deadAnimation();
     }
   }
-  //Gameover
-  // else if (gameState === 4) {
-  //
-  // }
+
+  // Win or gameover
+  if(gameState >= 2){
+    drawButton();
+    if(clickedButton()) {
+      restartGame();
+    }
+  }
+
 
 }
 
@@ -347,7 +364,7 @@ function deadAnimation() {
           grid[i][j] = "xf";
         }
 
-        gameState = 4;
+        gameState = 3;
       }
     }
   }
@@ -357,7 +374,7 @@ function deadAnimation() {
 function openSquares(x, y) {
   for(let i = -1; i <= 1; i++) {
     for (let j = -1; j <= 1; j++) {
-      if(x+i >= 0 && x+i < cols && y+j >= 0 && y+j < rows){
+      if (x+i >= 0 && x+i < cols && y+j >= 0 && y+j < rows){
         if (underGrid[y+j][x+i] !== "x" && grid[y+j][x+i] !== "f") {
           //Does a flag act as a mine with fill?
           grid[y+j][x+i] = underGrid[y+j][x+i];
@@ -366,4 +383,31 @@ function openSquares(x, y) {
       }
     }
   }
+}
+
+function didWin() {
+  let win = 0;
+  let checkMines = totalMines;
+  for(let i = 0; i < cols; i++) {
+    for (let j = 0; j < rows; j++) {
+      if (grid[i][j] !== -1 && win !== false){
+        if (grid[i][j] === "f" && underGrid[i][j] === "x") {
+          checkMines --;
+        }
+      }
+
+      else {
+        win = false;
+      }
+
+    }
+  }
+  if(checkMines === 0 && win === 0) {
+    win = true;
+  }
+  else {
+    win = false;
+  }
+
+  return win;
 }
