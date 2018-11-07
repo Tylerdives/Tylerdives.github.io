@@ -23,6 +23,7 @@ let clickedMine;
 let gameState = 1;
 
 let totalMines = 0;
+let theoreticalMines;
 
 let mineX, mineY;
 
@@ -59,6 +60,7 @@ function setup() {
   grid = generateBlankGrid(cols, rows);
 
   underGrid = generateUnderGrid(cols, rows);
+  theoreticalMines = totalMines;
   underGrid = fillNumbers(cols, rows);
 
   textSize(cellSize/1.9);
@@ -71,8 +73,9 @@ function setup() {
 
 function draw() {
   if (gameState === 1) {
-    background(255);
+    background(0);
     drawGrid();
+    displayMinesLeft();
     if(didWin()) {
       gameState = 2;
       textAlign(CENTER);
@@ -85,21 +88,36 @@ function draw() {
     }
   }
 
-  // Win or gameover
-  // if(gameState >= 2){
-  //   drawButton();
-  //   if(clickedButton()) {
-  //     restartGame();
-  //   }
-  // }
+  //Win
+  else if(gameState === 2){
+    textSize(40);
+    fill(0, 255, 0);
+    text("Congradulations! Press 'r' or shake to restart", width/5, height/2);
+  }
+  //GameOver
+  else if (gameState === 3) {
+    textSize(40);
+    fill(255, 0, 0);
+    text("Game over!, press 'r' or shake to restart!", width/5, height/2);
+  }
+
 
 
 }
 
+function displayMinesLeft() {
+  fill(255, 0, 0);
+  textSize(40);
+  text(theoreticalMines.toString(), width/1.5, height/2);
+  textSize(cellSize/1.9);
+}
+
 function restartGame() {
+  totalMines = 0;
   grid = generateBlankGrid(cols, rows);
 
   underGrid = generateUnderGrid(cols, rows);
+  theoreticalMines = totalMines;
   underGrid = fillNumbers(cols, rows);
 
   textSize(cellSize/1.9);
@@ -227,9 +245,11 @@ function drawFlag() {
 
   if (grid[ySquare][xSquare] === -1) {
     grid[ySquare][xSquare] = "f";
+    theoreticalMines--;
   }
   else if (grid[ySquare][xSquare] === "f"){
     grid[ySquare][xSquare] = -1;
+    theoreticalMines++;
   }
 
 }
