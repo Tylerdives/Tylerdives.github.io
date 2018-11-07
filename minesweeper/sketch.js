@@ -26,6 +26,8 @@ let totalMines = 0;
 
 let mineX, mineY;
 
+let canvas;
+
 function preload() {
   mine = loadImage("assets/minesweeperbomb.PNG");
   flag = loadImage("assets/minesweeperflag.PNG");
@@ -48,7 +50,10 @@ function setup() {
   //
   // }
 
-  createCanvas(windowWidth, windowHeight);
+  canvas = createCanvas(windowWidth, windowHeight);
+
+  // canvas.position(width/2 - cols/2 * 30, 0);
+
   cellSize = 30;
 
   grid = generateBlankGrid(cols, rows);
@@ -61,7 +66,7 @@ function setup() {
 
   clickedMine = false;
 
-  translate(width/2 - cols/2 * cellSize, 0);
+
 }
 
 function draw() {
@@ -81,16 +86,38 @@ function draw() {
   }
 
   // Win or gameover
-  if(gameState >= 2){
-    drawButton();
-    if(clickedButton()) {
-      restartGame();
-    }
-  }
+  // if(gameState >= 2){
+  //   drawButton();
+  //   if(clickedButton()) {
+  //     restartGame();
+  //   }
+  // }
 
 
 }
 
+function restartGame() {
+  grid = generateBlankGrid(cols, rows);
+
+  underGrid = generateUnderGrid(cols, rows);
+  underGrid = fillNumbers(cols, rows);
+
+  textSize(cellSize/1.9);
+  textAlign(LEFT);
+
+  clickedMine = false;
+  gameState = 1;
+}
+
+function keyTyped() {
+  if (key === "r") {
+    restartGame();
+  }
+}
+
+function deviceShaken() {
+  restartGame();
+}
 
 function generateBlankGrid(cols, rows) {
   let startGrid = [];
@@ -271,6 +298,7 @@ function drawGrid() {
         clickedMine = true;
         rect(x * cellSize, y * cellSize, cellSize, cellSize);
         image(mine, x * cellSize + 1, y * cellSize + 1, cellSize-1, cellSize-1);
+
         if (x === mineX && y === mineY) {
           image(redMine, x * cellSize, y * cellSize, cellSize, cellSize);
         }
