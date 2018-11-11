@@ -3,7 +3,7 @@
 // Oct 26th, 2018
 //
 // Extra for Experts:
-//
+// Floodfill(ish),
 
 let grid;
 
@@ -14,7 +14,7 @@ let rows = 25;
 
 let cellSize;
 
-let numberOffset = 0.09554140127388536;
+const NUMBER_OFFSET = 0.09554140127388536;
 
 let mine, flag, square, crossedMine, redMine;
 
@@ -27,7 +27,7 @@ let theoreticalMines;
 
 let mineX, mineY;
 
-let canvas;
+// let canvas;
 
 function preload() {
   mine = loadImage("assets/minesweeperbomb.PNG");
@@ -38,24 +38,19 @@ function preload() {
 }
 
 function setup() {
-  // if (windowHeight > windowWidth) {
-  //   createCanvas(windowWidth, windowWidth);
-  //   cellSize = floor(windowWidth / cols);
-  //   rect(0, 0, windowHeight-1 + cellSize, windowHeight-1);
-  //
-  // }
-  // else {
-  //   createCanvas(windowHeight, windowHeight);
-  //   cellSize = floor(windowHeight / cols);
-  //   rect(0, 0, windowHeight-1, windowHeight-1);
-  //
-  // }
+  if (windowHeight > windowWidth) {
+    cellSize = floor(windowWidth / cols);
+  }
 
-  canvas = createCanvas(windowWidth, windowHeight);
+  else {
+    cellSize = floor(windowHeight / cols);
+  }
+
+  createCanvas(windowWidth, windowHeight);
+
+  // canvas = createCanvas(windowWidth, windowHeight);
 
   // canvas.position(width/2 - cols/2 * 30, 0);
-
-  cellSize = 30;
 
   grid = generateBlankGrid(cols, rows);
 
@@ -76,6 +71,7 @@ function draw() {
     background(0);
     drawGrid();
     displayMinesLeft();
+
     if(didWin()) {
       gameState = 2;
       textAlign(CENTER);
@@ -83,6 +79,7 @@ function draw() {
       fill(0, 255, 0);
       text("YOU WIN!", width/1.8, height/3);
     }
+
     if (clickedMine) {
       deadAnimation();
     }
@@ -92,11 +89,12 @@ function draw() {
   else if(gameState === 2){
     textSize(40);
     fill(0, 255, 0);
-    text("Congradulations! Press 'r' or shake to restart", width/5, height/2);
+    text("Congradulations! Press 'r' or shake to restart", width/1.5, height/1.2);
   }
   //GameOver
   else if (gameState === 3) {
-    textSize(40);
+    textSize(50);
+    textStyle(BOLD);
     fill(255, 0, 0);
     text("Game over!, press 'r' or shake to restart!", width/5, height/2);
   }
@@ -108,11 +106,11 @@ function draw() {
 function displayMinesLeft() {
   fill(255, 0, 0);
   textSize(40);
-  text(theoreticalMines.toString(), width/1.5, height/2);
+  text(theoreticalMines.toString(), width/1.5, height/1.5);
   textSize(cellSize/1.9);
 }
 
-function restartGame() {
+function resetGame() {
   totalMines = 0;
   grid = generateBlankGrid(cols, rows);
 
@@ -121,6 +119,7 @@ function restartGame() {
   underGrid = fillNumbers(cols, rows);
 
   textSize(cellSize/1.9);
+  textStyle(NORMAL);
   textAlign(LEFT);
 
   clickedMine = false;
@@ -129,12 +128,12 @@ function restartGame() {
 
 function keyTyped() {
   if (key === "r") {
-    restartGame();
+    resetGame();
   }
 }
 
 function deviceShaken() {
-  restartGame();
+  resetGame();
 }
 
 function generateBlankGrid(cols, rows) {
@@ -348,55 +347,52 @@ function drawGrid() {
       fill(0);
       if (number === 1) {
         fill("blue");
-        text("1", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
+        text("1", x * cellSize + cellSize/2 - cellSize * NUMBER_OFFSET, y * cellSize + cellSize/2 + cellSize * NUMBER_OFFSET);
       }
 
       else if (number === 2) {
         fill("green");
-        text("2", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
+        text("2", x * cellSize + cellSize/2 - cellSize * NUMBER_OFFSET, y * cellSize + cellSize/2 + cellSize * NUMBER_OFFSET);
       }
 
       else if (number === 3) {
         fill("red");
-        text("3", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
+        text("3", x * cellSize + cellSize/2 - cellSize * NUMBER_OFFSET, y * cellSize + cellSize/2 + cellSize * NUMBER_OFFSET);
       }
 
       else if (number === 4) {
         fill(0, 0, 125);
         textStyle(BOLD);
-        text("4", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
+        text("4", x * cellSize + cellSize/2 - cellSize * NUMBER_OFFSET, y * cellSize + cellSize/2 + cellSize * NUMBER_OFFSET);
       }
 
       else if (number === 5) {
         fill(130, 0, 10);
         textStyle(BOLD);
-        text("5", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
+        text("5", x * cellSize + cellSize/2 - cellSize * NUMBER_OFFSET, y * cellSize + cellSize/2 + cellSize * NUMBER_OFFSET);
       }
 
       else if (number === 6) {
         textStyle(BOLD);
         fill(126, 177, 186);
-        text("6", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
+        text("6", x * cellSize + cellSize/2 - cellSize * NUMBER_OFFSET, y * cellSize + cellSize/2 + cellSize * NUMBER_OFFSET);
       }
 
       else if (number === 7) {
         textStyle(BOLD);
         fill(0);
-        text("7", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
+        text("7", x * cellSize + cellSize/2 - cellSize * NUMBER_OFFSET, y * cellSize + cellSize/2 + cellSize * NUMBER_OFFSET);
       }
 
       else if (number === 8) {
         textStyle(BOLD);
         fill(200);
-        text("8", x * cellSize + cellSize/2 - cellSize * numberOffset, y * cellSize + cellSize/2 + cellSize * numberOffset);
+        text("8", x * cellSize + cellSize/2 - cellSize * NUMBER_OFFSET, y * cellSize + cellSize/2 + cellSize * NUMBER_OFFSET);
       }
 
     }
   }
 
-//   push()
-//   translate(width/2, 0);
-//   pop()
 }
 
 
