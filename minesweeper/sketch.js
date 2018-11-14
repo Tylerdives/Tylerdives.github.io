@@ -5,8 +5,7 @@
 // Extra for Experts:
 // Floodfill(ish), number filling, mobile compatibility, minesweeper logic (winning, flag...)
 
-//Side note:
-//Didn't want to add sounds, because they don't add to the feel
+
 
 
 //Stating Variables
@@ -44,7 +43,6 @@ let mineX, mineY;
 
 // let canvas;
 
-
 //GRIDS' LEGEND:
 // x = mine
 //-1 = covered square
@@ -77,7 +75,7 @@ function setup() {
   //This didn't work
   // canvas = createCanvas(windowWidth, windowHeight);
 
-  // canvas.position(width/2 - cols/2 * 30, 0);
+  // canvas.position(width/2 - cols/2 * cellSize, 0);
 
   //Setting up the grids
   grid = generateBlankGrid(cols, rows);
@@ -98,7 +96,6 @@ function draw() {
   if (gameState === 1) {
     background(0);
     //Black background
-
     //Showing the visuals
     drawGrid();
     displayMinesLeft();
@@ -124,6 +121,7 @@ function draw() {
     textSize(50);
     textStyle(BOLD);
     fill(0, 255, 0);
+    //Displaying text
     text("Congratulations! Press 'r' or shake to restart", width/2, height/1.2);
   }
 
@@ -132,6 +130,7 @@ function draw() {
     textSize(50);
     textStyle(BOLD);
     fill(255, 0, 0);
+    //Displaying text
     text("Game over!, press 'r' or shake to restart.", width/5, height/2);
   }
 
