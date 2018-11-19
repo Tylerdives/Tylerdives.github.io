@@ -9,9 +9,9 @@ class Raindrop  {
   constructor() {
     this.x = random(width);
     this.y = random(-2000, -10);
-    this.dx = 0;
+    this.dx = 0.01;
     this.dy = 8;
-    this.radius = random(3, 6);
+    this.radius = random(3, 7);
     this.color = color(0, random(60), 255 - random(50), 255 - random(150));
     this.touchingGround = false;
   }
@@ -20,6 +20,11 @@ class Raindrop  {
     noStroke();
     fill(this.color);
     ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
+
+    // fill(0);
+    // textSize(60);
+    // let messages = ["hey", "hi", "hola", "hello"];
+    // text(random("hey"), this.x, this.y);
   }
 
   fall() {
@@ -30,67 +35,118 @@ class Raindrop  {
     }
     else {
       this.dy += 0.2;
+      // this.x += this.dx;
       this.y += this.dy;
     }
 
   }
+
 }
 
-let rainArray = [];
+class Snowflake {
+  constructor() {
+    this.x = random(width);
+    this.y = random(-2000, -10);
+    this.dx = 0;
+    this.dy = 1;
+    this.size = random(40, 60);
+    this.color = color(random(200, 255));
+    this.touchingGround = false;
+    this.shape = ["x", "*", "+", "#"];
+  }
+
+  display() {
+    fill(this.color);
+    textSize(this.size);
+    text(random(this.shape), this.x, this.y);
+  }
+
+  fall() {
+    if (this.y + this.dy >= collectionHeight + this.size) {
+      this.y = random(-1000, -10);
+      this.dy = 1;
+    }
+    this.dy += 0.001;
+    this.y += this.dy;
+  }
+
+
+}
+
+// let weatherLists.weather = [];
+
 let dropCounter = 0;
 let collectionHeight;
-let buffer = 31;
+// let buffer = 31;
 
 let weather;
 let noRain;
 let noSnow;
 
+let weatherLists = {
+  rain: [],
+  noRain: true,
+  snow: [],
+  noSnow: true,
+};
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   weather = "rain";
-  noRain = true;
+  // noRain = true;
 }
 
 function draw() {
+  background(0);
   if (weather === "rain") {
-    if (noRain) {
-      generateRain();
+    if (weatherLists.noRain) {
+      generatePrecipitation(weatherLists.rain, weatherLists.noRain);
     }
-    displayRain();
+    displayPrecipitation(weatherLists.rain);
+    // displayPrecipitation(weatherLists.snow);
+  }
+
+  else if (weather === "snow") {
+    if (weatherLists.noSnow) {
+      generatePrecipitation(weatherLists.snow, weatherLists.noSnow);
+    }
+
+    displayPrecipitation(weatherLists.snow);
+    displayPrecipitation(weatherLists.rain);
+    // displaySnow();
   }
 }
 
-function mousePressed() {
-  //rain
-  generateRain();
-}
+// function mousePressed() {
+//   //rain
+//   generateRain();
+// }
 
-function displayRain() {
-
+function displayPrecipitation(precip) {
   collectionHeight = height - dropCounter * 0.0001;
-  background(255);
-  for (let i=rainArray.length-1; i>0; i--) {
-    rainArray[i].fall();
-    rainArray[i].display();
-    touchingGround(i);
+  for (let i=precip.length-1; i>0; i--) {
+    precip[i].fall();
+    precip[i].display();
+    touchingGround(i, precip);
   }
 
   elementalCollection("rain");
 }
 
-function touchingGround(i) {
-  if (rainArray[i].touchingGround) {
+function touchingGround(i, precip) {
+  if (precip[i].touchingGround) {
     dropCounter++;
-    // rainArray.splice(i, 1);
+
+    // weatherLists.weather.splice(i, 1);
   }
 }
 
-function generateRain() {
+function generatePrecipitation(precip, noPrecip) {
   for (let i = 0; i < 400; i++) {
-    let someRain = new Raindrop();
-    rainArray.push(someRain);
+    let somePrecip = new Raindrop();
+    precip.push(somePrecip);
   }
-  noRain = false;
+  noPrecip = false;
 }
 
 
