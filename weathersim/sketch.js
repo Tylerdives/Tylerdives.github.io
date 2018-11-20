@@ -10,7 +10,7 @@ class Raindrop  {
     this.x = random(width);
     this.y = random(-2000, -10);
     this.dx = 0.01;
-    this.dy = 8;
+    this.dy = 6;
     this.radius = random(3, 7);
     this.color = color(0, random(60), 255 - random(50), 255 - random(150));
     this.touchingGround = false;
@@ -31,7 +31,7 @@ class Raindrop  {
     if (this.y + this.dy >= collectionHeight + this.radius/2) {
       this.touchingGround = true;
       this.y = random(-1000, -10);
-      this.dy = 8;
+      this.dy = 10;
     }
     else {
       this.dy += 0.2;
@@ -48,25 +48,26 @@ class Snowflake {
     this.x = random(width);
     this.y = random(-2000, -10);
     this.dx = 0;
-    this.dy = 1;
-    this.size = random(40, 60);
+    this.dy = 6;
+    this.size = random(20, 60);
     this.color = color(random(200, 255));
     this.touchingGround = false;
-    this.shape = ["x", "*", "+", "#"];
+    this.shape = "*";
   }
 
   display() {
     fill(this.color);
     textSize(this.size);
-    text(random(this.shape), this.x, this.y);
+    text(this.shape, this.x, this.y);
   }
 
   fall() {
     if (this.y + this.dy >= collectionHeight + this.size) {
-      this.y = random(-1000, -10);
-      this.dy = 1;
+      this.touchingGround = true;
+      this.y = random(0, -10);
+      this.dy = 6;
     }
-    this.dy += 0.001;
+    this.dy += 0.01;
     this.y += this.dy;
   }
 
@@ -85,35 +86,33 @@ let noSnow;
 
 let weatherLists = {
   rain: [],
-  noRain: true,
   snow: [],
-  noSnow: true,
 };
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  weather = "rain";
-  // noRain = true;
+  weather = "snow";
+  noRain = true;
+  noSnow = true;
 }
 
 function draw() {
   background(0);
   if (weather === "rain") {
-    if (weatherLists.noRain) {
-      generatePrecipitation(weatherLists.rain, weatherLists.noRain);
+    if (noRain) {
+      generatePrecipitation(weatherLists.rain, noRain);
     }
-    displayPrecipitation(weatherLists.rain);
-    // displayPrecipitation(weatherLists.snow);
+    displayPrecipitation(weatherLists.rain, "rain");
+    displayPrecipitation(weatherLists.snow, "snow");
   }
 
   else if (weather === "snow") {
-    if (weatherLists.noSnow) {
-      generatePrecipitation(weatherLists.snow, weatherLists.noSnow);
-    }
+    if (noSnow) {
+      generatePrecipitation(weatherLists.snow, noSnow);
 
-    displayPrecipitation(weatherLists.snow);
-    displayPrecipitation(weatherLists.rain);
-    // displaySnow();
+    }
+    displayPrecipitation(weatherLists.snow, "snow");
+    displayPrecipitation(weatherLists.rain, "rain");
   }
 }
 
@@ -122,31 +121,46 @@ function draw() {
 //   generateRain();
 // }
 
-function displayPrecipitation(precip) {
+function displayPrecipitation(precip, type) {
   collectionHeight = height - dropCounter * 0.0001;
   for (let i=precip.length-1; i>0; i--) {
     precip[i].fall();
     precip[i].display();
-    touchingGround(i, precip);
+    touchingGround(i, precip, type);
   }
 
-  elementalCollection("rain");
+  elementalCollection(weather);
+
 }
 
-function touchingGround(i, precip) {
+
+function touchingGround(i, precip, type) {
   if (precip[i].touchingGround) {
+    // console.log("in here...");
     dropCounter++;
+    if (weather !== type) {
+      // console.log("here!");
+      precip.splice(i, 1);
+    }
 
-    // weatherLists.weather.splice(i, 1);
   }
 }
 
-function generatePrecipitation(precip, noPrecip) {
-  for (let i = 0; i < 400; i++) {
-    let somePrecip = new Raindrop();
-    precip.push(somePrecip);
+function generatePrecipitation(list, type) {
+  if (weather === "rain") {
+    for (let i = 0; i < 400; i++) {
+      let somePrecip = new Raindrop();
+      list.push(somePrecip);
+    }
+    noRain = false;
   }
-  noPrecip = false;
+  else if (weather === "snow") {
+    for (let i = 0; i < 400; i++) {
+      let somePrecip = new Snowflake();
+      list.push(somePrecip);
+    }
+    noSnow = false;
+  }
 }
 
 
@@ -154,6 +168,9 @@ function generatePrecipitation(precip, noPrecip) {
 function elementalCollection(element) {
   if (element === "rain") {
     fill(0, 0, 255, 150);
+  }
+  else if (element === "snow") {
+    fill(200, 200, 255, 125);
   }
 
   rect(0, collectionHeight, width, dropCounter * 0.0001);
