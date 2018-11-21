@@ -34,9 +34,21 @@ class Raindrop  {
       this.dy = 10;
     }
     else {
+      this.touchingGround = false;
       this.dy += 0.2;
       // this.x += this.dx;
       this.y += this.dy;
+
+      // if(random(100) > 50 && this.dx < 10) {
+      //   this.dx++;
+      // }
+      // if (this.x > width) {
+      //   this.x = 0;
+      // }
+      // else if (this.x < 0) {
+      //   this.x = width;
+      // }
+      // this.x += this.dx;
     }
 
   }
@@ -47,7 +59,7 @@ class Snowflake {
   constructor() {
     this.x = random(width);
     this.y = random(-2000, -10);
-    this.dx = 0;
+    this.dx = random(-10, 10);
     this.dy = 6;
     this.size = random(20, 60);
     this.color = color(random(200, 255));
@@ -67,8 +79,25 @@ class Snowflake {
       this.y = random(0, -10);
       this.dy = 6;
     }
-    this.dy += 0.01;
-    this.y += this.dy;
+    else {
+      this.touchingGround = false;
+      this.dy += 0.01;
+      if(random(100) > 50 && this.dx < 10) {
+        this.dx++;
+      }
+      else {
+        this.dx--;
+      }
+      if (this.x > width) {
+        this.x = 0;
+      }
+      else if (this.x < 0) {
+        this.x = width;
+      }
+      this.x += this.dx;
+      this.y += this.dy;
+    }
+
   }
 
 
