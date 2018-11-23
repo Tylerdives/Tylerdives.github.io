@@ -10,7 +10,7 @@ class Raindrop  {
     this.x = random(width);
     this.y = random(-2000, -10);
     this.dx = 0.01;
-    this.dy = 6;
+    this.dy = random(5, 6);
     this.radius = random(3, 7);
     this.color = color(0, random(60), 255 - random(50), 255 - random(150));
     this.touchingGround = false;
@@ -39,16 +39,20 @@ class Raindrop  {
       // this.x += this.dx;
       this.y += this.dy;
 
-      // if(random(100) > 50 && this.dx < 10) {
-      //   this.dx++;
-      // }
-      // if (this.x > width) {
-      //   this.x = 0;
-      // }
-      // else if (this.x < 0) {
-      //   this.x = width;
-      // }
-      // this.x += this.dx;
+      if(random(100) > 30 && this.dx < 5) {
+        this.dx += random(0.1, 1);
+      }
+      else if (this.dx >= -1) {
+        this.dx -= random(0.1, 1);
+      }
+
+      if (this.x > width) {
+        this.x = 0;
+      }
+      else if (this.x < 0) {
+        this.x = width;
+      }
+      this.x += this.dx;
     }
 
   }
@@ -120,7 +124,7 @@ let weatherLists = {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  weather = "snow";
+  weather = "rain";
   noRain = true;
   noSnow = true;
 }
@@ -151,7 +155,7 @@ function draw() {
 // }
 
 function displayPrecipitation(precip, type) {
-  collectionHeight = height - dropCounter * 0.0001;
+  collectionHeight = height - dropCounter * 0.001;
   for (let i=precip.length-1; i>0; i--) {
     precip[i].fall();
     precip[i].display();
@@ -192,7 +196,13 @@ function generatePrecipitation(list, type) {
   }
 }
 
+function meltSnow() {
 
+}
+
+function evaporateWater() {
+
+}
 
 function elementalCollection(element) {
   if (element === "rain") {
@@ -202,5 +212,5 @@ function elementalCollection(element) {
     fill(200, 200, 255, 125);
   }
 
-  rect(0, collectionHeight, width, dropCounter * 0.0001);
+  rect(0, collectionHeight, width, dropCounter * 0.001);
 }
