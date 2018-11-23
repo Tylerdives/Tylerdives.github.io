@@ -64,7 +64,7 @@ class Snowflake {
     this.x = random(width);
     this.y = random(-2000, -10);
     this.dx = random(-10, 10);
-    this.dy = 6;
+    this.dy = random(5, 6);
     this.size = random(20, 60);
     this.color = color(random(200, 255));
     this.touchingGround = false;
@@ -81,15 +81,16 @@ class Snowflake {
     if (this.y + this.dy >= collectionHeight + this.size) {
       this.touchingGround = true;
       this.y = random(0, -10);
-      this.dy = 6;
+      this.dy = random(5, 6);
+      this.dx = random(-2, 2);
     }
     else {
       this.touchingGround = false;
       this.dy += 0.01;
-      if(random(100) > 50 && this.dx < 10) {
+      if(random(100) > 50 && this.dx < 7) {
         this.dx++;
       }
-      else {
+      else if (this.dx >= -6){
         this.dx--;
       }
       if (this.x > width) {
@@ -107,6 +108,29 @@ class Snowflake {
 
 }
 
+class LightningBolt {
+  constructor() {
+    this.x = random(100, width - 100);
+    this.y = -25;
+    this.steps = ceil(random(15, 20));
+    this.stepSize = ceil(width/this.steps);
+    this.color = color(random(220, 255), random(220, 255), random(0, 80));
+  }
+
+  display() {
+    fill(this.color);
+    // stroke(5);
+    let nextY = this.y + this.stepSize;
+    let nextX = this.x + random(-20, 20);
+    strokeWeight(5);
+    stroke(255);
+    line(this.x, this.y, nextX, nextY);
+
+    this.x = nextX;
+    this.y = nextY;
+  }
+}
+
 // let weatherLists.weather = [];
 
 let dropCounter = 0;
@@ -116,6 +140,7 @@ let collectionHeight;
 let weather;
 let noRain;
 let noSnow;
+let lightning;
 
 let weatherLists = {
   rain: [],
@@ -130,13 +155,25 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+
   if (weather === "rain") {
     if (noRain) {
       generatePrecipitation(weatherLists.rain, noRain);
     }
-    displayPrecipitation(weatherLists.rain, "rain");
-    displayPrecipitation(weatherLists.snow, "snow");
+    elementalCollection(weather);
+
+    if (mouseIsPressed) {
+      lightning = new LightningBolt();
+      for(let i = 0; i < lightning.steps; i++) {
+        lightning.display();
+      }
+    }
+
+    else {
+      background(0);
+      displayPrecipitation(weatherLists.rain, "rain");
+      displayPrecipitation(weatherLists.snow, "snow");
+    }
   }
 
   else if (weather === "snow") {
@@ -146,6 +183,11 @@ function draw() {
     }
     displayPrecipitation(weatherLists.snow, "snow");
     displayPrecipitation(weatherLists.rain, "rain");
+    elementalCollection(weather);
+  }
+
+  else if (weather === "sunny") {
+    // display
   }
 }
 
@@ -161,9 +203,6 @@ function displayPrecipitation(precip, type) {
     precip[i].display();
     touchingGround(i, precip, type);
   }
-
-  elementalCollection(weather);
-
 }
 
 
@@ -207,10 +246,12 @@ function evaporateWater() {
 function elementalCollection(element) {
   if (element === "rain") {
     fill(0, 0, 255, 150);
+    rect(0, collectionHeight, width, dropCounter * 0.001);
   }
   else if (element === "snow") {
     fill(200, 200, 255, 125);
+    rect(0, collectionHeight, width, dropCounter * 0.001);
   }
 
-  rect(0, collectionHeight, width, dropCounter * 0.001);
+
 }
