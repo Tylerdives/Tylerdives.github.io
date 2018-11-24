@@ -65,7 +65,7 @@ class Snowflake {
     this.y = random(-2000, -10);
     this.dx = random(-10, 10);
     this.dy = random(5, 6);
-    this.size = random(20, 60);
+    this.size = random(20, 40);
     this.color = color(random(200, 255));
     this.touchingGround = false;
     this.shape = "*";
@@ -112,18 +112,18 @@ class LightningBolt {
   constructor() {
     this.x = random(100, width - 100);
     this.y = -25;
-    this.steps = ceil(random(15, 20));
+    this.steps = ceil(random(15, 40));
     this.stepSize = ceil(width/this.steps);
-    this.color = color(random(220, 255), random(220, 255), random(0, 80));
+    this.color = color(random(220, 255), random(220, 255), random(150, 220));
+    this.size = floor(random(1, 10));
   }
 
   display() {
-    fill(this.color);
     // stroke(5);
     let nextY = this.y + this.stepSize;
-    let nextX = this.x + random(-20, 20);
-    strokeWeight(5);
-    stroke(255);
+    let nextX = this.x + random(-25, 25);
+    strokeWeight(this.size);
+    stroke(this.color);
     line(this.x, this.y, nextX, nextY);
 
     this.x = nextX;
@@ -160,23 +160,26 @@ function draw() {
     if (noRain) {
       generatePrecipitation(weatherLists.rain, noRain);
     }
-    elementalCollection(weather);
 
-    if (mouseIsPressed) {
+    if (random(300) > 298) {
       lightning = new LightningBolt();
+      let shockTime = millis();
       for(let i = 0; i < lightning.steps; i++) {
         lightning.display();
       }
     }
+
 
     else {
       background(0);
       displayPrecipitation(weatherLists.rain, "rain");
       displayPrecipitation(weatherLists.snow, "snow");
     }
+    elementalCollection(weather);
   }
 
   else if (weather === "snow") {
+    background(0);
     if (noSnow) {
       generatePrecipitation(weatherLists.snow, noSnow);
 
@@ -244,6 +247,7 @@ function evaporateWater() {
 }
 
 function elementalCollection(element) {
+  noStroke();
   if (element === "rain") {
     fill(0, 0, 255, 150);
     rect(0, collectionHeight, width, dropCounter * 0.001);

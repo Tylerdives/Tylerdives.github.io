@@ -1,20 +1,72 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+    <style media="screen">
+
+      body {
+        background-color: black;
+      }
+
+      h1 {
+        padding: 5px;
+        background-color: red;
+        margin: 20px;
+        padding-bottom: 20px;
+        color: rgb(255, 255, 255);
+        text-align: center;
+        font-size: 60px;
+        font-family: cursive;
+        letter-spacing: -3px;
+        text-shadow: 7px 4px black;
+        border-top-style: dashed;
+        border-bottom-style: dashed;
+        border-left-style: solid;
+        border-right-style: solid;
+        border-color: red black red black;
+        border-width: 30px 500px 30px 500px;
+      }
+
+      ul {
+
+        padding: 0px 20px;
+        margin: 10px 50px;
+        border-style: inset;
+        border-width: 10px;
+        border-color: red;
+        background-color: black;
+        border-radius: 15px;
+        font-size: 30px;
+        list-style-position: inside;
+        list-style-type: none;
+      }
+
+      ul li {
+        background-color: white;
+        padding: 5px;
+        margin-left: 5px;
+        font-size: 30px;
+        text-align: center;
+
+      }
+
+    </style>
     <meta charset="utf-8">
     <title>CS30 Demos</title>
   </head>
   <body>
+
     <h1>My cool projects</h1>
+
+    <br>
+    <p></p>
     <ul>
-      <li><a href="movingrect"> Moving Rectangle </a> </li>
-      <li><a href ="duck"> Magnifying duck </a> </li>
-      <li><a href="dvdlogo"> Dvd Logo </li>
-      <li><a href="interactivescene"> Interactive Scene</a></li>
-      <li><a href="snake"> State Variables Assignment</a></li>
-      <li><a href="grid"> Conway's game of life</a></li>
-      <li><a href="minesweeper"> Minesweeper</a></li>
-      <li><a href="weathersim"> Weather Simulator</li>
+      <li id = duck><a href ="duck"> Magnifying duck </a> </li>
+      <li id = dvdlogo><a href="dvdlogo"> Bouncing Dvd Logo </li>
+      <li id = interactivescene><a href="interactivescene"> Click the dot game</a></li>
+      <li id = statevar><a href="snake"> Two Player Snake</a></li>
+      <li id = gameoflife><a href="grid"> Conway's game of life</a></li>
+      <li id = grid><a href="minesweeper"> Minesweeper</a></li>
+      <li id = pair><a href="weathersim"> Weather Simulator</li>
     </ul>
   </body>
 </html>
