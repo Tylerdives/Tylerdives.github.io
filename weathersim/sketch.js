@@ -115,7 +115,7 @@ class LightningBolt {
     this.steps = ceil(random(15, 25));
     this.stepSize = ceil(height/this.steps);
     this.color = color(random(220, 255), random(220, 255), random(150, 220));
-    this.size = floor(random(1, 10));
+    this.size = floor(random(3, 7));
   }
 
   display() {
@@ -141,6 +141,9 @@ let weather;
 let noRain;
 let noSnow;
 let lightning;
+let lightningRarity = 3;
+let temperature = 15;
+let freezeSpeed = 0;
 
 let weatherLists = {
   rain: [],
@@ -161,9 +164,8 @@ function draw() {
       generatePrecipitation(weatherLists.rain, noRain);
     }
 
-    if (random(300) > 297) {
+    if (random(300) > 300 - lightningRarity) {
       lightning = new LightningBolt();
-      let shockTime = millis();
       for(let i = 0; i < lightning.steps; i++) {
         lightning.display();
       }
@@ -178,7 +180,9 @@ function draw() {
       displayPrecipitation(weatherLists.rain, "rain");
       displayPrecipitation(weatherLists.snow, "snow");
     }
-    elementalCollection(weather);
+
+    rainCollection();
+    freezeSpeed = 0;
   }
 
   else if (weather === "snow") {
@@ -189,21 +193,27 @@ function draw() {
     }
     displayPrecipitation(weatherLists.snow, "snow");
     displayPrecipitation(weatherLists.rain, "rain");
-    elementalCollection(weather);
+    rainCollection();
+    snowCollection();
+    if(freezeSpeed >= 250) {
+      displayIce();
+    }
   }
 
   else if (weather === "sunny") {
     // display
+    freezeSpeed = 0;
   }
 }
 
 // function mousePressed() {
 //   //rain
 //   generateRain();
+
 // }
 
 function displayPrecipitation(precip, type) {
-  collectionHeight = height - dropCounter * 0.001;
+  collectionHeight = height - dropCounter * 0.02;
   for (let i=precip.length-1; i>0; i--) {
     precip[i].fall();
     precip[i].display();
@@ -241,6 +251,7 @@ function generatePrecipitation(list, type) {
   }
 }
 
+
 function meltSnow() {
 
 }
@@ -249,16 +260,54 @@ function evaporateWater() {
 
 }
 
-function elementalCollection(element) {
-  noStroke();
-  if (element === "rain") {
-    fill(0, 0, 255, 150);
-    rect(0, collectionHeight, width, dropCounter * 0.001);
+function meltIce() {
+
+}
+
+function freezeWater() {
+  if (freezeSpeed < 2500) {
+    fill(freezeSpeed/10, freezeSpeed/10, 255, 200);
+    rect(0, collectionHeight, width, height - dropCounter * 0.02);
+    freezeSpeed++;
   }
-  else if (element === "snow") {
-    fill(200, 200, 255, 125);
-    rect(0, collectionHeight, width, dropCounter * 0.001);
-  }
+}
 
 
+function rainCollection() {
+  if (weather === "rain") {
+    noStroke();
+    fill(0, 0 , 255, 100);
+    rect(0, collectionHeight, width, height - dropCounter * 0.02);
+    //display the collection
+  }
+  else if (weather === "sunny") {
+    // display it
+    evaporateWater();
+  }
+  else if (weather === "snow") {
+    //colour change
+    freezeWater();
+  }
+}
+
+function displayIce() {
+  if (weather === "snow") {
+    fill(200, 200 , 255, 200);
+    rect(0, collectionHeight, width, height - dropCounter * 0.02);
+  }
+  else {
+    fill(250, 250, 255, 100);
+    rect(0, collectionHeight, width, height - dropCounter * 0.02)
+    meltIce();
+  }
+}
+
+function snowCollection() {
+  if (temperature ) {
+    //display snow
+  }
+  else {
+    //display it
+    meltSnow();
+  }
 }
