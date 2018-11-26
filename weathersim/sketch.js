@@ -112,8 +112,8 @@ class LightningBolt {
   constructor() {
     this.x = random(100, width - 100);
     this.y = -25;
-    this.steps = ceil(random(15, 40));
-    this.stepSize = ceil(width/this.steps);
+    this.steps = ceil(random(15, 25));
+    this.stepSize = ceil(height/this.steps);
     this.color = color(random(220, 255), random(220, 255), random(150, 220));
     this.size = floor(random(1, 10));
   }
@@ -161,12 +161,15 @@ function draw() {
       generatePrecipitation(weatherLists.rain, noRain);
     }
 
-    if (random(300) > 298) {
+    if (random(300) > 297) {
       lightning = new LightningBolt();
       let shockTime = millis();
       for(let i = 0; i < lightning.steps; i++) {
         lightning.display();
       }
+    }
+    else if (random(500) > 499) {
+      background(255);
     }
 
 
