@@ -5,14 +5,16 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
+//p5.gui
+
 class Raindrop  {
   constructor() {
     this.x = random(width);
     this.y = random(-2000, -10);
     this.dx = 0.01;
     this.dy = random(5, 6);
-    this.radius = random(3, 7);
-    this.color = color(0, random(60), 255 - random(50), 255 - random(150));
+    this.radius = random(3, 12);
+    this.color = color(0, random(60), 255 - random(50), 255 - random(50));
     this.touchingGround = false;
   }
 
@@ -142,8 +144,13 @@ let noRain;
 let noSnow;
 let lightning;
 let lightningRarity = 3;
-let temperature = 15;
-let freezeSpeed = 0;
+const TEMP_TO_COLOR = 6.375;
+let temp = 255;
+
+//+ values are melted shows darker colors (+255 max)
+//- values are frozen refers to lightness (0 min)
+let heatLimit = 255;
+let coldLimit = 0;
 
 let weatherLists = {
   rain: [],
@@ -176,33 +183,33 @@ function draw() {
 
 
     else {
-      background(0);
+      background(16, 49, 102);
       displayPrecipitation(weatherLists.rain, "rain");
       displayPrecipitation(weatherLists.snow, "snow");
     }
 
-    rainCollection();
-    freezeSpeed = 0;
+    waterCollection();
+    // snowCollection();
   }
 
   else if (weather === "snow") {
-    background(0);
+    background(16, 49, 102);
+    //Transition
     if (noSnow) {
       generatePrecipitation(weatherLists.snow, noSnow);
-
     }
+
     displayPrecipitation(weatherLists.snow, "snow");
     displayPrecipitation(weatherLists.rain, "rain");
-    rainCollection();
-    snowCollection();
-    if(freezeSpeed >= 250) {
-      displayIce();
-    }
+    waterCollection();
+    // snowCollection();
   }
 
   else if (weather === "sunny") {
-    // display
-    freezeSpeed = 0;
+    background(166, 199, 252);
+    displayPrecipitation(weatherLists.snow, "snow");
+    displayPrecipitation(weatherLists.rain, "rain");
+    waterCollection();
   }
 }
 
@@ -211,6 +218,20 @@ function draw() {
 //   generateRain();
 
 // }
+
+function deviceShaken() {
+  if (weather === "rain") {
+    noSnow = true;
+    weather === "snow";
+  }
+  else if (weather === "snow") {
+    weather === "sunny";
+  }
+  else {
+    noRain = true;
+    weather === "rain";
+  }
+}
 
 function displayPrecipitation(precip, type) {
   collectionHeight = height - dropCounter * 0.02;
@@ -252,62 +273,44 @@ function generatePrecipitation(list, type) {
 }
 
 
-function meltSnow() {
 
-}
 
-function evaporateWater() {
 
-}
-
-function meltIce() {
-
-}
-
-function freezeWater() {
-  if (freezeSpeed < 2500) {
-    fill(freezeSpeed/10, freezeSpeed/10, 255, 200);
-    rect(0, collectionHeight, width, height - dropCounter * 0.02);
-    freezeSpeed++;
+function waterCollection() {
+  if (weather === "rain" && temp < heatLimit) {
+    temp += 0.1;
   }
-}
-
-
-function rainCollection() {
-  if (weather === "rain") {
-    noStroke();
-    fill(0, 0 , 255, 100);
-    rect(0, collectionHeight, width, height - dropCounter * 0.02);
-    //display the collection
+  else if (weather === "sunny" && floor(temp) <= heatLimit) {
+    temp += 0.2;
+    if (dropCounter > 0) {
+      dropCounter -= 10;
+    }
   }
-  else if (weather === "sunny") {
-    // display it
-    evaporateWater();
-  }
-  else if (weather === "snow") {
-    //colour change
-    freezeWater();
-  }
-}
 
-function displayIce() {
-  if (weather === "snow") {
-    fill(200, 200 , 255, 200);
-    rect(0, collectionHeight, width, height - dropCounter * 0.02);
+  else if (weather === "snow" && temp > coldLimit) {
+    temp -= 0.5;
   }
   else {
-    fill(250, 250, 255, 100);
-    rect(0, collectionHeight, width, height - dropCounter * 0.02)
-    meltIce();
+    temp--;
+    temp = floor(temp);
   }
+
+  noStroke();
+  if (weather === "snow" && temp < 200) {
+    fill(200 - temp, 200 - temp, 255, 50);
+  }
+  fill(255 - temp, 255 - temp, 255, 255);
+  rect(0, collectionHeight, width, height - dropCounter * 0.02);
 }
 
-function snowCollection() {
-  if (temperature ) {
-    //display snow
-  }
-  else {
-    //display it
-    meltSnow();
-  }
-}
+
+
+// function snowCollection() {
+//   if (temperature ) {
+//     //display snow
+//   }
+//   else {
+//     //display it
+//     meltSnow();
+//   }
+// }
