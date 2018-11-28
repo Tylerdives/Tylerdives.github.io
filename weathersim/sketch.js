@@ -14,7 +14,7 @@ class Raindrop  {
     this.dx = 0.01;
     this.dy = random(5, 6);
     this.radius = random(3, 12);
-    this.color = color(0, random(60), 255 - random(50), 255 - random(50));
+    this.color = color(0, random(60), 255 - random(50), 255 - random(100, 200));
     this.touchingGround = false;
   }
 
@@ -136,7 +136,8 @@ class LightningBolt {
 // let weatherLists.weather = [];
 
 let dropCounter = 0;
-let collectionHeight;
+let snowCounter = 0;
+let collectionHeight, snowCollectionHeight;
 // let buffer = 31;
 
 let weather;
@@ -146,6 +147,7 @@ let lightning;
 let lightningRarity = 3;
 const TEMP_TO_COLOR = 6.375;
 let temp = 255;
+let changeCooldown;
 
 //+ values are melted shows darker colors (+255 max)
 //- values are frozen refers to lightness (0 min)
@@ -162,6 +164,7 @@ function setup() {
   weather = "rain";
   noRain = true;
   noSnow = true;
+  changeCooldown = 2000;
 }
 
 function draw() {
@@ -183,17 +186,17 @@ function draw() {
 
 
     else {
-      background(16, 49, 102);
+      background(16, 39, 102);
       displayPrecipitation(weatherLists.rain, "rain");
       displayPrecipitation(weatherLists.snow, "snow");
     }
 
     waterCollection();
-    // snowCollection();
+    snowCollection();
   }
 
   else if (weather === "snow") {
-    background(16, 49, 102);
+    background(46, 79, 132);
     //Transition
     if (noSnow) {
       generatePrecipitation(weatherLists.snow, noSnow);
@@ -202,7 +205,7 @@ function draw() {
     displayPrecipitation(weatherLists.snow, "snow");
     displayPrecipitation(weatherLists.rain, "rain");
     waterCollection();
-    // snowCollection();
+    snowCollection();
   }
 
   else if (weather === "sunny") {
@@ -219,22 +222,28 @@ function draw() {
 
 // }
 
-function deviceShaken() {
-  if (weather === "rain") {
-    noSnow = true;
-    weather === "snow";
-  }
-  else if (weather === "snow") {
-    weather === "sunny";
-  }
-  else {
-    noRain = true;
-    weather === "rain";
+function mousePressed() {
+  if (millis() > changeCooldown) {
+    if (weather === "rain") {
+      noSnow = true;
+      weather === "snow";
+      changeCooldown = millis() + 2000;
+    }
+    else if (weather === "snow") {
+      weather === "sunny";
+      changeCooldown = millis() + 2000;
+    }
+    else if (weather === "sunny"){
+      noRain = true;
+      weather === "rain";
+      changeCooldown = millis() + 2000;
+    }
   }
 }
 
 function displayPrecipitation(precip, type) {
   collectionHeight = height - dropCounter * 0.02;
+  snowCollectionHeight = height - snowCounter * 0.05 + collectionHeight;
   for (let i=precip.length-1; i>0; i--) {
     precip[i].fall();
     precip[i].display();
@@ -246,7 +255,12 @@ function displayPrecipitation(precip, type) {
 function touchingGround(i, precip, type) {
   if (precip[i].touchingGround) {
     // console.log("in here...");
-    dropCounter++;
+    if (type === "rain") {
+      dropCounter++;
+    }
+    else if (type === "snow") {
+      snowCounter++;
+    }
     if (weather !== type) {
       // console.log("here!");
       precip.splice(i, 1);
@@ -288,7 +302,10 @@ function waterCollection() {
   }
 
   else if (weather === "snow" && temp > coldLimit) {
-    temp -= 0.5;
+    if (temp > coldLimit) {
+      temp -= 0.5;
+    }
+
   }
   else {
     temp--;
@@ -296,21 +313,19 @@ function waterCollection() {
   }
 
   noStroke();
-  if (weather === "snow" && temp < 200) {
-    fill(200 - temp, 200 - temp, 255, 50);
+  if (weather === "snow" && temp < 125) {
+    fill(255 - temp, 255 - temp, 255, temp + 90);
   }
-  fill(255 - temp, 255 - temp, 255, 255);
-  rect(0, collectionHeight, width, height - dropCounter * 0.02);
+  else {
+    fill(255 - temp, 255 - temp, 255, 255);
+  }
+
+  rect(0, collectionHeight, width,dropCounter * 0.02);
 }
 
 
 
-// function snowCollection() {
-//   if (temperature ) {
-//     //display snow
-//   }
-//   else {
-//     //display it
-//     meltSnow();
-//   }
-// }
+function snowCollection() {
+  fill(255, 0 , 0);
+  rect(0, snowCollectionHeight, width, snowCounter * 0.05);
+}
