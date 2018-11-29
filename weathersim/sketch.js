@@ -5,16 +5,14 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-//p5.gui
-
 class Raindrop  {
   constructor() {
     this.x = random(width);
     this.y = random(-2000, -10);
     this.dx = 0.01;
-    this.dy = random(5, 6);
-    this.radius = random(3, 12);
-    this.color = color(0, random(60), 255 - random(50), 255 - random(100, 200));
+    this.dy = random(4, 5);
+    this.radius = random(3, 10);
+    this.color = color(0, random(60), 255 - random(50), 255 - random(0, 200));
     this.touchingGround = false;
   }
 
@@ -22,11 +20,6 @@ class Raindrop  {
     noStroke();
     fill(this.color);
     ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
-
-    // fill(0);
-    // textSize(60);
-    // let messages = ["hey", "hi", "hola", "hello"];
-    // text(random("hey"), this.x, this.y);
   }
 
   fall() {
@@ -58,7 +51,6 @@ class Raindrop  {
     }
 
   }
-
 }
 
 class Snowflake {
@@ -133,19 +125,59 @@ class LightningBolt {
   }
 }
 
-// let weatherLists.weather = [];
+class Steam {
+  constructor() {
+    this.x = random(width);
+    this.y = collectionHeight;
+    this.dx = 0.01;
+    this.dy = 5;
+    this.radius = random(3, 8);
+    this.color = color(150, 150, 160, 140);
+    this.touchingGround = false;
+  }
+
+  display() {
+    noStroke();
+    fill(this.color);
+    ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
+  }
+
+  fall() {
+    this.y -= this.dy;
+
+    if (this.y < 0 + this.radius * 2) {
+      this.touchingGround = true;
+    }
+    else {
+      this.touchingTop = false;
+    }
+
+    if(random(100) > 50 && this.dx < 5) {
+      this.dx += random(0.1, 1);
+    }
+    else if (this.dx >= -1) {
+      this.dx -= random(0.1, 1);
+    }
+
+    if (this.x > width) {
+      this.x = 0;
+    }
+    else if (this.x < 0) {
+      this.x = width;
+    }
+    this.x += this.dx;
+
+  }
+}
 
 let dropCounter = 0;
 let snowCounter = 0;
 let collectionHeight, snowCollectionHeight;
-// let buffer = 31;
-
 let weather;
 let noRain;
 let noSnow;
 let lightning;
 let lightningRarity = 3;
-const TEMP_TO_COLOR = 6.375;
 let temp = 255;
 let changeCooldown;
 
@@ -154,9 +186,14 @@ let changeCooldown;
 let heatLimit = 255;
 let coldLimit = 0;
 
+let gui;
+
+
+
 let weatherLists = {
   rain: [],
   snow: [],
+  steam: [],
 };
 
 function setup() {
@@ -165,6 +202,8 @@ function setup() {
   noRain = true;
   noSnow = true;
   changeCooldown = 2000;
+  gui = createGui("Weather Controls");
+  gui.addGlobals("drops", "lightning rarity", "");
 }
 
 function draw() {
@@ -192,7 +231,6 @@ function draw() {
     }
 
     waterCollection();
-    snowCollection();
   }
 
   else if (weather === "snow") {
@@ -205,40 +243,20 @@ function draw() {
     displayPrecipitation(weatherLists.snow, "snow");
     displayPrecipitation(weatherLists.rain, "rain");
     waterCollection();
-    snowCollection();
   }
 
   else if (weather === "sunny") {
     background(166, 199, 252);
     displayPrecipitation(weatherLists.snow, "snow");
     displayPrecipitation(weatherLists.rain, "rain");
+    displayPrecipitation(weatherLists.steam, 0);
     waterCollection();
   }
 }
 
-// function mousePressed() {
-//   //rain
-//   generateRain();
 
-// }
-
-function mousePressed() {
-  if (millis() > changeCooldown) {
-    if (weather === "rain") {
-      noSnow = true;
-      weather === "snow";
-      changeCooldown = millis() + 2000;
-    }
-    else if (weather === "snow") {
-      weather === "sunny";
-      changeCooldown = millis() + 2000;
-    }
-    else if (weather === "sunny"){
-      noRain = true;
-      weather === "rain";
-      changeCooldown = millis() + 2000;
-    }
-  }
+function deviceShaken() {
+  weather = "snow";
 }
 
 function displayPrecipitation(precip, type) {
@@ -296,20 +314,21 @@ function waterCollection() {
   }
   else if (weather === "sunny" && floor(temp) <= heatLimit) {
     temp += 0.2;
-    if (dropCounter > 0) {
+    if (dropCounter > 0 && temp > 200) {
       dropCounter -= 10;
+      let steam = new Steam();
+      weatherLists.steam.push(steam);
     }
   }
 
-  else if (weather === "snow" && temp > coldLimit) {
-    if (temp > coldLimit) {
-      temp -= 0.5;
-    }
-
+  else if (weather === "snow" && ceil(temp) >= coldLimit) {
+    temp -= 0.5;
   }
   else {
-    temp--;
-    temp = floor(temp);
+    if (weather === "sunny") {
+      temp--;
+      temp = floor(temp);
+    }
   }
 
   noStroke();
@@ -321,11 +340,4 @@ function waterCollection() {
   }
 
   rect(0, collectionHeight, width,dropCounter * 0.02);
-}
-
-
-
-function snowCollection() {
-  fill(255, 0 , 0);
-  rect(0, snowCollectionHeight, width, snowCounter * 0.05);
 }
