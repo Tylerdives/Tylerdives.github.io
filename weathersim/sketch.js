@@ -177,7 +177,7 @@ let weather;
 let noRain;
 let noSnow;
 let lightning;
-let lightningRarity = 3;
+let lightningRarity = 1;
 let temp = 255;
 let changeCooldown;
 
@@ -189,6 +189,12 @@ let coldLimit = 0;
 let gui;
 
 
+//sounds!
+let thunder;
+let rain;
+let birds;
+let wind;
+
 
 let weatherLists = {
   rain: [],
@@ -196,14 +202,20 @@ let weatherLists = {
   steam: [],
 };
 
+function preload() {
+  thunder = loadSound("assets/thunder.wav");
+  rain = loadSound("assets/rain.wav");
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
   weather = "rain";
   noRain = true;
   noSnow = true;
   changeCooldown = 2000;
-  gui = createGui("Weather Controls");
-  gui.addGlobals("drops", "lightning rarity", "");
+  // sliderRange(0, 400, 2);
+  // gui = createGui("Weather Controls");
+  // gui.addGlobals('weather', "lightning rarity");
 }
 
 function draw() {
@@ -218,9 +230,8 @@ function draw() {
       for(let i = 0; i < lightning.steps; i++) {
         lightning.display();
       }
-    }
-    else if (random(500) > 499) {
-      background(255);
+      thunder.setVolume(random(0.5, 2));
+      thunder.play();
     }
 
 
@@ -256,7 +267,7 @@ function draw() {
 
 
 function deviceShaken() {
-  weather = "snow";
+  weather = "sunny";
 }
 
 function displayPrecipitation(precip, type) {
@@ -275,6 +286,8 @@ function touchingGround(i, precip, type) {
     // console.log("in here...");
     if (type === "rain") {
       dropCounter++;
+      if(dropCounter % 210 === 0) {
+      }
     }
     else if (type === "snow") {
       snowCounter++;
