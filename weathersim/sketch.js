@@ -34,10 +34,10 @@ class Raindrop  {
       // this.x += this.dx;
       this.y += this.dy;
 
-      if(random(100) > 30 && this.dx < 5) {
+      if(random(100) > 30 && this.dx < 15) {
         this.dx += random(0.1, 1);
       }
-      else if (this.dx >= -1) {
+      else {
         this.dx -= random(0.1, 1);
       }
 
@@ -72,7 +72,7 @@ class Snowflake {
   }
 
   fall() {
-    if (this.y + this.dy >= collectionHeight + this.size) {
+    if (this.y + this.dy >= collectionHeight + 15) {
       this.touchingGround = true;
       this.y = random(0, -10);
       this.dy = random(5, 6);
@@ -81,7 +81,7 @@ class Snowflake {
     else {
       this.touchingGround = false;
       this.dy += 0.01;
-      if(random(100) > 50 && this.dx < 7) {
+      if(random(100) > 50 && this.dx < 25) {
         this.dx++;
       }
       else if (this.dx >= -6){
@@ -216,6 +216,23 @@ class GuiButton {
   }
 }
 
+
+class Sun {
+  constructor() {
+    this.x = width;
+    this.y = 0;
+    this.diameter = random(400, 500);
+    this.color = color(random(175, 255), random(175, 255), 0);
+  }
+
+  display() {
+    fill(this.color);
+    noStroke();
+    ellipse(this.x, this.y, this.diameter, this.diameter);
+
+  }
+}
+
 let dropCounter = 0;
 let snowCounter = 0;
 let collectionHeight, snowCollectionHeight;
@@ -235,9 +252,8 @@ let coldLimit = 0;
 
 
 //sounds!
-let wantThunder;
-let thunder;
-let rain;
+let thunderSound;
+let rainDrop;
 let birds;
 let wind;
 
@@ -253,8 +269,8 @@ let weatherLists = {
 };
 
 function preload() {
-  thunder = loadSound("assets/thunder.wav");
-  rain = loadSound("assets/rain.wav");
+  thunderSound = loadSound("assets/thunder.wav");
+  rainDrop = loadSound("assets/rain.wav");
 
   rainImage = loadImage("assets/rainImage.JPG");
   snowImage = loadImage("assets/snowImage.JPG");
@@ -268,7 +284,6 @@ function setup() {
   noRain = true;
   noSnow = true;
   changeCooldown = 2000;
-  wantThunder = true;
 
   rainButton = new GuiButton("rain", rainImage, 0, true);
   sunnyButton = new GuiButton("sunny", sunImage, 100, false);
@@ -278,70 +293,19 @@ function setup() {
 
 function draw() {
   if (weather === "rain") {
-    if (noRain) {
-      generatePrecipitation(weatherLists.rain, noRain);
-    }
-
-    background(temp-80, temp-50, 254);
-    displayPrecipitation(weatherLists.rain, "rain");
-    displayPrecipitation(weatherLists.snow, "snow");
-    displayPrecipitation(weatherLists.steam, 0);
-
-    waterCollection();
-    displayGui();
+    rain();
   }
-
   else if (weather === "thunder") {
-    if (noRain) {
-      generatePrecipitation(weatherLists.rain, noRain);
-    }
-
-    if (random(300) > 300 - lightningRarity) {
-      lightning = new LightningBolt();
-      for(let i = 0; i < lightning.steps; i++) {
-        lightning.display();
-      }
-      thunder.setVolume(random(0.5, 1));
-      thunder.play();
-    }
-
-
-    else {
-      background(temp-80, temp-50, 254);
-      displayPrecipitation(weatherLists.rain, "thunder");
-      displayPrecipitation(weatherLists.snow, "snow");
-      displayPrecipitation(weatherLists.steam, 0);
-    }
-
-    waterCollection();
-    displayGui();
+    thunder();
   }
-
   else if (weather === "snow") {
-    background(temp-80, temp-50, 230);
-    if(temp < 120) {
-      background(temp-80, temp-50, 230-temp);
-    }
-    //Transition
-    if (noSnow) {
-      generatePrecipitation(weatherLists.snow, noSnow);
-    }
-
-    displayPrecipitation(weatherLists.snow, "snow");
-    displayPrecipitation(weatherLists.rain, "rain");
-    displayPrecipitation(weatherLists.steam, 0);
-    waterCollection();
-    displayGui();
+    snow();
   }
-
   else if (weather === "sunny") {
-    background(temp-80, temp-50, 254);
-    displayPrecipitation(weatherLists.snow, "snow");
-    displayPrecipitation(weatherLists.rain, "rain");
-    displayPrecipitation(weatherLists.steam, 0);
-    waterCollection();
-    displayGui();
+    sunny();
   }
+  waterCollection();
+  displayGui();
 }
 
 function displayGui() {
@@ -371,6 +335,62 @@ function displayGui() {
   noStroke();
 }
 
+function rain() {
+  if (noRain) {
+    generatePrecipitation(weatherLists.rain, noRain, 300);
+  }
+
+  background(temp-80, temp-50, 254);
+  displayPrecipitation(weatherLists.rain, "rain");
+  displayPrecipitation(weatherLists.snow, "snow");
+  displayPrecipitation(weatherLists.steam, 0);
+}
+
+function thunder() {
+  if (noRain) {
+    generatePrecipitation(weatherLists.rain, noRain, 450);
+  }
+
+  if (random(300) > 300 - lightningRarity) {
+    lightning = new LightningBolt();
+    for(let i = 0; i < lightning.steps; i++) {
+      lightning.display();
+    }
+    thunderSound.setVolume(random(0.5, 1));
+    thunderSound.play();
+  }
+
+
+  else {
+    background(temp-80, temp-50, 254);
+    displayPrecipitation(weatherLists.rain, "thunder");
+    displayPrecipitation(weatherLists.snow, "snow");
+    displayPrecipitation(weatherLists.steam, 0);
+  }
+}
+
+function snow() {
+  background(temp-80, temp-50, 230);
+  if(temp < 120) {
+    background(temp-80, temp-50, 230-temp);
+  }
+  //Transition
+  if (noSnow) {
+    generatePrecipitation(weatherLists.snow, noSnow, 300);
+  }
+
+  displayPrecipitation(weatherLists.snow, "snow");
+  displayPrecipitation(weatherLists.rain, "rain");
+  displayPrecipitation(weatherLists.steam, 0);
+}
+
+function sunny() {
+  background(temp-80, temp-50, 254);
+  displayPrecipitation(weatherLists.snow, "snow");
+  displayPrecipitation(weatherLists.rain, "rain");
+  displayPrecipitation(weatherLists.steam, 0);
+}
+
 function deviceShaken() {
   if(weather === "rain") {
     weather = "snow";
@@ -387,7 +407,7 @@ function deviceShaken() {
 }
 
 function displayPrecipitation(precip, type) {
-  collectionHeight = height - dropCounter * 0.02;
+  collectionHeight = height - dropCounter * 0.01;
   snowCollectionHeight = height - snowCounter * 0.05 + collectionHeight;
   for (let i=precip.length-1; i>0; i--) {
     precip[i].fall();
@@ -400,11 +420,7 @@ function displayPrecipitation(precip, type) {
 function touchingGround(i, precip, type) {
   if (precip[i].touchingGround) {
     // console.log("in here...");
-    if (type === "rain" || type === "thunder") {
-      dropCounter++;
-      // if(dropCounter % 210 === 0) {
-      // }
-    }
+    dropCounter++;
     if (weather !== type || precip.length > 400) {
       // console.log("here!");
       precip.splice(i, 1);
@@ -413,16 +429,16 @@ function touchingGround(i, precip, type) {
   }
 }
 
-function generatePrecipitation(list, type) {
+function generatePrecipitation(list, type, amount) {
   if (weather === "rain" || weather === "thunder") {
-    for (let i = 0; i < 400; i++) {
+    for (let i = 0; i < amount; i++) {
       let somePrecip = new Raindrop();
       list.push(somePrecip);
     }
     noRain = false;
   }
   else if (weather === "snow") {
-    for (let i = 0; i < 400; i++) {
+    for (let i = 0; i < amount; i++) {
       let somePrecip = new Snowflake();
       list.push(somePrecip);
     }
@@ -437,14 +453,14 @@ function generatePrecipitation(list, type) {
 function waterCollection() {
   if (weather === "rain" || weather === "thunder" && floor(temp-1) < heatLimit) {
     if(temp < heatLimit - 80) {
-      temp += 0.1;
+      temp += 0.4;
     }
     else {
       temp -= 0.2;
     }
   }
   else if (weather === "sunny" && floor(temp) <= heatLimit) {
-    temp += 0.2;
+    temp += 0.3;
     if (dropCounter > 0 && temp > 200) {
       dropCounter -= 10;
       let steam = new Steam();
@@ -455,20 +471,58 @@ function waterCollection() {
   else if (weather === "snow" && ceil(temp) >= coldLimit) {
     temp -= 0.5;
   }
+
   else {
-    if (weather === "sunny") {
-      temp--;
+    if(weather === "sunny") {
+      temp --;
       temp = floor(temp);
     }
   }
 
+
   noStroke();
-  if (weather === "snow" && temp < 125) {
-    fill(255 - temp, 255 - temp, 255, temp + 90);
+  if (temp < 125) {
+    fill(255 - temp, 255 - temp, 255, 125);
   }
   else {
     fill(255 - temp, 255 - temp, 255, 255);
   }
 
-  rect(0, collectionHeight, width,dropCounter * 0.02);
+  rect(0, collectionHeight, width,dropCounter * 0.01);
+}
+
+function keyTyped () {
+  //Wind logic
+  if (key === "a") {
+    if (weather === "rain" || weather === "thunder") {
+      for (let i=weatherLists.rain.length-1; i>0; i--) {
+        if (weatherLists.rain[i].dx > -50) {
+          weatherLists.rain[i].dx -= 5;
+        }
+      }
+    }
+    else if (weather === "snow") {
+      for (let i=weatherLists.snow.length-1; i>0; i--) {
+        if (weatherLists.snow[i].dx > -50) {
+          weatherLists.snow[i].dx -= 5;
+        }
+      }
+    }
+  }
+  else if (key === "d") {
+    if (weather === "rain" || weather === "thunder") {
+      for (let i=weatherLists.rain.length-1; i>0; i--) {
+        if (weatherLists.rain[i].dx < 50) {
+          weatherLists.rain[i].dx += 5;
+        }
+      }
+    }
+    else if (weather === "snow") {
+      for (let i=weatherLists.snow.length-1; i>0; i--) {
+        if (weatherLists.snow[i].dx < 50) {
+          weatherLists.snow[i].dx += 5;
+        }
+      }
+    }
+  }
 }
