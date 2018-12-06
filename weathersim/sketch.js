@@ -16,6 +16,8 @@
 
 //Classes
 
+//p5.gui didn't work
+
 class Raindrop  {
   constructor() {
     //All the stuff that defines a raindrop
