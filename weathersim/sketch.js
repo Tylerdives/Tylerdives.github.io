@@ -38,7 +38,7 @@ class Raindrop  {
     }
     else {
       this.touchingGround = false;
-      this.dy += 0.2;
+      this.dy += 0.1;
       this.y += this.dy;
 
       //Makes the wind effects
@@ -156,7 +156,7 @@ class Steam {
     this.dx = 0.01;
     this.dy = 5;
     this.radius = random(3, 8);
-    this.color = color(150, 150, 160, 140);
+    this.color = color(180, 180, 190, 80);
     this.touchingGround = false;
     //I mean touching top, but to reuse functions, it had to be called this :(
   }
@@ -246,6 +246,7 @@ class GuiButton {
         //Change the weather
         weather = this.weather;
         this.selected = true;
+        noMusic = true;
 
       }
     }
@@ -260,10 +261,10 @@ class GuiButton {
 class Cloud {
   constructor(img) {
     //loacation of cloud and setting the img... size too
-    this.x = -100;
+    this.x = 0;
     this.width = img.width * 3.25;
     this.height = img.height * 1.75;
-    this.y = -400;
+    this.y = 0;
     this.img = img;
 
   }
@@ -286,6 +287,7 @@ class Cloud {
 
   }
 }
+
 //makes  a big mr sunshine
 class Sun {
   constructor(){
@@ -293,20 +295,29 @@ class Sun {
     this.x = width;
     this.y = 100;
     this.radius = 500;
+    this.color = color(random(225, 255), random(225, 255), 0);
   }
 
   display(){
     //changing the color of sun depedning on weather
     noStroke();
-    if(weather === "sunny"){
-      fill(255,255,0);
-    }
-    else {
-      fill(175,175,0);
-    }
+    fill(this.color);
     ellipse(this.x,this.y,this.radius,this.radius);
   }
+
+  move() {
+    //moves the sun out when not sunny weather and moves in during sun
+    if(this.x - this.radius/2 <= width && weather !== "sunny") {
+      this.x += 2;
+    }
+    else if (this.x + this.radius/2 >= width && weather === "sunny") {
+      this.x -= 2;
+    }
+  }
+
+
 }
+
 
 //here are some variables
 let dropCounter = 0;
@@ -315,7 +326,7 @@ let weather;
 let noRain;
 let noSnow;
 let lightning;
-let lightningRarity = 3;
+let lightningRarity = 2;
 let temp = 255;
 let changeCooldown;
 let sun;
@@ -328,13 +339,15 @@ let coldLimit = 0;
 
 
 //sounds!
+let noMusic;
 let thunderSound;
-let rainDrop;
-let birds;
+let lightRain, heavyRain;
+let sunnyBirds;
+let christmasMusic;
 
 
 //Images !
-let cloud;
+// let cloud;
 
 
 let rainImage, snowImage, sunImage, thunderImage;
@@ -345,19 +358,22 @@ let weatherLists = {
   rain: [],
   snow: [],
   steam: [],
-  cloud: [],
+  // cloud: [],
 };
 
 function preload() {
   thunderSound = loadSound("assets/thunder.wav");
-  rainDrop = loadSound("assets/rain.wav");
+  lightRain = loadSound("assets/lightRain.wav");
+  heavyRain = loadSound("assets/heavyRain.wav");
+  sunnyBirds = loadSound("assets/birds.mp3");
+  christmasMusic = loadSound("assets/winterMusic.wav");
 
   rainImage = loadImage("assets/rainImage.JPG");
   snowImage = loadImage("assets/snowImage.JPG");
   sunImage = loadImage("assets/sunImage.JPG");
   thunderImage = loadImage("assets/thunderImage.jpg");
 
-  cloud = loadImage("assets/cloud.jpg");
+  // cloud = loadImage("assets/cloud.jpg");
 }
 
 function setup() {
@@ -365,6 +381,7 @@ function setup() {
   weather = "rain";
   noRain = true;
   noSnow = true;
+  noMusic = true;
 
   rainButton = new GuiButton("rain", rainImage, 0, true);
   sunnyButton = new GuiButton("sunny", sunImage, 100, false);
@@ -372,7 +389,7 @@ function setup() {
   thunderButton = new GuiButton("thunder", thunderImage, 300, false);
   sun = new Sun();
 
-  generatePrecipitation(weatherLists.cloud, 2, "cloud");
+  // generatePrecipitation(weatherLists.cloud, 2, "cloud");
 }
 
 function draw() {
@@ -388,15 +405,63 @@ function draw() {
   else if (weather === "sunny") {
     sunny();
   }
+
+  if (noMusic) {
+    playMusic();
+  }
+
   waterCollection();
+  sun.move();
   sun.display();
-  displayClouds();
+
+  // displayClouds();
 
   displayGui();
 
 }
 
+function playMusic() {
+  if (weather === "rain") {
+    lightRain.stop();
+    sunnyBirds.stop();
+    heavyRain.stop();
+    christmasMusic.stop();
+    lightRain.setVolume(0.4);
+    lightRain.loop();
+  }
+
+  else if (weather === "thunder") {
+    lightRain.stop();
+    sunnyBirds.stop();
+    heavyRain.stop();
+    christmasMusic.stop();
+    heavyRain.setVolume(0.6);
+    heavyRain.loop();
+  }
+
+  else if (weather === "sunny") {
+    lightRain.stop();
+    sunnyBirds.stop();
+    heavyRain.stop();
+    christmasMusic.stop();
+    sunnyBirds.setVolume(0.4);
+    sunnyBirds.loop();
+  }
+
+  else if (weather === "snow"){
+    lightRain.stop();
+    sunnyBirds.stop();
+    heavyRain.stop();
+    christmasMusic.stop();
+    christmasMusic.setVolume(0.6);
+    christmasMusic.loop();
+  }
+
+  noMusic = false;
+}
+
 function displayGui() {
+
   rainButton.display();
   snowButton.display();
   sunnyButton.display();
@@ -424,6 +489,7 @@ function displayGui() {
 }
 
 function displayClouds() {
+  //Clouds aren't working atm
   for(let i = weatherLists.cloud.length-1; i > 0; i--) {
     // weatherLists.cloud[i].update();
     weatherLists.cloud[i].display();
@@ -491,20 +557,6 @@ function sunny() {
   displayPrecipitation(weatherLists.steam, 0);
 }
 
-function deviceShaken() {
-  if(weather === "rain") {
-    weather = "snow";
-  }
-  else if(weather === "snow") {
-    weather = "sunny";
-  }
-  else if (weather === "sunny") {
-    weather = "thunder";
-  }
-  else if (weather === "thunder") {
-    weather = "rain";
-  }
-}
 
 function displayPrecipitation(precip, type) {
   collectionHeight = height - dropCounter * 0.01;
@@ -543,6 +595,7 @@ function generatePrecipitation(list, amount, type) {
     }
     noSnow = false;
   }
+  //Clouds aren't working properly, they don't show up and lag
   else if (type === "cloud") {
     for (let i = 0; i < amount; i++) {
       let someCloud = new Cloud(cloud);
