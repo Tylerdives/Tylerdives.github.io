@@ -11,7 +11,6 @@ I want to build a diving game (simulator). It will be a diving game with boards,
 - Tuck position (increased rotational speed)
 - Dive scoring with angle of entry(one score)
 - Forward Dives
-- Backwards Dives
 - Dive logic (tap of the button)
 - menu
 - Splash sound
@@ -30,6 +29,7 @@ I want to build a diving game (simulator). It will be a diving game with boards,
 - Water splash physics
 - Pike position
 - Twisters
+- Backwards Dives
 - Reverse Dives
 - Inward Dives
 - Handstands
