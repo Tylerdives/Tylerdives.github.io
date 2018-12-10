@@ -1,4 +1,4 @@
-# Proposal
+# CS30 final project Proposal
 
 I want to build a diving game (simulator). It will be a diving game with boards, positions and scoring.
 
