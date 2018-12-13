@@ -53,10 +53,10 @@ class Player {
   }
 
   rotatePlayer() {
-    push();
-    translate(this.x + 25, this.y + 75);
-    rotate(45);
-    pop();
+    translate(this.x, this.y);
+    rotate(this.angle);
+    this.angle += 3;
+
   }
 
   reset() {
@@ -89,10 +89,13 @@ function setup() {
 
 function draw() {
   background(255);
-  drawPlayer();
+
+  push();
   if (player.go) {
     updatePlayer();
   }
+  drawPlayer();
+  pop()
   drawPool();
 
 }
