@@ -4,9 +4,9 @@
 //
 
 class Player {
-  constructor(boardHeight) {
-    this.initX = width/2 - 50;
-    this.initY = height/10 ;
+  constructor(boardHeight, tuckSpeed) {
+    this.initX = width/2;
+    this.initY = height/2;
 
     this.x = this.initX;
     this.y = this.initY;
@@ -22,46 +22,68 @@ class Player {
     this.angle = 0;
     this.go = false;
 
-    this.position = "straight";
+    this.tuckSpinSpeed = 3;
+
+    this.position = "layout";
   }
 
-  display() {
-    fill(this.bodyColor);
-    if (this.position === "tuck") {
-      fill(0);
+
+  update() {
+    if (this.position === "layout") {
+      this.angle += 1;
     }
-    rect(this.x, this.y, this.width, this.height);
-    fill(this.headColor);
-    rect(this.x, this.y, this.width, 20);
-    fill(this.feetColor);
-    rect(this.x, this.y + 70, this.width, 20);
-  }
-
-  fall() {
+    else if (this.position === "tuck") {
+      this.angle += this.tuckSpinSpeed;
+      this.tuckSpinSpeed += 0.01;
+    }
+    else if (this.position === "straight") {
+      this.angle += 2;
+      this.tuckSpinSpeed = 3;
+    }
     this.y += this.dy;
     this.dy += 0.090;
-
-    this.x += this.dx;
+    this.x+= this.dx;
     if (this.dx > 0.1) {
       this.dx -= 0.01;
     }
   }
 
-  float() {
-    this.y -= 0.01;
-    // this.x += random(-0.2, 0.2);
+  display() {
+    push();
+    translate(this.x, this.y);
+
+    if (this.go) {
+      rotate(this.angle);
+    }
+    fill(this.bodyColor);
+    if (this.position === "tuck") {
+      fill(0);
+    }
+
+    rect(0 - this.width/2, 0 - this.height/2, this.width, this.height);
+    fill(this.headColor);
+    rect(0 - this.width/2, 0 - this.height/2, this.width, 20);
+    fill(this.feetColor);
+    rect(0 - this.width/2, 0 + 70 - this.height/2, this.width, 20);
+    strokeWeight(10);
+    point(0, 0);
+    strokeWeight(1);
+    pop();
   }
 
-  rotatePlayer() {
-    translate(this.x, this.y);
-    rotate(this.angle);
-    this.angle += 3;
+  swim() {
+    this.y += this.dy;
+    if (this.y > height + 100) {
+      this.dy = -8;
+      this.angle = 0;
+    }
+    this.dy += 0.1;
 
   }
 
   reset() {
-    this.initX = width/2 - 50;
-    this.initY = height/10 ;
+    this.initX = width/2;
+    this.initY = 150 ;
 
     this.x = this.initX;
     this.y = this.initY;
@@ -73,7 +95,9 @@ class Player {
     this.angle = 0;
     this.go = false;
 
-    this.position = "straight";
+    this.tuckSpinSpeed = 3;
+
+    this.position = "layout";
   }
 }
 
@@ -90,12 +114,11 @@ function setup() {
 function draw() {
   background(255);
 
-  push();
   if (player.go) {
     updatePlayer();
   }
+
   drawPlayer();
-  pop()
   drawPool();
 
 }
@@ -105,7 +128,7 @@ function drawPool() {
   rect(0, height-100, width, 100);
 
   fill(0, 255, 0);
-  rect(0 , player.initY + player.height, player.initX  + 30, 10);
+  // rect(0 , player.initY + player.height, player.initX  + 30, 10);
 }
 
 function drawPlayer() {
@@ -113,29 +136,22 @@ function drawPlayer() {
 }
 
 function updatePlayer() {
-  player.rotatePlayer();
-  if (player.y < height + 200) {
-    player.fall();
-
-    if(player.y < height - 100) {
-      if (mouseIsPressed) {
-        player.position = "tuck";
-      }
-      else {
-        player.position = "straight";
-      }
+  if (player.y < height - 100) {
+    player.update();
+    if (mouseIsPressed) {
+      player.position = "tuck";
     }
-
-    else {
-      // score();
+    else if (player.position !== "layout"){
+      player.position = "straight";
     }
   }
   else {
-    // while(player.y + player.height> height - 150) {
-    //   player.float();
-    //   console.log(1)
-    // }
-    player.reset();
+    if(player.y > height - 100) {
+      player.swim();
+    }
+    else {
+      player.reset();
+    }
   }
 }
 
