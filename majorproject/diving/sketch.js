@@ -6,7 +6,7 @@
 class Player {
   constructor(boardHeight, tuckSpeed) {
     this.initX = width/2;
-    this.initY = height/2;
+    this.initY = 100;
 
     this.x = this.initX;
     this.y = this.initY;
@@ -22,9 +22,14 @@ class Player {
     this.angle = 0;
     this.go = false;
 
-    this.tuckSpinSpeed = 3;
+    this.tuckSpinSpeed = 1.5;
+    this.tuckSpinIncrease = 0.05;
 
     this.position = "layout";
+    this.straightened = false;
+    this.secondTuck = false;
+
+    this.direction = "1";
   }
 
 
@@ -34,14 +39,28 @@ class Player {
     }
     else if (this.position === "tuck") {
       this.angle += this.tuckSpinSpeed;
-      this.tuckSpinSpeed += 0.01;
+      this.tuckSpinSpeed += this.tuckSpinIncrease;
+      if(this.straightened) {
+        this.secondTuck = true;
+      }
     }
+
     else if (this.position === "straight") {
-      this.angle += 2;
-      this.tuckSpinSpeed = 3;
+      //Straight is after spinning
+      if(this.angle < 90) {
+        this.position = "layout";
+      }
+
+      else {
+        this.angle += this.tuckSpinSpeed/2.5;
+      }
+      if (this.tuckSpinSpeed > 3) {
+        this.tuckSpinSpeed -= 0.02;
+      }
+      this.straightened = true;
     }
     this.y += this.dy;
-    this.dy += 0.090;
+    this.dy += 0.093;
     this.x+= this.dx;
     if (this.dx > 0.1) {
       this.dx -= 0.01;
@@ -73,17 +92,20 @@ class Player {
 
   swim() {
     this.y += this.dy;
-    if (this.y > height + 100) {
-      this.dy = -8;
-      this.angle = 0;
+    if (this.dy !== 5) {
+      if(this.y > height + 100) {
+        return true;
+      }
     }
-    this.dy += 0.1;
+    else {
+      return false;
+    }
 
   }
 
   reset() {
-    this.initX = width/2;
-    this.initY = 150 ;
+    // this.initX = this.initX;
+    // this.initY = this.initY;
 
     this.x = this.initX;
     this.y = this.initY;
@@ -92,12 +114,19 @@ class Player {
     this.dx = 2;
     this.dy = -4;
 
+    this.bodyColor = color(255, 0, 0);
+    this.headColor = color(0, 255, 0);
+    this.feetColor = color(255, 255, 0);
+
     this.angle = 0;
     this.go = false;
 
-    this.tuckSpinSpeed = 3;
+    this.tuckSpinSpeed = 1.5;
+    // this.tuckSpinIncrease = 0.02;
 
     this.position = "layout";
+    this.straightened = false;
+    this.secondTuck = false;
   }
 }
 
@@ -116,6 +145,7 @@ function draw() {
 
   if (player.go) {
     updatePlayer();
+    // console.log(player.position)
   }
 
   drawPlayer();
@@ -146,17 +176,38 @@ function updatePlayer() {
     }
   }
   else {
-    if(player.y > height - 100) {
-      player.swim();
-    }
-    else {
+    if (player.swim()) {
+      defineDive();
+      // score();
       player.reset();
     }
   }
+}
+
+function defineDive() {
+  let diveNumber = "";
+
+  diveNumber += player.direction;
+  diveNumber += "0";
+
+  let rotations = round(player.angle/180);
+  diveNumber += rotations.toString();
+
+  if(player.straightened) {
+    diveNumber += "c";
+  }
+  else {
+    diveNumber += "a";
+  }
+  console.log(diveNumber);
 }
 
 function keyTyped() {
   if (key === " ") {
     player.go = true;
   }
+}
+
+function mousePressed() {
+  player.go = true;
 }
