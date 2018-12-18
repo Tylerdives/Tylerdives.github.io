@@ -5,6 +5,8 @@
 
 class Player {
   constructor(boardHeight, tuckSpeed) {
+    this.boardHeight = boardHeight;
+
     this.initX = width/2;
     this.initY = 100;
 
@@ -41,6 +43,7 @@ class Player {
       this.angle += this.tuckSpinSpeed;
       this.tuckSpinSpeed += this.tuckSpinIncrease;
       if(this.straightened) {
+        // this.tuckSpinSpeed = this.tuckSpinSpeed/1.5;
         this.secondTuck = true;
       }
     }
@@ -140,6 +143,7 @@ function setup() {
   player = new Player(0);
 }
 
+
 function draw() {
   background(255);
 
@@ -158,7 +162,7 @@ function drawPool() {
   rect(0, height-100, width, 100);
 
   fill(0, 255, 0);
-  // rect(0 , player.initY + player.height, player.initX  + 30, 10);
+  rect(0, player.height * 1.5 + 10, player.initX + player.width/2, 10);
 }
 
 function drawPlayer() {
@@ -178,10 +182,34 @@ function updatePlayer() {
   else {
     if (player.swim()) {
       defineDive();
-      // score();
+      score(5);
       player.reset();
     }
   }
+}
+
+function score(judges, fail) {
+  let score;
+  let dive = round(player.angle/180) * 180;
+  let allScores = [];
+  for(let i = 0; i < judges; i++) {
+    score = player.angle;
+    score = abs(dive-score);
+    score = score/90;
+    if (random(100) < 50) {
+      score = ceil(score*20)/2;
+    }
+    else {
+      score = floor(score*20)/2;
+    }
+    // score = round(score*20)/2;
+
+
+    score = 10-score;
+    allScores.push(score);
+  }
+
+  console.log(allScores);
 }
 
 function defineDive() {
@@ -193,7 +221,7 @@ function defineDive() {
   let rotations = round(player.angle/180);
   diveNumber += rotations.toString();
 
-  if(player.straightened) {
+  if(player.straightened || player.position === "tuck") {
     diveNumber += "c";
   }
   else {
