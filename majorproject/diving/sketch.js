@@ -14,7 +14,7 @@ class Player {
     this.y = this.initY;
     this.width = 30;
     this.height = 90;
-    this.dx = 2;
+    this.dx = 1.75;
     this.dy = -4;
 
     this.bodyColor = color(255, 0, 0);
@@ -27,17 +27,51 @@ class Player {
     this.tuckSpinSpeed = 1.5;
     this.tuckSpinIncrease = 0.05;
 
+    this.layoutSpeed = 1;
     this.position = "layout";
     this.straightened = false;
     this.secondTuck = false;
 
     this.direction = "1";
+
+    this.facing = "forwards";
+    this.spin = "forwards";
   }
 
 
   update() {
+    if(this.direction === 1 || this.direction === 3) {
+      this.facing = "forwards";
+      if(this.direction === 3) {
+        this.spin = "backwards";
+      }
+      else {
+        this.spin = "forwards";
+      }
+    }
+    else if(this.direction === 2 || this.direction === 4) {
+      this.facing = "backwards";
+      if (this.direction === 4) {
+        this.spin = "backwards";
+      }
+      else {
+        this.spin = "forwards";
+      }
+    }
+
+    if(this.spin === "forwards" && this.tuckSpinSpeed < 0) {
+      this.tuckSpinSpeed = -1 * this.tuckSpinSpeed;
+      this.layoutSpeed = -1 * this.layoutSpeed;
+      this.tuckSpinIncrease = -1 * this.tuckSpinIncrease;
+    }
+    else if(this.spin === "backwards" && this.tuckSpinSpeed > 0) {
+      this.tuckSpinSpeed = -1 * this.tuckSpinSpeed;
+      this.layoutSpeed = -1 * this.layoutSpeed;
+      this.tuckSpinIncrease = -1 * this.tuckSpinIncrease;
+    }
+
     if (this.position === "layout") {
-      this.angle += 1;
+      this.angle += this.layoutSpeed;
     }
     else if (this.position === "tuck") {
       this.angle += this.tuckSpinSpeed;
@@ -50,11 +84,12 @@ class Player {
 
     else if (this.position === "straight") {
       //Straight is after spinning
-      if(this.angle < 90) {
+      if(this.angle < 90 && this.angle > -90) {
         this.position = "layout";
       }
 
       else {
+        // console.log(this.tuckSpinIncrease)
         this.angle += this.tuckSpinSpeed/2.5;
       }
       if (this.tuckSpinSpeed > 3) {
@@ -64,7 +99,7 @@ class Player {
     }
     this.y += this.dy;
     this.dy += 0.093;
-    this.x+= this.dx;
+    this.x += this.dx;
     if (this.dx > 0.1) {
       this.dx -= 0.01;
     }
@@ -114,7 +149,7 @@ class Player {
     this.y = this.initY;
     this.width = 30;
     this.height = 90;
-    this.dx = 2;
+    this.dx = 1.75;
     this.dy = -4;
 
     this.bodyColor = color(255, 0, 0);
@@ -125,11 +160,16 @@ class Player {
     this.go = false;
 
     this.tuckSpinSpeed = 1.5;
-    // this.tuckSpinIncrease = 0.02;
+    this.tuckSpinIncrease = 0.05;
 
     this.position = "layout";
     this.straightened = false;
     this.secondTuck = false;
+    this.layoutSpeed = 1;
+    this.direction = "1";
+
+    this.facing = "forwards";
+    this.spin = "forwards";
   }
 }
 
@@ -182,7 +222,7 @@ function updatePlayer() {
   else {
     if (player.swim()) {
       defineDive();
-      score(5);
+      score(3);
       player.reset();
     }
   }
@@ -195,17 +235,24 @@ function score(judges, fail) {
   for(let i = 0; i < judges; i++) {
     score = player.angle;
     score = abs(dive-score);
-    score = score/90;
-    if (random(100) < 50) {
-      score = ceil(score*20)/2;
-    }
-    else {
-      score = floor(score*20)/2;
-    }
-    // score = round(score*20)/2;
+    score = score/random(70, 110);
+    // if (random(100) < 50) {
+    //   score = ceil(score*20)/2;
+    // }
+    // else {
+    //   score = floor(score*20)/2;
+    // }
+
+    score = round(score*20)/2;
 
 
-    score = 10-score;
+
+    score = abs(10-score);
+    if(player.secondTuck || player.position === "tucl") {
+      if (score > 4.5) {
+        score = score - 3;
+      }
+    }
     allScores.push(score);
   }
 
@@ -233,6 +280,15 @@ function defineDive() {
 function keyTyped() {
   if (key === " ") {
     player.go = true;
+  }
+  if (key === "p" && !player.go) {
+    if(player.spin === "forwards") {
+      player.spin = "backwards";
+    }
+    else if (player.spin === "backwards") {
+      player.spin = "forwards";
+    }
+
   }
 }
 
