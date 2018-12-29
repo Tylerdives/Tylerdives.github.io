@@ -32,10 +32,12 @@ class Player {
     this.straightened = false;
     this.secondTuck = false;
 
-    this.direction = "1";
+    this.direction = 1;
 
     this.facing = "forwards";
     this.spin = "forwards";
+
+    this.didFail = false;
   }
 
 
@@ -120,6 +122,16 @@ class Player {
     rect(0 - this.width/2, 0 - this.height/2, this.width, this.height);
     fill(this.headColor);
     rect(0 - this.width/2, 0 - this.height/2, this.width, 20);
+    fill(0, 0, 255);
+
+    if(this.direction === 1 || this.direction === 3) {
+      rect(0, 0 - this.height/2, this.width/2, 20);
+    }
+
+    else {
+      rect(0 - this.width/2, 0 - this.height/2, this.width/2, 20);
+    }
+
     fill(this.feetColor);
     rect(0 - this.width/2, 0 + 70 - this.height/2, this.width, 20);
     strokeWeight(10);
@@ -166,12 +178,18 @@ class Player {
     this.straightened = false;
     this.secondTuck = false;
     this.layoutSpeed = 1;
-    this.direction = "1";
+    this.direction = 1;
 
     this.facing = "forwards";
     this.spin = "forwards";
+
+    this.didFail = false;
   }
 }
+
+
+let mode;
+
 
 let player;
 
@@ -222,7 +240,7 @@ function updatePlayer() {
   else {
     if (player.swim()) {
       defineDive();
-      score(3);
+      score(3, player.didFail);
       player.reset();
     }
   }
@@ -236,27 +254,28 @@ function score(judges, fail) {
     score = player.angle;
     score = abs(dive-score);
     score = score/random(70, 110);
-    // if (random(100) < 50) {
-    //   score = ceil(score*20)/2;
-    // }
-    // else {
-    //   score = floor(score*20)/2;
-    // }
-
     score = round(score*20)/2;
 
-
-
-    score = abs(10-score);
-    if(player.secondTuck || player.position === "tucl") {
-      if (score > 4.5) {
-        score = score - 3;
+    if(!fail) {
+      score = abs(10-score);
+      if(player.secondTuck || player.position === "tucl") {
+        if (score > 3.0) {
+          score = score - 3;
+        }
       }
+      allScores.push(score);
     }
-    allScores.push(score);
-  }
 
-  console.log(allScores);
+    else {
+      score = 0;
+      allScores.push(score);
+    }
+
+
+
+
+  }
+    console.log(allScores);
 }
 
 function defineDive() {
@@ -265,7 +284,7 @@ function defineDive() {
   diveNumber += player.direction;
   diveNumber += "0";
 
-  let rotations = round(player.angle/180);
+  let rotations = abs(round(player.angle/180));
   diveNumber += rotations.toString();
 
   if(player.straightened || player.position === "tuck") {
@@ -281,17 +300,17 @@ function keyTyped() {
   if (key === " ") {
     player.go = true;
   }
-  if (key === "p" && !player.go) {
-    if(player.spin === "forwards") {
-      player.spin = "backwards";
-    }
-    else if (player.spin === "backwards") {
-      player.spin = "forwards";
-    }
 
+  if (key === "p" && !player.go) {
+    if (player.direction < 4) {
+      player.direction++;
+    }
+    else {
+      player.direction = 1;
+    }
   }
 }
 
-function mousePressed() {
-  player.go = true;
-}
+// function mousePressed() {
+//   player.go = true;
+// }

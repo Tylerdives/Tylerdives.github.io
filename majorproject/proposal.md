@@ -15,6 +15,7 @@ I want to build a diving game (simulator). It will be a diving game with boards,
 - menu
 - Splash sound
 - Competition (2)
+- Gui
 
 ## Nice to Have List
 - Making it actually look good
