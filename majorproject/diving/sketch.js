@@ -20,6 +20,7 @@ class Player {
     this.bodyColor = color(255, 0, 0);
     this.headColor = color(0, 255, 0);
     this.feetColor = color(255, 255, 0);
+    this.faceColor = color(0, 0, 255);
 
     this.angle = 0;
     this.go = false;
@@ -122,8 +123,8 @@ class Player {
     rect(0 - this.width/2, 0 - this.height/2, this.width, this.height);
     fill(this.headColor);
     rect(0 - this.width/2, 0 - this.height/2, this.width, 20);
-    fill(0, 0, 255);
 
+    fill(this.faceColor);
     if(this.direction === 1 || this.direction === 3) {
       rect(0, 0 - this.height/2, this.width/2, 20);
     }
@@ -167,6 +168,7 @@ class Player {
     this.bodyColor = color(255, 0, 0);
     this.headColor = color(0, 255, 0);
     this.feetColor = color(255, 255, 0);
+    this.faceColor = color(0, 0, 255);
 
     this.angle = 0;
     this.go = false;
@@ -188,21 +190,68 @@ class Player {
 }
 
 
-let mode;
 
+class PracticeDisplay {
+  constructor(scores) {
+    this.width = width/10;
+    this.height = height/10;
+    this.x = width/2 - this.width;
+    this.y = height/2 - this.height;
+
+    this.color = color(0, 0, 255);
+    this.borderColor = color(0, 0, 0);
+    this.score = scores;
+    this.diveNumber = diveDone;
+
+    this.initTime = millis();
+    this.displayTime = 2000;
+  }
+
+  display() {
+    fill(this.color);
+    stroke(this.borderColor);
+    rect(this.x, this.y, this.width, this.height);
+    stroke(0);
+  }
+}
+
+
+
+
+
+let gameState;
 
 let player;
+
+let degreeOfDifficulty;
+let diveDone;
 
 
 function setup() {
   angleMode(DEGREES);
   createCanvas(windowWidth, windowHeight);
 
+  gameState = 3;
+  //Guide to gameState
+  //0 = Main menu
+  //1 = Selection menu
+  //2 = Practice menu
+  //3 = Practice
+  //4 = Competition menu
+  //5 = Competition
+  //6 = Settings
+
+
   player = new Player(0);
 }
 
 
 function draw() {
+
+  // if(gameState === 0) {
+  //   mainMenu();
+  // }
+
   background(255);
 
   if (player.go) {
@@ -239,9 +288,21 @@ function updatePlayer() {
   }
   else {
     if (player.swim()) {
-      defineDive();
-      score(3, player.didFail);
-      player.reset();
+      if(gameState === 3) {
+        player.didFail = false;
+        defineDive();
+        let diveDisplay = new PracticeDisplay(score(1, player.didFail));
+        while(millis() - diveDisplay.initTime < 2000){
+          diveDisplay.display();
+          console.log("pinecone")
+        }
+        player.reset();
+      }
+      else if(gameState === 5) {
+        defineDive();
+        score(3, player.didFail);
+      }
+
     }
   }
 }
@@ -271,11 +332,9 @@ function score(judges, fail) {
       allScores.push(score);
     }
 
-
-
-
-  }
     console.log(allScores);
+    return allScores;
+  }
 }
 
 function defineDive() {
@@ -294,7 +353,9 @@ function defineDive() {
     diveNumber += "a";
   }
   console.log(diveNumber);
+  diveDone = diveNumber;
 }
+
 
 function keyTyped() {
   if (key === " ") {
@@ -311,6 +372,6 @@ function keyTyped() {
   }
 }
 
-// function mousePressed() {
-//   player.go = true;
-// }
+function deviceShaken() {
+  player.go = true;
+}
