@@ -191,26 +191,6 @@ class Player {
 
 
 
-class PracticeDisplay {
-  constructor(scores) {
-    this.width = width/10;
-    this.height = height/10;
-    this.x = width/2 - this.width;
-    this.y = height/2 - this.height;
-
-    this.color = color(0, 0, 255);
-    this.borderColor = color(0, 0, 0);
-    this.score = scores;
-    this.diveNumber = diveDone;
-
-    this.initTime = millis();
-    this.displayTime = 2000;
-  }
-
-  display() {
-
-  }
-}
 
 
 
@@ -263,7 +243,7 @@ function draw() {
   drawPlayer();
   drawPool();
   if(finishedDive && !player.go) {
-    if(millis() < initTime + 2000) {
+    if(millis() < initTime + 3000) {
       practiceDisplay();
     }
     else {
@@ -273,9 +253,17 @@ function draw() {
 }
 
 function drawPool() {
-  fill(0, 0, 100, 200);
+  fill(0, 0, 100, 220);
   rect(0, height-100, width, 100);
+  fill(242, 242, 210);
 
+  rect(0, height-102, 50, 102);
+  rect(width-50, height-102, 50, 102);
+  stroke(242, 242, 210);
+  rect(0, height-20, width, 20);
+  stroke(0);
+
+  stroke(0);
   fill(0, 255, 0);
   rect(0, player.height * 1.5 + 10, player.initX + player.width/2, 10);
 }
@@ -315,16 +303,19 @@ function updatePlayer() {
 }
 
 function practiceDisplay() {
+
   let boxWidth = width/6;
   let boxHeight = height/6;
   let boxY = height/2 - boxHeight/2;
   let boxX = width/2 - boxWidth/2;
+
   fill(156, 255, 255);
   strokeWeight(4);
   stroke(0);
-  rect(boxX, boxY, boxWidth, boxHeight);
 
+  rect(boxX, boxY, boxWidth, boxHeight);
   line(boxX, boxY + boxHeight/2, boxX + boxWidth, boxY + boxHeight/2);
+
   strokeWeight(1);
   textAlign(CENTER, CENTER);
   textSize(28);
@@ -361,7 +352,6 @@ function score(judges, fail) {
       allScores.push(score);
     }
 
-    console.log(allScores);
     return allScores;
   }
 }
@@ -381,7 +371,6 @@ function defineDive() {
   else {
     diveNumber += "a";
   }
-  console.log(diveNumber);
   diveDone = diveNumber;
 }
 
