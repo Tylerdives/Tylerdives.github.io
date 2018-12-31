@@ -208,10 +208,7 @@ class PracticeDisplay {
   }
 
   display() {
-    fill(this.color);
-    stroke(this.borderColor);
-    rect(this.x, this.y, this.width, this.height);
-    stroke(0);
+
   }
 }
 
@@ -225,12 +222,16 @@ let player;
 
 let degreeOfDifficulty;
 let diveDone;
+let finishedDive;
+let lastScores;
+
+let initTime;
 
 
 function setup() {
   angleMode(DEGREES);
   createCanvas(windowWidth, windowHeight);
-
+  finishedDive = false;
   gameState = 3;
   //Guide to gameState
   //0 = Main menu
@@ -254,14 +255,21 @@ function draw() {
 
   background(255);
 
+
   if (player.go) {
     updatePlayer();
     // console.log(player.position)
   }
-
   drawPlayer();
   drawPool();
-
+  if(finishedDive && !player.go) {
+    if(millis() < initTime + 2000) {
+      practiceDisplay();
+    }
+    else {
+      finishedDive = false;
+    }
+  }
 }
 
 function drawPool() {
@@ -291,12 +299,11 @@ function updatePlayer() {
       if(gameState === 3) {
         player.didFail = false;
         defineDive();
-        let diveDisplay = new PracticeDisplay(score(1, player.didFail));
-        while(millis() - diveDisplay.initTime < 2000){
-          diveDisplay.display();
-          console.log("pinecone")
-        }
+        lastScores = score(1, player.didFail);
         player.reset();
+        finishedDive = true;
+        initTime = millis();
+
       }
       else if(gameState === 5) {
         defineDive();
@@ -306,6 +313,28 @@ function updatePlayer() {
     }
   }
 }
+
+function practiceDisplay() {
+  let boxWidth = width/6;
+  let boxHeight = height/6;
+  let boxY = height/2 - boxHeight/2;
+  let boxX = width/2 - boxWidth/2;
+  fill(156, 255, 255);
+  strokeWeight(4);
+  stroke(0);
+  rect(boxX, boxY, boxWidth, boxHeight);
+
+  line(boxX, boxY + boxHeight/2, boxX + boxWidth, boxY + boxHeight/2);
+  strokeWeight(1);
+  textAlign(CENTER, CENTER);
+  textSize(28);
+  let score = lastScores[0].toString();
+  fill(0);
+  text(diveDone, boxX + boxWidth/2, boxY + boxHeight/4);
+  text("Average score: " + score, boxX + boxWidth/2, boxY + boxHeight/4 * 3);
+
+}
+
 
 function score(judges, fail) {
   let score;
