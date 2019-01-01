@@ -198,34 +198,63 @@ class DivingButton {
     this.color = color(255, 0, 255);
     this.hoveringColor = color(100, 100, 255);
     this.changeColor = color(0, 255, 0);
-    this.available = true;
+    this.available = false;
     this.whatToChange = playerThing;
     this.changeTo = changeTo;
+    this.on = false;
   }
 
   display() {
-    if(collidePointCircle(mouseX, mouseY, this.x, this.y, this.radius*2)) {
-      fill(this.hoveringColor);
-      if(mouseIsPressed) {
-        fill(this.changeColor);
-        if(this.whatToChange === "go") {
-          if(player.go !== true) {
-            this.available =
-            //WAS WORKING HERE LAST
-            player.go = this.changeTo;
+    if(this.available) {
+      if(collidePointCircle(mouseX, mouseY, this.x, this.y, this.radius*2)) {
+        fill(this.hoveringColor);
+        if(mouseIsPressed) {
+          fill(this.changeColor);
+          if(this.whatToChange === "go") {
+            if(player.go !== true) {
+              //WAS WORKING HERE LAST
+              player.go = this.changeTo;
+              this.on = true;
+            }
+            else {
+              this.available = false;
+            }
           }
-          else {
-            this.available = false;
+
+          else if(this.whatToChange === "position") {
+            if(player.go) {
+              player.position = this.changeTo;
+              this.on = true;
+            }
+            else {
+              this.available = false;
+            }
+
           }
+          // console.log(this.whatToChange, this.changeTo )
         }
-        else if(this.whatToChange === "position") {
-          player.position = this.changeTo;
+        else {
+          this.on = false;
         }
-        // console.log(this.whatToChange, this.changeTo )
+      }
+      else {
+        fill(this.color);
       }
     }
     else {
-      fill(this.color);
+      if(player.go === false && this.whatToChange === "go") {
+        this.available = true;
+      }
+
+      else if(player.go === true && this.whatToChange === "position") {
+        this.available = true;
+      }
+
+      else {
+        this.available = false;
+      }
+
+      fill(160)
     }
 
     ellipse(this.x, this.y, this.radius*2, this.radius*2);
@@ -249,6 +278,7 @@ let lastScores;
 let initTime;
 let tuckButton, goButton;
 
+let frontButton, backButton, reverseButton, inwardButton;
 
 function setup() {
   angleMode(DEGREES);
@@ -267,7 +297,9 @@ function setup() {
 
   player = new Player(0);
   goButton = new DivingButton("go", true, 1, 0);
-  tuckButton = new DivingButton("position", "tuck", 2, 0)
+  tuckButton = new DivingButton("position", "tuck", 2, 0);
+
+  // frontButton = new DivingButton("direction", 1, )
 }
 
 
@@ -327,13 +359,14 @@ function drawPlayer() {
 function updatePlayer() {
   if (player.y < height - 100) {
     player.update();
-    if (mouseIsPressed) {
+    if (tuckButton.on) {
       player.position = "tuck";
     }
     else if (player.position !== "layout"){
       player.position = "straight";
     }
   }
+
   else {
     if (player.swim()) {
       if(gameState === 3) {
@@ -341,6 +374,7 @@ function updatePlayer() {
         defineDive();
         lastScores = score(1, player.didFail);
         player.reset();
+        tuckButton.available = false;
         finishedDive = true;
         initTime = millis();
 
@@ -386,7 +420,7 @@ function score(judges, fail) {
   for(let i = 0; i < judges; i++) {
     score = player.angle;
     score = abs(dive-score);
-    score = score/random(70, 110);
+    score = score/random(80, 100);
     score = round(score*20)/2;
 
     if(!fail) {
@@ -428,10 +462,6 @@ function defineDive() {
 
 
 function keyTyped() {
-  if (key === " ") {
-    player.go = true;
-  }
-
   if (key === "p" && !player.go) {
     if (player.direction < 4) {
       player.direction++;
@@ -443,5 +473,10 @@ function keyTyped() {
 }
 
 function deviceShaken() {
-  player.go = true;
+  if (player.direction < 4) {
+    player.direction++;
+  }
+  else {
+    player.direction = 1;
+  }
 }
