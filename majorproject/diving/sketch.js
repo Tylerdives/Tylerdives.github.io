@@ -189,7 +189,48 @@ class Player {
   }
 }
 
+class DivingButton {
+  constructor(playerThing, changeTo, level, image) {
+    this.space = 25;
+    this.radius = 40;
+    this.x = width - width/20;
+    this.y = height - level * 100;
+    this.color = color(255, 0, 255);
+    this.hoveringColor = color(100, 100, 255);
+    this.changeColor = color(0, 255, 0);
+    this.available = true;
+    this.whatToChange = playerThing;
+    this.changeTo = changeTo;
+  }
 
+  display() {
+    if(collidePointCircle(mouseX, mouseY, this.x, this.y, this.radius*2)) {
+      fill(this.hoveringColor);
+      if(mouseIsPressed) {
+        fill(this.changeColor);
+        if(this.whatToChange === "go") {
+          if(player.go !== true) {
+            this.available =
+            //WAS WORKING HERE LAST
+            player.go = this.changeTo;
+          }
+          else {
+            this.available = false;
+          }
+        }
+        else if(this.whatToChange === "position") {
+          player.position = this.changeTo;
+        }
+        // console.log(this.whatToChange, this.changeTo )
+      }
+    }
+    else {
+      fill(this.color);
+    }
+
+    ellipse(this.x, this.y, this.radius*2, this.radius*2);
+  }
+}
 
 
 
@@ -206,6 +247,7 @@ let finishedDive;
 let lastScores;
 
 let initTime;
+let tuckButton, goButton;
 
 
 function setup() {
@@ -224,6 +266,8 @@ function setup() {
 
 
   player = new Player(0);
+  goButton = new DivingButton("go", true, 1, 0);
+  tuckButton = new DivingButton("position", "tuck", 2, 0)
 }
 
 
@@ -242,6 +286,9 @@ function draw() {
   }
   drawPlayer();
   drawPool();
+  goButton.display();
+  tuckButton.display();
+
   if(finishedDive && !player.go) {
     if(millis() < initTime + 3000) {
       practiceDisplay();
@@ -250,9 +297,11 @@ function draw() {
       finishedDive = false;
     }
   }
+
 }
 
 function drawPool() {
+  strokeWeight(2);
   fill(0, 0, 100, 220);
   rect(0, height-100, width, 100);
   fill(242, 242, 210);
@@ -263,6 +312,9 @@ function drawPool() {
   rect(0, height-20, width, 20);
   stroke(0);
 
+  line(0, height-102, 0, height);
+  line(50, height-21, width-50, height-21);
+  strokeWeight(1);
   stroke(0);
   fill(0, 255, 0);
   rect(0, player.height * 1.5 + 10, player.initX + player.width/2, 10);
