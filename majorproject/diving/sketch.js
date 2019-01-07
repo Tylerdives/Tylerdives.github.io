@@ -192,9 +192,9 @@ class Player {
 class DivingButton {
   constructor(playerThing, changeTo, level, image) {
     this.space = 25;
-    this.radius = 40;
+    this.radius = height/12;
     this.x = width - width/20;
-    this.y = height - level * 100;
+    this.y = height - level * 140 - height/12;
     this.color = color(255, 0, 255);
     this.hoveringColor = color(100, 100, 255);
     this.changeColor = color(0, 255, 0);
@@ -202,6 +202,7 @@ class DivingButton {
     this.whatToChange = playerThing;
     this.changeTo = changeTo;
     this.on = false;
+    this.selected = false;
   }
 
   display() {
@@ -231,6 +232,16 @@ class DivingButton {
             }
 
           }
+
+          else if(this.whatToChange === "direction") {
+            if(!player.go) {
+              player.direction = this.changeTo;
+              this.selected = true;
+            }
+            else {
+              this.available = false;
+            }
+          }
           // console.log(this.whatToChange, this.changeTo )
         }
         else {
@@ -250,11 +261,15 @@ class DivingButton {
         this.available = true;
       }
 
+      else if(player.go === false && this.whatToChange === "direction") {
+        this.available = true;
+      }
+
       else {
         this.available = false;
       }
 
-      fill(160)
+      fill(160);
     }
 
     ellipse(this.x, this.y, this.radius*2, this.radius*2);
@@ -296,10 +311,13 @@ function setup() {
 
 
   player = new Player(0);
-  goButton = new DivingButton("go", true, 1, 0);
-  tuckButton = new DivingButton("position", "tuck", 2, 0);
+  goButton = new DivingButton("go", true, 0, 0);
+  tuckButton = new DivingButton("position", "tuck", 1, 0);
 
-  // frontButton = new DivingButton("direction", 1, )
+  frontButton = new DivingButton("direction", 1, 1, 0);
+  backButton = new DivingButton("direction", 2, 2, 0);
+  reverseButton = new DivingButton("direction", 3, 3, 0);
+  inwardButton = new DivingButton("direction", 4, 4, 0);
 }
 
 
@@ -318,8 +336,9 @@ function draw() {
   }
   drawPlayer();
   drawPool();
-  goButton.display();
-  tuckButton.display();
+  displayButtons();
+  // goButton.display();
+  // tuckButton.display();
 
   if(finishedDive && !player.go) {
     if(millis() < initTime + 3000) {
@@ -385,6 +404,20 @@ function updatePlayer() {
       }
 
     }
+  }
+}
+
+function displayButtons() {
+  if(!player.go) {
+    goButton.display();
+    frontButton.display();
+    backButton.display();
+    reverseButton.display();
+    inwardButton.display();
+  }
+
+  else {
+    tuckButton.display();
   }
 }
 
