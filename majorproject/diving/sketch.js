@@ -26,7 +26,7 @@ class Player {
     this.go = false;
 
     this.tuckSpinSpeed = 1.5;
-    this.tuckSpinIncrease = 0.05;
+    this.tuckSpinIncrease = 0.06;
 
     this.layoutSpeed = 1;
     this.position = "layout";
@@ -100,6 +100,8 @@ class Player {
       }
       this.straightened = true;
     }
+
+
     this.y += this.dy;
     this.dy += 0.093;
     this.x += this.dx;
@@ -192,9 +194,9 @@ class Player {
 class DivingButton {
   constructor(playerThing, changeTo, level, image) {
     this.space = 25;
-    this.radius = height/12;
+    this.radius = height/13;
     this.x = width - width/20;
-    this.y = height - level * 140 - height/12;
+    this.y = height - level * (height/5.5) - height/7;
     this.color = color(255, 0, 255);
     this.hoveringColor = color(100, 100, 255);
     this.changeColor = color(0, 255, 0);
@@ -393,6 +395,10 @@ function updatePlayer() {
         defineDive();
         lastScores = score(1, player.didFail);
         player.reset();
+        frontButton.selected = false;
+        backButton.selected = false;
+        reverseButton.selected = false;
+        inwardButton.selected = false;
         tuckButton.available = false;
         finishedDive = true;
         initTime = millis();
@@ -437,7 +443,7 @@ function practiceDisplay() {
 
   strokeWeight(1);
   textAlign(CENTER, CENTER);
-  textSize(28);
+  textSize(width/55);
   let score = lastScores[0].toString();
   fill(0);
   text(diveDone, boxX + boxWidth/2, boxY + boxHeight/4);
