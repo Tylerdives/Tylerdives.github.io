@@ -28,7 +28,7 @@ class Player {
     this.tuckSpinSpeed = 1.5;
     this.tuckSpinIncrease = 0.06;
 
-    this.layoutSpeed = 1;
+    this.layoutSpeed = 0.8;
     this.position = "layout";
     this.straightened = false;
     this.secondTuck = false;
@@ -103,7 +103,7 @@ class Player {
 
 
     this.y += this.dy;
-    this.dy += 0.093;
+    this.dy += 0.085;
     this.x += this.dx;
     if (this.dx > 0.1) {
       this.dx -= 0.01;
@@ -195,7 +195,7 @@ class DivingButton {
   constructor(playerThing, changeTo, level, image) {
     this.space = 25;
     this.radius = height/13;
-    this.x = width - width/20;
+    this.x = width - this.radius - 40;
     this.y = height - level * (height/5.5) - height/7;
     this.color = color(255, 0, 255);
     this.hoveringColor = color(100, 100, 255);
@@ -281,13 +281,11 @@ class DivingButton {
 
 
 
-
-
 let gameState;
 
 let player;
 
-let degreeOfDifficulty;
+
 let diveDone;
 let finishedDive;
 let lastScores;
@@ -296,6 +294,8 @@ let initTime;
 let tuckButton, goButton;
 
 let frontButton, backButton, reverseButton, inwardButton;
+
+let diveMap;
 
 function setup() {
   angleMode(DEGREES);
@@ -320,6 +320,8 @@ function setup() {
   backButton = new DivingButton("direction", 2, 2, 0);
   reverseButton = new DivingButton("direction", 3, 3, 0);
   inwardButton = new DivingButton("direction", 4, 4, 0);
+
+  let diveMap = new Map();
 }
 
 
@@ -511,11 +513,11 @@ function keyTyped() {
   }
 }
 
-function deviceShaken() {
-  if (player.direction < 4) {
-    player.direction++;
-  }
-  else {
-    player.direction = 1;
-  }
-}
+// function deviceShaken() {
+//   if (player.direction < 4) {
+//     player.direction++;
+//   }
+//   else {
+//     player.direction = 1;
+//   }
+// }
