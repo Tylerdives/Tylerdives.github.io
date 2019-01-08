@@ -299,12 +299,12 @@ let diveMap;
 
 function setup() {
   angleMode(DEGREES);
+
   createCanvas(windowWidth, windowHeight);
   finishedDive = false;
-  gameState = 3;
+  gameState = 1;
   //Guide to gameState
-  //0 = Main menu
-  //1 = Selection menu
+  //1 = Selection/Main menu
   //2 = Practice menu
   //3 = Practice
   //4 = Competition menu
@@ -327,13 +327,55 @@ function setup() {
 
 function draw() {
 
-  // if(gameState === 0) {
-  //   mainMenu();
+
+  if(gameState === 1) {
+
+    mainMenu();
+
+  }
+
+
+
+  // else if (gameState === 2) {
+  //
   // }
 
+  else if (gameState === 3) {
+    practice();
+  }
+
+
+}
+
+function mainMenu() {
+  background(0, 0, 255);
+  drawStartButtons();
+}
+
+function drawStartButtons() {
+  fill(0);
+  textAlign(CENTER, CENTER);
+  textSize(width/40);
+  stroke(0);
+
+
+  strokeWeight(2);
+  fill(255);
+  text("PRACTICE", width/3, height-height/4);
+  text("COMPETITION", width/1.5, height-height/4);
+
+  if(collidePointEllipse(mouseX, mouseY, width/3, height-height/4, width/5, height/5)) {
+    fill(255, 0, 0);
+  }
+
+    fill(255, 0, 255);
+  strokeWeight(3);
+  ellipse(width/3, height-height/4, width/5, height/5);
+  ellipse(width/1.5, height-height/4, width/5, height/5);
+}
+
+function practice() {
   background(255);
-
-
   if (player.go) {
     updatePlayer();
     // console.log(player.position)
@@ -352,8 +394,8 @@ function draw() {
       finishedDive = false;
     }
   }
-
 }
+
 
 function drawPool() {
   strokeWeight(2);
@@ -444,8 +486,8 @@ function practiceDisplay() {
   line(boxX, boxY + boxHeight/2, boxX + boxWidth, boxY + boxHeight/2);
 
   strokeWeight(1);
-  textAlign(CENTER, CENTER);
-  textSize(width/55);
+
+  textSize(width/54);
   let score = lastScores[0].toString();
   fill(0);
   text(diveDone, boxX + boxWidth/2, boxY + boxHeight/4);
