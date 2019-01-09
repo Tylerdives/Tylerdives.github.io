@@ -4,7 +4,7 @@
 //
 
 class Player {
-  constructor(boardHeight, tuckSpeed) {
+  constructor(boardHeight, tuckSpeed, frontDiver, backDiver, frontTuck, backTuck) {
     this.boardHeight = boardHeight;
 
     this.initX = width/2;
@@ -12,8 +12,15 @@ class Player {
 
     this.x = this.initX;
     this.y = this.initY;
-    this.width = 30;
-    this.height = 90;
+
+    this.width = 90;
+    this.height = 290;
+
+    this.frontDiver = frontDiver;
+    this.backDiver = backDiver;
+    // this.frontTuck = frontTuck;
+    // this.backTuck = backTuck;
+
     this.dx = 1.75;
     this.dy = -4;
 
@@ -122,6 +129,8 @@ class Player {
       fill(0);
     }
 
+    // image(this.frontDiver, this.x, this.y, this.width, this.height);
+
     rect(0 - this.width/2, 0 - this.height/2, this.width, this.height);
     fill(this.headColor);
     rect(0 - this.width/2, 0 - this.height/2, this.width, 20);
@@ -137,6 +146,7 @@ class Player {
 
     fill(this.feetColor);
     rect(0 - this.width/2, 0 + 70 - this.height/2, this.width, 20);
+
     strokeWeight(10);
     point(0, 0);
     strokeWeight(1);
@@ -251,6 +261,7 @@ class DivingButton {
         }
       }
       else {
+        // this.on = false;
         fill(this.color);
       }
     }
@@ -274,6 +285,9 @@ class DivingButton {
       fill(160);
     }
 
+    if(player.direction === this.changeTo) {
+      fill(this.changeColor);
+    }
     ellipse(this.x, this.y, this.radius*2, this.radius*2);
   }
 }
@@ -297,12 +311,19 @@ let frontButton, backButton, reverseButton, inwardButton;
 
 let diveMap;
 
+let frontDiver, backDiver;
+
+function preLoad() {
+  frontDiver = loadImage("assets/DiverForwardStraight.png");
+  backDiver = loadImage("assets/DiverBackwardStraight.png");
+}
+
 function setup() {
   angleMode(DEGREES);
 
   createCanvas(windowWidth, windowHeight);
   finishedDive = false;
-  gameState = 1;
+  gameState = 3;
   //Guide to gameState
   //1 = Selection/Main menu
   //2 = Practice menu
@@ -312,7 +333,7 @@ function setup() {
   //6 = Settings
 
 
-  player = new Player(0);
+  player = new Player(0, 0, frontDiver, backDiver);
   goButton = new DivingButton("go", true, 0, 0);
   tuckButton = new DivingButton("position", "tuck", 1, 0);
 
@@ -344,7 +365,7 @@ function draw() {
     practice();
   }
 
-
+  // image(frontDiver, width/2, height/2);
 }
 
 function mainMenu() {
@@ -354,24 +375,27 @@ function mainMenu() {
 
 function drawStartButtons() {
   fill(0);
-  textAlign(CENTER, CENTER);
+
   textSize(width/40);
   stroke(0);
 
 
-  strokeWeight(2);
-  fill(255);
-  text("PRACTICE", width/3, height-height/4);
-  text("COMPETITION", width/1.5, height-height/4);
+
 
   if(collidePointEllipse(mouseX, mouseY, width/3, height-height/4, width/5, height/5)) {
     fill(255, 0, 0);
   }
 
-    fill(255, 0, 255);
+  fill(255, 120, 0);
   strokeWeight(3);
   ellipse(width/3, height-height/4, width/5, height/5);
   ellipse(width/1.5, height-height/4, width/5, height/5);
+
+  strokeWeight(2);
+  fill(255);
+  textAlign(CENTER, CENTER);
+  text("PRACTICE", width/3, height-height/4);
+  text("COMPETITION", width/1.5, height-height/4);
 }
 
 function practice() {
@@ -383,8 +407,6 @@ function practice() {
   drawPlayer();
   drawPool();
   displayButtons();
-  // goButton.display();
-  // tuckButton.display();
 
   if(finishedDive && !player.go) {
     if(millis() < initTime + 3000) {
@@ -490,6 +512,7 @@ function practiceDisplay() {
   textSize(width/54);
   let score = lastScores[0].toString();
   fill(0);
+  textAlign(CENTER, CENTER);
   text(diveDone, boxX + boxWidth/2, boxY + boxHeight/4);
   text("Average score: " + score, boxX + boxWidth/2, boxY + boxHeight/4 * 3);
 
