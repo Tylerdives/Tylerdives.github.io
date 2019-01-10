@@ -13,8 +13,8 @@ class Player {
     this.x = this.initX;
     this.y = this.initY;
 
-    this.width = 90;
-    this.height = 290;
+    this.width = 40;
+    this.height = 110;
 
     this.frontDiver = frontDiver;
     this.backDiver = backDiver;
@@ -128,28 +128,82 @@ class Player {
     if (this.position === "tuck") {
       fill(0);
     }
+    // imageMode(CORNER);
 
-    // image(this.frontDiver, this.x, this.y, this.width, this.height);
+    if(this.direction === 1 || this.direction === 3 && player.position === "layout" || player.postition === "straight") {
+      strokeWeight(7);
+      //BODY
+      line(0, -10, 0, 50);
+      if(!player.go) {
+        //FEET
+        line(0, 50, 10, 50);
 
-    rect(0 - this.width/2, 0 - this.height/2, this.width, this.height);
-    fill(this.headColor);
-    rect(0 - this.width/2, 0 - this.height/2, this.width, 20);
+      }
+      else {
+        //FEET
+        line(0, 50, 2, 60);
+        //Hand grab
+        point(2.5, -61);
+      }
 
-    fill(this.faceColor);
-    if(this.direction === 1 || this.direction === 3) {
-      rect(0, 0 - this.height/2, this.width/2, 20);
+      fill(255);
+      //ARM
+      line(0, 10, 5, -60);
+      //HEAD
+      ellipse(0, -30, 33, 33);
+      //ARM
+      line(0, 10, 0, -60);
+
+
+      strokeWeight(1);
+      // image(this.frontDiver, 0 - this.width/2, 0 - this.height/2, this.width, this.height);
     }
 
-    else {
-      rect(0 - this.width/2, 0 - this.height/2, this.width/2, 20);
+    else if (this.direction === 2 || this.direction === 4) {
+      strokeWeight(7);
+      line(0, -10, 0, 50);
+      if(!player.go) {
+        //FEET
+        line(0, 50, -10, 50);
+
+      }
+      else {
+        //FEET
+        line(0, 50, -2, 60)
+        //Hand grab
+        point(2.5, -61);
+      }
+
+      fill(255);
+      //ARMS
+      line(0, 10, 5, -60);
+      //HEAD
+      ellipse(0, -30, 33, 33);
+      //ARMS
+      line(0, 10, 0, -60);
+      strokeWeight(4);
+
+      strokeWeight(1);
     }
 
-    fill(this.feetColor);
-    rect(0 - this.width/2, 0 + 70 - this.height/2, this.width, 20);
 
-    strokeWeight(10);
-    point(0, 0);
-    strokeWeight(1);
+    // rect(0 - this.width/2, 0 - this.height/2, this.width, this.height);
+    // fill(this.headColor);
+    // rect(0 - this.width/2, 0 - this.height/2, this.width, 20);
+    //
+    // fill(this.faceColor);
+    // if(this.direction === 1 || this.direction === 3) {
+    //   rect(0, 0 - this.height/2, this.width/2, 20);
+    // }
+    //
+    // else {
+    //   rect(0 - this.width/2, 0 - this.height/2, this.width/2, 20);
+    // }
+    //
+    // fill(this.feetColor);
+    // rect(0 - this.width/2, 0 + 70 - this.height/2, this.width, 20);
+
+
     pop();
   }
 
@@ -172,8 +226,9 @@ class Player {
 
     this.x = this.initX;
     this.y = this.initY;
-    this.width = 30;
-    this.height = 90;
+
+    this.width = 40;
+    this.height = 110;
     this.dx = 1.75;
     this.dy = -4;
 
@@ -261,7 +316,7 @@ class DivingButton {
         }
       }
       else {
-        // this.on = false;
+        this.on = false;
         fill(this.color);
       }
     }
@@ -313,7 +368,7 @@ let diveMap;
 
 let frontDiver, backDiver;
 
-function preLoad() {
+function preload() {
   frontDiver = loadImage("assets/DiverForwardStraight.png");
   backDiver = loadImage("assets/DiverBackwardStraight.png");
 }
@@ -365,7 +420,7 @@ function draw() {
     practice();
   }
 
-  // image(frontDiver, width/2, height/2);
+
 }
 
 function mainMenu() {
@@ -436,7 +491,7 @@ function drawPool() {
   strokeWeight(1);
   stroke(0);
   fill(0, 255, 0);
-  rect(0, player.height * 1.5 + 10, player.initX + player.width/2, 10);
+  rect(0, player.height * 1.5 - 11, player.initX + player.width/4 + 3, 10);
 }
 
 function drawPlayer() {
