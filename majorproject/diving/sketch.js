@@ -585,8 +585,8 @@ function drawPool() {
   fill(0, 255, 0);
 
   //Diving board
-  rect(0, 110 * 1.5 - 11, width/3 + 10 + 3, 10);
-  rect(0, 110 * 4.2 - 11, width/3 + 10 + 3, 10);
+  rect(0, width/32, width/3 + 10 + 3, 10);
+  rect(0, width/32, width/3 + 10 + 3, 10);
 }
 
 function drawPlayer() {
