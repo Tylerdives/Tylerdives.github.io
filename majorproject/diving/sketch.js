@@ -14,8 +14,6 @@ class Player {
     this.x = this.initX;
     this.y = this.initY;
 
-    this.width = 40;
-    this.height = 110;
 
     this.dx = 1.75;
     this.dy = -4;
@@ -130,26 +128,26 @@ class Player {
     if((this.direction === 1 || this.direction === 3) && player.position !== "tuck") {
       strokeWeight(7);
       //BODY
-      line(0, -10, 0, 50);
+      line(0, -width/103.1, 0, width/32);
       if(!this.go) {
         //FEET
-        line(0, 50, 10, 50);
+        line(0, width/32, width/103.1, width/32);
 
       }
       else {
         //FEET
-        line(0, 50, 2, 60);
+        line(0, width/32, 2, width/17.1);
         //Hand grab
-        point(2.5, -61);
+        point(width/412.4, -width/17);
       }
 
       fill(255);
       //ARM
-      line(0, 10, 5, -60);
+      line(0, width/103.1, width/206.2, -width/17.1);
       //HEAD
-      ellipse(0, -30, 33, 33);
+      ellipse(0, -width/34, 33, 33);
       //ARM
-      line(0, 10, 0, -60);
+      line(0, width/103.1, 0, -width/17.1);
 
 
       strokeWeight(1);
