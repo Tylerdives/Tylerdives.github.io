@@ -26,7 +26,7 @@ class Player {
     this.angle = 0;
     this.go = false;
 
-    this.tuckSpinSpeed = 1.5;
+    this.tuckSpinSpeed = 1.7;
     this.tuckSpinIncrease = 0.06;
 
     this.layoutSpeed = 0.8;
@@ -105,7 +105,7 @@ class Player {
 
 
     this.y += this.dy;
-    this.dy += 0.085;
+    this.dy += 0.080;
     this.x += this.dx;
     if (this.dx > 0.1) {
       this.dx -= 0.01;
@@ -128,26 +128,26 @@ class Player {
     if((this.direction === 1 || this.direction === 3) && player.position !== "tuck") {
       strokeWeight(7);
       //BODY
-      line(0, -width/103.1, 0, width/32);
+      line(0, -10, 0, 50);
       if(!this.go) {
         //FEET
-        line(0, width/32, width/103.1, width/32);
+        line(0, 50, 10, 50);
 
       }
       else {
         //FEET
-        line(0, width/32, 2, width/17.1);
+        line(0, 50, 2, 60);
         //Hand grab
-        point(width/412.4, -width/17);
+        point(2.5, -61);
       }
 
       fill(255);
       //ARM
-      line(0, width/103.1, width/206.2, -width/17.1);
+      line(0, 10, 5, -60);
       //HEAD
-      ellipse(0, -width/34, 33, 33);
+      ellipse(0, -30, 33, 33);
       //ARM
-      line(0, width/103.1, 0, -width/17.1);
+      line(0, 10, 0, -60);
 
 
       strokeWeight(1);
@@ -585,8 +585,8 @@ function drawPool() {
   fill(0, 255, 0);
 
   //Diving board
-  rect(0, width/32, width/3 + 10 + 3, 10);
-  rect(0, width/32, width/3 + 10 + 3, 10);
+  rect(0, 110 * 1.5 - 11, width/3 + 10 + 3, 10);
+  rect(0, 110 * 4.2 - 11, width/3 + 10 + 3, 10);
 }
 
 function drawPlayer() {
