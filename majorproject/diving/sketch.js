@@ -7,7 +7,8 @@ class Player {
   constructor(boardHeight, tuckSpeed) {
     this.boardHeight = boardHeight;
 
-    this.initX = width/2;
+    this.initX = width/3;
+    // this.initY = 100;
     this.initY = 100;
 
     this.x = this.initX;
@@ -45,6 +46,7 @@ class Player {
 
 
   update() {
+
     if(this.direction === 1 || this.direction === 3) {
       this.facing = "forwards";
       if(this.direction === 3) {
@@ -120,12 +122,12 @@ class Player {
       rotate(this.angle);
     }
     fill(this.bodyColor);
-    if (this.position === "tuck") {
-      fill(0);
-    }
+    // if (this.position === "tuck") {
+    //   fill(0);
+    // }
     // imageMode(CORNER);
 
-    if(this.direction === 1 || this.direction === 3) {
+    if((this.direction === 1 || this.direction === 3) && player.position !== "tuck") {
       strokeWeight(7);
       //BODY
       line(0, -10, 0, 50);
@@ -154,7 +156,7 @@ class Player {
       // image(this.frontDiver, 0 - this.width/2, 0 - this.height/2, this.width, this.height);
     }
 
-    else if (this.direction === 2 || this.direction === 4) {
+    else if ((this.direction === 2 || this.direction === 4) && player.position !== "tuck") {
       strokeWeight(7);
       line(0, -10, 0, 50);
       if(!this.go) {
@@ -166,12 +168,12 @@ class Player {
         //FEET
         line(0, 50, -2, 60);
         //Hand grab
-        point(2.5, -61);
+        point(-2.5, -61);
       }
 
       fill(255);
       //ARMS
-      line(0, 10, 5, -60);
+      line(0, 10, -5, -60);
       //HEAD
       ellipse(0, -30, 33, 33);
       //ARMS
@@ -179,6 +181,51 @@ class Player {
       strokeWeight(4);
 
       strokeWeight(1);
+    }
+
+    //BACKWARDS TUCK
+    else if(player.direction === 2 || player.direction === 4) {
+      strokeWeight(7);
+      fill(255)
+      //Body
+      //BODY
+      line(0, -40, 0, 20);
+      //FEMUR
+      line(0, 20, -18, 0);
+      ellipse(0, -40, 31, 31);
+      //FEET and shins
+      line(-18, 0, -24, 20);
+
+      //Arms
+      line(0, -15, -18, 13);
+
+
+      // fill(255);
+      // //ARMS
+      // line(0, 10, -5, -60);
+      // //HEAD
+      // ellipse(0, -30, 33, 33);
+      // //ARMS
+      // line(0, 10, 0, -60);
+      // strokeWeight(4);
+      //
+      // strokeWeight(1);
+    }
+
+    //FORWARDS TUCK
+    else if(player.direction === 3 || player.direction === 1) {
+      strokeWeight(7);
+      fill(255)
+      //BODY
+      line(0, -40, 0, 20);
+      //FEMUR
+      line(0, 20, 18, 0);
+      ellipse(0, -40, 31, 31);
+      //FEET and shins
+      line(18, 0, 24, 20);
+
+      //Arms
+      line(0, -15, 18, 13);
     }
 
     fill(0);
@@ -190,23 +237,6 @@ class Player {
     else if((this.direction === 3 || this.direction === 4) && !this.go) {
       text("←", 0, -70);
     }
-
-    // rect(0 - this.width/2, 0 - this.height/2, this.width, this.height);
-    // fill(this.headColor);
-    // rect(0 - this.width/2, 0 - this.height/2, this.width, 20);
-    //
-    // fill(this.faceColor);
-    // if(this.direction === 1 || this.direction === 3) {
-    //   rect(0, 0 - this.height/2, this.width/2, 20);
-    // }
-    //
-    // else {
-    //   rect(0 - this.width/2, 0 - this.height/2, this.width/2, 20);
-    // }
-    //
-    // fill(this.feetColor);
-    // rect(0 - this.width/2, 0 + 70 - this.height/2, this.width, 20);
-
 
     pop();
   }
@@ -229,7 +259,7 @@ class Player {
     // this.initY = this.initY;
 
     this.x = this.initX;
-    this.y = this.initY;
+    this.y = boardHeight;
 
     this.width = 40;
     this.height = 110;
@@ -375,11 +405,16 @@ let frontButton, backButton, reverseButton, inwardButton;
 
 let diveMap;
 
+let poolAmbiance;
 
 let menuPool;
+let buttonY;
+
+let boardHeight;
 
 function preload() {
   menuPool = loadImage("assets/menuimage.jpg");
+  // poolAmbiance = loadSound("assets/poolAmbiance.wav");
 }
 
 function setup() {
@@ -388,13 +423,14 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   finishedDive = false;
   gameState = 1;
+  buttonY = height/10;
+  boardHeight = 100;
   //Guide to gameState
   //1 = Selection/Main menu
-  //2 = Practice menu
-  //3 = Practice
-  //4 = Competition menu
-  //5 = Competition
-  //6 = Settings
+  //2 = Practice
+  //3 = Competition menu
+  //4 = Competition
+  //5 = Settings/How to play
 
 
   player = new Player(0, 0);
@@ -412,19 +448,17 @@ function setup() {
 
 function draw() {
 
-
   if(gameState === 1) {
-
     mainMenu();
-
   }
 
   // else if (gameState === 2) {
   //
   // }
 
-  else if (gameState === 3) {
+  else if (gameState === 2) {
     practice();
+
   }
 
 
@@ -432,7 +466,38 @@ function draw() {
 
 function mainMenu() {
   image(menuPool, 0, 0, width, height);
+  textSize(width/9);
+  fill(255, 20, 70);
+  text("Dynamic Diving", width/2, 250);
   drawStartButtons();
+}
+
+function switchBoardButton() {
+  // let buttonY = height/10;
+  if(collidePointCircle(mouseX, mouseY, width-300, buttonY, 90, 90)) {
+    fill(0, 255, 255);
+    if(mouseIsPressed) {
+      if(player.y !== 400) {
+        buttonY = height/10 * 4;
+        player.y = 400;
+        boardHeight = 400;
+      }
+      else {
+        buttonY = height/10;
+        player.y = 100;
+        boardHeight = 100;
+      }
+    }
+  }
+  else {
+    fill(255, 100, 50);
+  }
+  ellipse(width-300, buttonY, 90, 90);
+  fill(0);
+  textAlign(CENTER, CENTER);
+  textSize(width/68);
+  text("SWITCH", width-300, buttonY);
+
 }
 
 function drawStartButtons() {
@@ -441,19 +506,28 @@ function drawStartButtons() {
   textSize(width/40);
   stroke(0);
 
-
-
-
+  //PRACTICE BUTTON
   if(collidePointEllipse(mouseX, mouseY, width/3, height-height/4, width/5, height/5)) {
+    fill(255, 0, 0);
+    if(mouseIsPressed) {
+      gameState = 2;
+    }
+  }
+  else {
+    fill(255, 120, 0);
+  }
+  strokeWeight(3);
+  ellipse(width/3, height-height/4, width/5, height/5);
+
+
+  //COMPETITION BUTTON
+  if(collidePointEllipse(mouseX, mouseY, width/1.5, height-height/4, width/5, height/5)) {
     fill(255, 0, 0);
   }
   else {
-      fill(255, 120, 0);
+    fill(255, 120, 0);
   }
 
-
-  strokeWeight(3);
-  ellipse(width/3, height-height/4, width/5, height/5);
   ellipse(width/1.5, height-height/4, width/5, height/5);
 
   strokeWeight(2);
@@ -464,14 +538,24 @@ function drawStartButtons() {
 }
 
 function practice() {
+  // let noMusic;
+  // if(noMusic !== false) {
+  //   poolAmbiance.setVolume(0.01);
+  //   poolAmbiance.loop();
+  //   noMusic = false;
+  // }
+
   background(255);
   if (player.go) {
     updatePlayer();
-    // console.log(player.position)
+  }
+  else {
+    switchBoardButton();
   }
   drawPlayer();
   drawPool();
   displayButtons();
+
 
   if(finishedDive && !player.go) {
     if(millis() < initTime + 3000) {
@@ -501,7 +585,10 @@ function drawPool() {
   strokeWeight(1);
   stroke(0);
   fill(0, 255, 0);
-  rect(0, player.height * 1.5 - 11, player.initX + player.width/4 + 3, 10);
+
+  //Diving board
+  rect(0, 110 * 1.5 - 11, width/3 + 10 + 3, 10);
+  rect(0, 110 * 4.2 - 11, width/3 + 10 + 3, 10);
 }
 
 function drawPlayer() {
@@ -521,24 +608,26 @@ function updatePlayer() {
 
   else {
     if (player.swim()) {
-      if(gameState === 3) {
+      if(gameState === 2) {
         player.didFail = false;
         defineDive();
         lastScores = score(1, player.didFail);
         player.reset();
+
         frontButton.selected = false;
         backButton.selected = false;
         reverseButton.selected = false;
         inwardButton.selected = false;
         tuckButton.available = false;
+
         finishedDive = true;
         initTime = millis();
 
       }
-      else if(gameState === 5) {
-        defineDive();
-        score(3, player.didFail);
-      }
+      // else if(gameState === 5) {
+      //   defineDive();
+      //   score(3, player.didFail);
+      // }
 
     }
   }
@@ -596,7 +685,7 @@ function score(judges, fail) {
 
     if(!fail) {
       score = abs(10-score);
-      if(player.secondTuck || player.position === "tucl") {
+      if(player.secondTuck || player.straightened === false) {
         if (score > 3.0) {
           score = score - 3;
         }
