@@ -8,4 +8,8 @@
 - What does the tuck feature do?
 - What is the c after the score?
 
-## Person 2:
+## Person 2 -Meeka:
+- Instructions would be nice and some clarification as to how the scoring works (What makes a good dive good, etc)
+- What does the jump number mean?
+- An ability to go back to the main menu without refreshing the page
+- Clarify what the arrow means

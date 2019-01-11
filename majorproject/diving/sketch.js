@@ -119,11 +119,8 @@ class Player {
     if (this.go) {
       rotate(this.angle);
     }
+
     fill(this.bodyColor);
-    // if (this.position === "tuck") {
-    //   fill(0);
-    // }
-    // imageMode(CORNER);
 
     if((this.direction === 1 || this.direction === 3) && player.position !== "tuck") {
       strokeWeight(7);
@@ -151,7 +148,7 @@ class Player {
 
 
       strokeWeight(1);
-      // image(this.frontDiver, 0 - this.width/2, 0 - this.height/2, this.width, this.height);
+
     }
 
     else if ((this.direction === 2 || this.direction === 4) && player.position !== "tuck") {
@@ -184,7 +181,7 @@ class Player {
     //BACKWARDS TUCK
     else if(player.direction === 2 || player.direction === 4) {
       strokeWeight(7);
-      fill(255)
+      fill(255);
       //Body
       //BODY
       line(0, -40, 0, 20);
@@ -197,23 +194,12 @@ class Player {
       //Arms
       line(0, -15, -18, 13);
 
-
-      // fill(255);
-      // //ARMS
-      // line(0, 10, -5, -60);
-      // //HEAD
-      // ellipse(0, -30, 33, 33);
-      // //ARMS
-      // line(0, 10, 0, -60);
-      // strokeWeight(4);
-      //
-      // strokeWeight(1);
     }
 
     //FORWARDS TUCK
     else if(player.direction === 3 || player.direction === 1) {
       strokeWeight(7);
-      fill(255)
+      fill(255);
       //BODY
       line(0, -40, 0, 20);
       //FEMUR
@@ -253,9 +239,6 @@ class Player {
   }
 
   reset() {
-    // this.initX = this.initX;
-    // this.initY = this.initY;
-
     this.x = this.initX;
     this.y = boardHeight;
 
@@ -409,6 +392,7 @@ let menuPool;
 let buttonY;
 
 let boardHeight;
+let compList1;
 
 function preload() {
   menuPool = loadImage("assets/menuimage.jpg");
@@ -445,20 +429,18 @@ function setup() {
 
 
 function draw() {
-
+  //Main Menu
   if(gameState === 1) {
     mainMenu();
   }
-
-  // else if (gameState === 2) {
-  //
-  // }
-
+  //Practice
   else if (gameState === 2) {
     practice();
-
   }
-
+  //Competition menu
+  else if(gameState === 3) {
+    competitionMenu();
+  }
 
 }
 
@@ -468,6 +450,50 @@ function mainMenu() {
   fill(255, 20, 70);
   text("Dynamic Diving", width/2, 250);
   drawStartButtons();
+}
+
+function competitionMenu() {
+  image(menuPool, 0, 0, width, height);
+
+
+  if(collidePointEllipse(mouseX, mouseY,width/3, height/4, width/6, width/6)) {
+    fill(0, 200, 100);
+  }
+  else {
+    fill(0, 255, 0)
+  }
+
+  ellipse(width/3, height/4, width/6, width/6);
+
+  text("1m Provincials", width/3, height/4, width/6, width/6);
+
+  if(collidePointEllipse(mouseX, mouseY, width/1.5, height/4, width/6, width/6)) {
+    fill(0, 200, 100);
+  }
+  else {
+    fill(0, 255, 0);
+  }
+  ellipse(width/1.5, height/4, width/6, width/6);
+  text("3m Provincials", width/1.5, height/4, width/6, width/6);
+
+  if(collidePointEllipse(mouseX, mouseY, width/3, height/4 * 3, width/6, width/6)) {
+    fill(0, 200, 100);
+  }
+  else {
+    fill(0, 255, 0);
+  }
+  ellipse(width/3, height/4 * 3, width/6, width/6);
+  text("1m Nationals", width/3, height/4 * 3, width/6, width/6);
+
+  if(collidePointEllipse(mouseX, mouseY, width/1.5, height/4 * 3, width/6, width/6)) {
+    fill(0, 200, 100);
+  }
+  else {
+    fill(0, 255, 0);
+  }
+  ellipse(width/1.5, height/4 * 3, width/6, width/6);
+  text("3m Nationals", width/1.5, height/4 * 3, width/6, width/6);
+  textAlign(CENTER, CENTER);
 }
 
 function switchBoardButton() {
@@ -521,6 +547,9 @@ function drawStartButtons() {
   //COMPETITION BUTTON
   if(collidePointEllipse(mouseX, mouseY, width/1.5, height-height/4, width/5, height/5)) {
     fill(255, 0, 0);
+    if(mouseIsPressed) {
+      gameState = 3;
+    }
   }
   else {
     fill(255, 120, 0);
