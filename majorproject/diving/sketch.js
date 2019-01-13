@@ -380,6 +380,7 @@ let finishedDive;
 let lastScores;
 
 let initTime;
+let initTimeCompButton;
 let tuckButton, goButton;
 
 let frontButton, backButton, reverseButton, inwardButton;
@@ -395,6 +396,8 @@ let boardHeight;
 let compListOne, compListTwo, compListThree, compListFour;
 let ddListOne, ddListTwo, ddListThree, ddListFour;
 let compMode = 0;
+let temp;
+let totalScore;
 
 function preload() {
   menuPool = loadImage("assets/menuimage.jpg");
@@ -514,7 +517,7 @@ function competitionMenu() {
   //COMPETITION 4, 3m Nat
   if(collidePointCircle(mouseX, mouseY, width/1.5, height/4 * 3, width/6, width/6)) {
     fill(0, 200, 100);
-    if(mouseIsPressed) {
+    if(mouseIsPressed && !(millis() < initTimeCompButton + 1000)) {
       compMode = 4;
       gameState = 4;
     }
@@ -534,10 +537,53 @@ function competitionMenu() {
   text("3m Provincials", width/1.5, height/4);
 }
 
-function competition(compMode) {
-  if(compMode === 1 || compMode === 3) {
-    boardHeight = height/1.8075;
+function competition() {
+
+  if((compMode === 1 || compMode === 3) && temp !== false) {
+    player.y = 400;
+    boardHeight = 400;
+    temp = false;
   }
+  else if ((compMode === 2 || compMode === 40) && temp !== false) {
+    player.y = 100;
+    boardHeight = 100;
+    temp = false;
+  }
+
+  background(255);
+
+  if (player.go) {
+    updatePlayer();
+  }
+
+  drawPlayer();
+  drawPool();
+  displayButtons();
+
+
+  if(finishedDive) {
+    if(millis() < initTime + 3000) {
+      displayScores();
+      goButton.available = false;
+    }
+    else {
+      finishedDive = false;
+    }
+  }
+
+}
+
+function displayScores() {
+  let time = millis();
+  rectMode(CENTER);
+  for(let i = 0; i < lastScores.length; i++) {
+    fill(0);
+    rect(width * (i+1) * (1/(lastScores.length+1)), height-200, 100, 100);
+    fill(255);
+    textAlign(CENTER, CENTER);
+    text(lastScores[i].toString(), width * (i+1) * (1/(lastScores.length+1)), height-200);
+  }
+  rectMode(CORNER);
 }
 
 function switchBoardButton() {
@@ -545,10 +591,10 @@ function switchBoardButton() {
   if(collidePointCircle(mouseX, mouseY, width-300, buttonY, 90, 90)) {
     fill(0, 255, 255);
     if(mouseIsPressed) {
-      if(player.y !== height/1.8075) {
+      if(player.y !== 400) {
         buttonY = height/10 * 4;
-        player.y = height/1.8075;
-        boardHeight = height/1.8075;
+        player.y = 400;
+        boardHeight = 400;
       }
       else {
         buttonY = height/10;
@@ -593,6 +639,7 @@ function drawStartButtons() {
     fill(255, 0, 0);
     if(mouseIsPressed) {
       gameState = 3;
+      initTimeCompButton = millis();
     }
   }
   else {
@@ -693,12 +740,28 @@ function updatePlayer() {
 
         finishedDive = true;
         initTime = millis();
-
       }
-      // else if(gameState === 5) {
-      //   defineDive();
-      //   score(3, player.didFail);
-      // }
+
+      else if (gameState === 4){
+        defineDive();
+        if(compMode === 1 || compMode === 2) {
+          lastScores = score(3, player.didFail);
+        }
+        else {
+          lastScores = score(5, player.didFail);
+        }
+
+        player.reset();
+
+        frontButton.selected = false;
+        backButton.selected = false;
+        reverseButton.selected = false;
+        inwardButton.selected = false;
+        tuckButton.available = false;
+
+        finishedDive = true;
+        initTime = millis();
+      }
 
     }
   }
@@ -743,7 +806,6 @@ function practiceDisplay() {
 
 }
 
-
 function score(judges, fail) {
   let score;
   let dive = round(player.angle/180) * 180;
@@ -769,8 +831,9 @@ function score(judges, fail) {
       allScores.push(score);
     }
 
-    return allScores;
+
   }
+  return allScores;
 }
 
 function defineDive() {
@@ -782,32 +845,8 @@ function defineDive() {
   let rotations = abs(round(player.angle/180));
   diveNumber += rotations.toString();
 
-  if(player.straightened || player.position === "tuck") {
-    diveNumber += "c";
-  }
-  else {
-    diveNumber += "a";
-  }
+
+  diveNumber += "c";
+
   diveDone = diveNumber;
 }
-
-
-function keyTyped() {
-  if (key === "p" && !player.go) {
-    if (player.direction < 4) {
-      player.direction++;
-    }
-    else {
-      player.direction = 1;
-    }
-  }
-}
-
-// function deviceShaken() {
-//   if (player.direction < 4) {
-//     player.direction++;
-//   }
-//   else {
-//     player.direction = 1;
-//   }
-// }
