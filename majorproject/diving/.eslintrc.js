@@ -442,9 +442,10 @@ module.exports = {
       "VIDEO": true,
       "AUDIO": true,
       "createCapture": true,
-      "createElement": true
+      "createElement": true,
 
       //p5js 2d collide globals
-      "collidePointEllipse": true
+      "collidePointCircle": true,
+      "collidePointEllipse": true,
   },
 }

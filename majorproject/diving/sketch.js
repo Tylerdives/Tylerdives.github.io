@@ -450,8 +450,12 @@ function draw() {
     practice();
   }
   //Competition menu
-  else if(gameState === 3) {
+  else if (gameState === 3) {
     competitionMenu();
+  }
+
+  else if (gameState === 4) {
+    competition();
   }
 
 }
@@ -467,10 +471,11 @@ function mainMenu() {
 function competitionMenu() {
   image(menuPool, 0, 0, width, height);
   //COMPETITION 1, 1m Prov
-  if(collidePointEllipse(mouseX, mouseY,width/3, height/4, width/6, width/6)) {
+  if(collidePointCircle(mouseX, mouseY,width/3, height/4, width/6, width/6)) {
     fill(0, 200, 100);
     if(mouseIsPressed) {
       compMode = 1;
+      gameState = 4;
     }
   }
   else {
@@ -479,8 +484,12 @@ function competitionMenu() {
   ellipse(width/3, height/4, width/6, width/6);
 
   //COMPETITION 2, 3m prov
-  if(collidePointEllipse(mouseX, mouseY, width/1.5, height/4, width/6, width/6)) {
+  if(collidePointCircle(mouseX, mouseY, width/1.5, height/4, width/6, width/6)) {
     fill(0, 200, 100);
+    if(mouseIsPressed) {
+      compMode = 2;
+      gameState = 4;
+    }
   }
   else {
     fill(0, 255, 0);
@@ -489,8 +498,12 @@ function competitionMenu() {
   ellipse(width/1.5, height/4, width/6, width/6);
 
   //COMPETITION 3, 1m Nat
-  if(collidePointEllipse(mouseX, mouseY, width/3, height/4 * 3, width/6, width/6)) {
+  if(collidePointCircle(mouseX, mouseY, width/3, height/4 * 3, width/6, width/6)) {
     fill(0, 200, 100);
+    if(mouseIsPressed) {
+      compMode = 3;
+      gameState = 4;
+    }
   }
   else {
     fill(0, 255, 0);
@@ -499,14 +512,19 @@ function competitionMenu() {
   ellipse(width/3, height/4 * 3, width/6, width/6);
 
   //COMPETITION 4, 3m Nat
-  if(collidePointEllipse(mouseX, mouseY, width/1.5, height/4 * 3, width/6, width/6)) {
+  if(collidePointCircle(mouseX, mouseY, width/1.5, height/4 * 3, width/6, width/6)) {
     fill(0, 200, 100);
+    if(mouseIsPressed) {
+      compMode = 4;
+      gameState = 4;
+    }
   }
   else {
     fill(0, 255, 0);
   }
 
   ellipse(width/1.5, height/4 * 3, width/6, width/6);
+
 
   fill(0);
   textAlign(CENTER, CENTER);
@@ -516,15 +534,21 @@ function competitionMenu() {
   text("3m Provincials", width/1.5, height/4);
 }
 
+function competition(compMode) {
+  if(compMode === 1 || compMode === 3) {
+    boardHeight = height/1.8075;
+  }
+}
+
 function switchBoardButton() {
   // let buttonY = height/10;
   if(collidePointCircle(mouseX, mouseY, width-300, buttonY, 90, 90)) {
     fill(0, 255, 255);
     if(mouseIsPressed) {
-      if(player.y !== 400) {
+      if(player.y !== height/1.8075) {
         buttonY = height/10 * 4;
-        player.y = 400;
-        boardHeight = 400;
+        player.y = height/1.8075;
+        boardHeight = height/1.8075;
       }
       else {
         buttonY = height/10;
