@@ -443,5 +443,8 @@ module.exports = {
       "AUDIO": true,
       "createCapture": true,
       "createElement": true
+
+      //p5js 2d collide globals
+      "collidePointEllipse": true
   },
 }

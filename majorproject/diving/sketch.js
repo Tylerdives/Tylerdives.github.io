@@ -95,7 +95,7 @@ class Player {
 
       else {
         // console.log(this.tuckSpinIncrease)
-        this.angle += this.tuckSpinSpeed/2.5;
+        this.angle += this.tuckSpinSpeed/2.7;
       }
       if (this.tuckSpinSpeed > 3) {
         this.tuckSpinSpeed -= 0.02;
@@ -256,12 +256,12 @@ class Player {
     this.go = false;
 
     this.tuckSpinSpeed = 1.7;
-    this.tuckSpinIncrease = 0.05;
+    this.tuckSpinIncrease = 0.06;
 
     this.position = "layout";
     this.straightened = false;
     this.secondTuck = false;
-    this.layoutSpeed = 1;
+    this.layoutSpeed = 0.8;
     this.direction = 1;
 
     this.facing = "forwards";
@@ -392,7 +392,9 @@ let menuPool;
 let buttonY;
 
 let boardHeight;
-let compList1;
+let compListOne, compListTwo, compListThree, compListFour;
+let ddListOne, ddListTwo, ddListThree, ddListFour;
+let compMode = 0;
 
 function preload() {
   menuPool = loadImage("assets/menuimage.jpg");
@@ -413,6 +415,16 @@ function setup() {
   //3 = Competition menu
   //4 = Competition
   //5 = Settings/How to play
+
+  compListOne = ["101c", "201c", "401c", "202c", "301c", "103c"];
+  ddListOne = [1.2, 1.5, 1.4, 1.5, 1.6, 1.6];
+  compListTwo = ["103c", "201c", "301c", "403c", "303c", "404c"];
+  ddListTwo = [1.5, 1.7, 1.8, 1.9, 2.0, 2.4];
+
+  compListThree = ["103c", "201c", "301c", "401c", "104c", "204c", "303c", "403c"];
+  ddListThree = [1.6, 1.5, 1.6, 1.4, 2.2, 2.2, 2.1, 2.2];
+  compListFour =  ["105c", "203c", "303c", "404c", "106c", "205c", "306c", "405c"];
+  ddListFour = [2.2, 1.9, 2.0, 2.4, 2.5, 2.8, 2.6, 2.7];
 
 
   player = new Player(0, 0);
@@ -454,46 +466,54 @@ function mainMenu() {
 
 function competitionMenu() {
   image(menuPool, 0, 0, width, height);
-
-
+  //COMPETITION 1, 1m Prov
   if(collidePointEllipse(mouseX, mouseY,width/3, height/4, width/6, width/6)) {
     fill(0, 200, 100);
+    if(mouseIsPressed) {
+      compMode = 1;
+    }
   }
   else {
-    fill(0, 255, 0)
+    fill(0, 255, 0);
   }
-
   ellipse(width/3, height/4, width/6, width/6);
 
-  text("1m Provincials", width/3, height/4, width/6, width/6);
-
+  //COMPETITION 2, 3m prov
   if(collidePointEllipse(mouseX, mouseY, width/1.5, height/4, width/6, width/6)) {
     fill(0, 200, 100);
   }
   else {
     fill(0, 255, 0);
   }
-  ellipse(width/1.5, height/4, width/6, width/6);
-  text("3m Provincials", width/1.5, height/4, width/6, width/6);
 
+  ellipse(width/1.5, height/4, width/6, width/6);
+
+  //COMPETITION 3, 1m Nat
   if(collidePointEllipse(mouseX, mouseY, width/3, height/4 * 3, width/6, width/6)) {
     fill(0, 200, 100);
   }
   else {
     fill(0, 255, 0);
   }
-  ellipse(width/3, height/4 * 3, width/6, width/6);
-  text("1m Nationals", width/3, height/4 * 3, width/6, width/6);
 
+  ellipse(width/3, height/4 * 3, width/6, width/6);
+
+  //COMPETITION 4, 3m Nat
   if(collidePointEllipse(mouseX, mouseY, width/1.5, height/4 * 3, width/6, width/6)) {
     fill(0, 200, 100);
   }
   else {
     fill(0, 255, 0);
   }
+
   ellipse(width/1.5, height/4 * 3, width/6, width/6);
-  text("3m Nationals", width/1.5, height/4 * 3, width/6, width/6);
+
+  fill(0);
   textAlign(CENTER, CENTER);
+  text("1m Provincials", width/3, height/4);
+  text("3m Nationals", width/1.5, height/4 * 3);
+  text("1m Nationals", width/3, height/4 * 3);
+  text("3m Provincials", width/1.5, height/4);
 }
 
 function switchBoardButton() {
@@ -585,7 +605,7 @@ function practice() {
 
 
   if(finishedDive && !player.go) {
-    if(millis() < initTime + 3000) {
+    if(millis() < initTime + 5000) {
       practiceDisplay();
     }
     else {
