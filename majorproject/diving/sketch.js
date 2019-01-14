@@ -397,13 +397,15 @@ let compListOne, compListTwo, compListThree, compListFour;
 let ddListOne, ddListTwo, ddListThree, ddListFour;
 let compMode = 0;
 let temp;
-let totalScore;
+let diverScore = 0;
 
 let compDives= [];
 let compDds = [];
 
 let diveCounter = 0;
 let introTimer;
+
+// let compScoreOne
 
 function preload() {
   menuPool = loadImage("assets/menuimage.jpg");
@@ -427,7 +429,7 @@ function setup() {
 
   compListOne = ["101c", "201c", "401c", "202c", "301c", "103c"];
   ddListOne = [1.2, 1.5, 1.4, 1.5, 1.6, 1.6];
-  compListTwo = ["103c", "201c", "301c", "403c", "303c", "404c"];
+  compListTwo = ["103c", "201c", "302c", "403c", "303c", "404c"];
   ddListTwo = [1.5, 1.7, 1.8, 1.9, 2.0, 2.4];
 
   compListThree = ["103c", "201c", "301c", "401c", "104c", "204c", "303c", "403c"];
@@ -559,8 +561,7 @@ function competitionMenu() {
 
 function competition() {
   if(diveCounter >= compDives[compMode-1].length-1) {
-    //REMEMBER FINAL SCORE AND quit
-    // console.log("Yay")
+    gameState -= 1;
   }
 
 
@@ -586,6 +587,7 @@ function competition() {
   drawPool();
   displayButtons();
 
+
   if(millis() < introTimer + 3000 && !player.go || !player.go && mouseIsPressed && !finishedDive) {
     let boxWidth = width/4;
     let boxHeight = height/6;
@@ -607,15 +609,18 @@ function competition() {
     text(compDives[compMode-1][diveCounter], boxX + boxWidth/2, boxY + boxHeight/4 * 3);
   }
 
+  fill(255);
+  rect(0, height - height/8, width/6, height/8);
+  fill(0);
+  text("Total score " + diverScore, 0 + width/6/2, height-height/8/2);
+
   if(finishedDive) {
     if(millis() < initTime + 3000) {
       displayScores();
       goButton.available = false;
     }
     else {
-
-
-      calculateScore();
+      diverScore += calculateScore();
       diveCounter++;
       finishedDive = false;
       player.didFail = false;
@@ -641,7 +646,6 @@ function calculateScore() {
   let totalScore = threeScores[0] + threeScores[1] + threeScores[2];
 
   totalScore = totalScore * compDds[compMode-1][diveCounter];
-  console.log(totalScore);
   return totalScore;
 }
 
@@ -961,8 +965,6 @@ function score(judges, fail) {
       score = 0;
       allScores.push(score);
     }
-
-
   }
   return allScores;
 }
