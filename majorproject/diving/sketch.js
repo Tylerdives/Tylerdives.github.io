@@ -385,8 +385,6 @@ let tuckButton, goButton;
 
 let frontButton, backButton, reverseButton, inwardButton;
 
-let diveMap;
-
 let poolAmbiance;
 
 let menuPool;
@@ -405,7 +403,18 @@ let compDds = [];
 let diveCounter = 0;
 let introTimer;
 
-// let compScoreOne
+let compRecordOne = 150;
+let creatorScoreOne = 214;
+
+let compRecordTwo = 205;
+let creatorScoreTwo = 282;
+
+let compRecordThree = 300;
+let creatorScoreThree = 392;
+
+let compRecordFour = 440;
+let creatorScoreFour = 507;
+
 
 function preload() {
   menuPool = loadImage("assets/menuimage.jpg");
@@ -456,8 +465,6 @@ function setup() {
   backButton = new DivingButton("direction", 2, 2, "Back");
   reverseButton = new DivingButton("direction", 3, 3, "Reverse");
   inwardButton = new DivingButton("direction", 4, 4, "Inward");
-
-  let diveMap = new Map();
 }
 
 
@@ -553,18 +560,27 @@ function competitionMenu() {
 
   fill(0);
   textAlign(CENTER, CENTER);
-  text("1m Provincials", width/3, height/4);
-  text("3m Nationals", width/1.5, height/4 * 3);
+  text("1m Regionals", width/3, height/4);
+  text("3m International", width/1.5, height/4 * 3);
   text("1m Nationals", width/3, height/4 * 3);
   text("3m Provincials", width/1.5, height/4);
+
+  fill(255);
+  text("Record: " + compRecordOne + "pts", width/3, height/4 + 100);
+  text("Record: " + compRecordFour + "pts", width/1.5, height/4 * 3 + 100);
+  text("Record: " + compRecordThree + "pts", width/3, height/4 * 3 + 100);
+  text("Record: " + compRecordTwo + "pts", width/1.5, height/4 + 100);
+
+  fill(255, 0, 0);
+  text("Creator record: " + creatorScoreOne + "pts", width/3, height/4 + 150);
+  text("Creator record: " + creatorScoreFour + "pts", width/1.5, height/4 * 3 + 150);
+  text("Creator record: " + creatorScoreThree + "pts", width/3, height/4 * 3 + 150);
+  text("Creator record: " + creatorScoreTwo + "pts", width/1.5, height/4 + 150);
+
+  returnButton(1, "menu", 1);
 }
 
 function competition() {
-  if(diveCounter >= compDives[compMode-1].length-1) {
-    gameState -= 1;
-  }
-
-
 
   if((compMode === 1 || compMode === 3) && temp !== false) {
     player.y = 400;
@@ -586,6 +602,7 @@ function competition() {
   drawPlayer();
   drawPool();
   displayButtons();
+  returnButton(3, "competition", 3);
 
 
   if(millis() < introTimer + 3000 && !player.go || !player.go && mouseIsPressed && !finishedDive) {
@@ -601,8 +618,6 @@ function competition() {
     rect(boxX, boxY, boxWidth, boxHeight);
     line(boxX, boxY + boxHeight/2, boxX + boxWidth, boxY + boxHeight/2);
 
-    // rectMode(CENTER);
-    // rect(width/2, height/2, )
     strokeWeight(1);
     fill(0);
     text(translateDive(compDives[compMode-1][diveCounter]), boxX + boxWidth/2, boxY + boxHeight/4);
@@ -624,15 +639,36 @@ function competition() {
       diveCounter++;
       finishedDive = false;
       player.didFail = false;
+
+
       introTimer = millis();
     }
+  }
+
+  if(diveCounter === compDives[compMode-1].length) {
+    if(compMode === 1 && diverScore > compRecordOne) {
+      compRecordOne = diverScore;
+    }
+    else if(compMode === 2 && diverScore > compRecordTwo) {
+      compRecordTwo = diverScore;
+    }
+    else if(compMode === 3 && diverScore > compRecordThree) {
+      compRecordThree = diverScore;
+    }
+    else if(compMode === 4 && diverScore > compRecordFour) {
+      compRecordFour = diverScore;
+    }
+    temp = "";
+    diveCounter = 0;
+    gameState -= 1;
+    diverScore = 0;
   }
 
 }
 
 function calculateScore() {
   let threeScores;
-  console.log(lastScores);
+  // console.log(lastScores);
   if(lastScores.length > 3) {
     threeScores = sort(lastScores);
     threeScores.pop();
@@ -641,11 +677,16 @@ function calculateScore() {
   else {
     threeScores = lastScores;
   }
-  console.log(threeScores);
+  // console.log(threeScores);
 
   let totalScore = threeScores[0] + threeScores[1] + threeScores[2];
 
   totalScore = totalScore * compDds[compMode-1][diveCounter];
+  totalScore = 100 * totalScore;
+  // console.log(totalScore)
+  totalScore = round(totalScore);
+  // console.log(totalScore)
+  totalScore = totalScore/100;
   return totalScore;
 }
 
@@ -805,7 +846,7 @@ function practice() {
   drawPlayer();
   drawPool();
   displayButtons();
-
+  returnButton(1, "practice", 1);
 
   if(finishedDive && !player.go) {
     if(millis() < initTime + 5000) {
@@ -969,6 +1010,27 @@ function score(judges, fail) {
   return allScores;
 }
 
+function returnButton(state, type, offset) {
+  if(collidePointCircle(mouseX, mouseY, 100, 100 * offset, 150, 150)) {
+    fill(0, 255, 255);
+    if(mouseIsPressed) {
+      gameState = state;
+      if(type === "competition") {
+        temp = "";
+        diveCounter = 0;
+        diverScore = 0;
+      }
+    }
+  }
+  else {
+    fill(255, 100, 50);
+  }
+
+  ellipse(100, 100 * offset, 150, 150);
+  fill(0);
+  text("Back", 100, 100 * offset);
+}
+
 function defineDive() {
   let diveNumber = "";
 
@@ -977,7 +1039,6 @@ function defineDive() {
 
   let rotations = abs(round(player.angle/180));
   diveNumber += rotations.toString();
-
 
   diveNumber += "c";
 
