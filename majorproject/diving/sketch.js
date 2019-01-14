@@ -557,7 +557,7 @@ function competitionMenu() {
 
   ellipse(width/1.5, height/4 * 3, width/6, width/6);
 
-
+  textSize(width/40);
   fill(0);
   textAlign(CENTER, CENTER);
   text("1m Regionals", width/3, height/4);
@@ -571,11 +571,14 @@ function competitionMenu() {
   text("Record: " + compRecordThree + "pts", width/3, height/4 * 3 + 100);
   text("Record: " + compRecordTwo + "pts", width/1.5, height/4 + 100);
 
-  fill(255, 0, 0);
+  fill(0);
   text("Creator record: " + creatorScoreOne + "pts", width/3, height/4 + 150);
   text("Creator record: " + creatorScoreFour + "pts", width/1.5, height/4 * 3 + 150);
   text("Creator record: " + creatorScoreThree + "pts", width/3, height/4 * 3 + 150);
   text("Creator record: " + creatorScoreTwo + "pts", width/1.5, height/4 + 150);
+
+  fill(255, 255, 0);
+  text("Last score: " + diverScore + "pts", width/2, height/2);
 
   returnButton(1, "menu", 1);
 }
@@ -586,11 +589,13 @@ function competition() {
     player.y = 400;
     boardHeight = 400;
     temp = false;
+    diverScore = 0;
   }
-  else if ((compMode === 2 || compMode === 40) && temp !== false) {
+  else if ((compMode === 2 || compMode === 4) && temp !== false) {
     player.y = 100;
     boardHeight = 100;
     temp = false;
+    diverScore = 0;
   }
 
   background(255);
@@ -632,6 +637,7 @@ function competition() {
   if(finishedDive) {
     if(millis() < initTime + 3000) {
       displayScores();
+
       goButton.available = false;
     }
     else {
@@ -662,6 +668,9 @@ function competition() {
     diveCounter = 0;
     gameState -= 1;
     diverScore = 0;
+    player.reset();
+    lastScores = [];
+    diverScore = 0;
   }
 
 }
@@ -682,11 +691,13 @@ function calculateScore() {
   let totalScore = threeScores[0] + threeScores[1] + threeScores[2];
 
   totalScore = totalScore * compDds[compMode-1][diveCounter];
-  totalScore = 100 * totalScore;
+  totalScore = 1000 * totalScore;
   // console.log(totalScore)
   totalScore = round(totalScore);
   // console.log(totalScore)
-  totalScore = totalScore/100;
+  totalScore = totalScore/1000;
+
+  // totalScore = round(totalScore);
   return totalScore;
 }
 
@@ -747,7 +758,7 @@ function translateDive(diveToDo) {
 }
 
 function displayScores() {
-  let time = millis();
+
   rectMode(CENTER);
   for(let i = 0; i < lastScores.length; i++) {
     fill(0);
@@ -782,7 +793,7 @@ function switchBoardButton() {
   ellipse(width-300, buttonY, 90, 90);
   fill(0);
   textAlign(CENTER, CENTER);
-  textSize(width/68);
+  textSize(width/70);
   text("SWITCH", width-300, buttonY);
 
 }
@@ -1014,14 +1025,15 @@ function returnButton(state, type, offset) {
   if(collidePointCircle(mouseX, mouseY, 100, 100 * offset, 150, 150)) {
     fill(0, 255, 255);
     if(mouseIsPressed) {
-      gameState = state;
-      if(type === "competition") {
-        temp = "";
-        diveCounter = 0;
-        diverScore = 0;
-
-      }
       player.reset();
+      gameState = state;
+
+      finishedDive = false;
+      temp = "";
+      diveCounter = 0;
+      diverScore = 0;
+      initTime = millis();
+
     }
   }
   else {
