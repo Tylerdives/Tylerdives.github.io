@@ -1019,6 +1019,7 @@ function returnButton(state, type, offset) {
         temp = "";
         diveCounter = 0;
         diverScore = 0;
+        player.reset();
       }
     }
   }
