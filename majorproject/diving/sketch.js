@@ -404,7 +404,7 @@ let diveCounter = 0;
 let introTimer;
 
 let compRecordOne = 150;
-let creatorScoreOne = 214;
+let creatorScoreOne = 232;
 
 let compRecordTwo = 205;
 let creatorScoreTwo = 282;
@@ -443,7 +443,7 @@ function setup() {
 
   compListThree = ["103c", "201c", "301c", "401c", "104c", "204c", "303c", "403c"];
   ddListThree = [1.6, 1.5, 1.6, 1.4, 2.2, 2.2, 2.1, 2.2];
-  compListFour =  ["105c", "203c", "303c", "404c", "106c", "205c", "306c", "405c"];
+  compListFour =  ["105c", "204c", "303c", "404c", "106c", "205c", "306c", "405c"];
   ddListFour = [2.2, 1.9, 2.0, 2.4, 2.5, 2.8, 2.6, 2.7];
 
 
@@ -578,9 +578,9 @@ function competitionMenu() {
   text("Creator record: " + creatorScoreTwo + "pts", width/1.5, height/4 + 150);
 
   fill(255, 255, 0);
-  text("Last score: " + diverScore + "pts", width/2, height/2);
+  text("Last score: " + diverScore + "pts", width/2, height/2 + 50);
 
-  returnButton(1, "menu", 1);
+  returnButton(1, 1);
 }
 
 function competition() {
@@ -607,7 +607,7 @@ function competition() {
   drawPlayer();
   drawPool();
   displayButtons();
-  returnButton(3, "competition", 3);
+  returnButton(3, 3);
 
 
   if(millis() < introTimer + 3000 && !player.go || !player.go && mouseIsPressed && !finishedDive) {
@@ -634,10 +634,15 @@ function competition() {
   fill(0);
   text("Total score " + diverScore, 0 + width/6/2, height-height/8/2);
 
+
+
   if(finishedDive) {
     if(millis() < initTime + 3000) {
       displayScores();
-
+      if(lastScores[0] + lastScores[1] + lastScores[2] === 0) {
+        fill(0);
+        text("FAIL DIVE", width/2, height/2);
+      }
       goButton.available = false;
     }
     else {
@@ -667,10 +672,9 @@ function competition() {
     temp = "";
     diveCounter = 0;
     gameState -= 1;
-    diverScore = 0;
     player.reset();
     lastScores = [];
-    diverScore = 0;
+    // diverScore = 0;
   }
 
 }
@@ -857,7 +861,7 @@ function practice() {
   drawPlayer();
   drawPool();
   displayButtons();
-  returnButton(1, "practice", 1);
+  returnButton(1, 1);
 
   if(finishedDive && !player.go) {
     if(millis() < initTime + 5000) {
@@ -1021,7 +1025,7 @@ function score(judges, fail) {
   return allScores;
 }
 
-function returnButton(state, type, offset) {
+function returnButton(state, offset) {
   if(collidePointCircle(mouseX, mouseY, 100, 100 * offset, 150, 150)) {
     fill(0, 255, 255);
     if(mouseIsPressed) {
