@@ -695,11 +695,7 @@ function calculateScore() {
   let totalScore = threeScores[0] + threeScores[1] + threeScores[2];
 
   totalScore = totalScore * compDds[compMode-1][diveCounter];
-  totalScore = 1000 * totalScore;
-  // console.log(totalScore)
-  totalScore = round(totalScore);
-  // console.log(totalScore)
-  totalScore = totalScore/1000;
+  totalScore = Math.round(totalScore * 100) / 100;
 
   // totalScore = round(totalScore);
   return totalScore;
