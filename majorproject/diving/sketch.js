@@ -3,6 +3,9 @@
 // December 12th, 2018
 //
 
+
+//Player & button classes
+
 class Player {
   constructor(boardHeight, tuckSpeed) {
     this.boardHeight = boardHeight;
@@ -14,14 +17,9 @@ class Player {
     this.x = this.initX;
     this.y = this.initY;
 
-
     this.dx = 1.75;
     this.dy = -4;
 
-    this.bodyColor = color(255, 0, 0);
-    this.headColor = color(0, 255, 0);
-    this.feetColor = color(255, 255, 0);
-    this.faceColor = color(0, 0, 255);
 
     this.angle = 0;
     this.go = false;
@@ -41,7 +39,6 @@ class Player {
 
     this.didFail = false;
   }
-
 
   update() {
 
@@ -94,7 +91,6 @@ class Player {
       }
 
       else {
-        // console.log(this.tuckSpinIncrease)
         this.angle += this.tuckSpinSpeed/2.7;
       }
       if (this.tuckSpinSpeed > 3) {
@@ -107,20 +103,24 @@ class Player {
     this.y += this.dy;
     this.dy += 0.080;
     this.x += this.dx;
+    //Makes it less like a parabola (looks better)
     if (this.dx > 0.1) {
       this.dx -= 0.01;
     }
   }
 
+
   display() {
+    //Pushing, then performing all transformations
     push();
     translate(this.x, this.y);
-
     if (this.go) {
       rotate(this.angle);
     }
 
-    fill(this.bodyColor);
+
+    //Drawing the player
+    // fill(this.bodyColor);
 
     if((this.direction === 1 || this.direction === 3) && player.position !== "tuck") {
       strokeWeight(7);
@@ -145,7 +145,6 @@ class Player {
       ellipse(0, -30, 33, 33);
       //ARM
       line(0, 10, 0, -60);
-
 
       strokeWeight(1);
 
@@ -182,7 +181,6 @@ class Player {
     else if(player.direction === 2 || player.direction === 4) {
       strokeWeight(7);
       fill(255);
-      //Body
       //BODY
       line(0, -40, 0, 20);
       //FEMUR
@@ -215,6 +213,7 @@ class Player {
     fill(0);
     textSize(width/54);
 
+    //The small arrow to define direction spinning
     if((this.direction === 1 || this.direction === 2) && !this.go) {
       text("→", 0, -70);
     }
@@ -222,23 +221,23 @@ class Player {
       text("←", 0, -70);
     }
 
+    //Popping so the screen doesn't rotate
     pop();
   }
 
-  swim() {
-    this.y += this.dy;
-    if (this.dy !== 5) {
-      if(this.y > height + 100) {
-        return true;
-      }
-    }
-    else {
-      return false;
-    }
 
+  swim() {
+    //Makes a slight delay before the diver reappears on the board
+    this.y += this.dy;
+    if(this.y > height + 100) {
+      return true;
+    }
+    return false;
   }
 
+
   reset() {
+    //RESETS most player vars
     this.x = this.initX;
     this.y = boardHeight;
 
@@ -247,10 +246,6 @@ class Player {
     this.dx = 1.75;
     this.dy = -4;
 
-    this.bodyColor = color(255, 0, 0);
-    this.headColor = color(0, 255, 0);
-    this.feetColor = color(255, 255, 0);
-    this.faceColor = color(0, 0, 255);
 
     this.angle = 0;
     this.go = false;
@@ -271,32 +266,43 @@ class Player {
   }
 }
 
+//A class for the tuck, direction, and go button
 class DivingButton {
   constructor(playerThing, changeTo, level, message) {
-    this.space = 25;
     this.radius = height/13;
     this.x = width - this.radius - 40;
     this.y = height - level * (height/5.5) - height/7;
+
+    //Three colors :D
     this.color = color(255, 0, 255);
     this.hoveringColor = color(100, 100, 255);
     this.changeColor = color(0, 255, 0);
+
     this.available = false;
+    //Should the button be pressable?
+
     this.whatToChange = playerThing;
     this.changeTo = changeTo;
+    //The variable changes
+
     this.on = false;
+    //On as in button is "on"
     this.selected = false;
+
     this.message = message;
   }
 
   display() {
+    //Shows and does all detection things
+
     if(this.available) {
       if(collidePointCircle(mouseX, mouseY, this.x, this.y, this.radius*2)) {
         fill(this.hoveringColor);
         if(mouseIsPressed) {
           fill(this.changeColor);
+
           if(this.whatToChange === "go") {
             if(player.go !== true) {
-              //WAS WORKING HERE LAST
               player.go = this.changeTo;
               this.on = true;
             }
@@ -352,7 +358,6 @@ class DivingButton {
       else {
         this.available = false;
       }
-
       fill(160);
     }
 
@@ -367,8 +372,9 @@ class DivingButton {
   }
 }
 
-
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Variables begin
 
 let gameState;
 
@@ -385,7 +391,6 @@ let tuckButton, goButton;
 
 let frontButton, backButton, reverseButton, inwardButton;
 
-let poolAmbiance;
 
 let menuPool;
 let buttonY;
@@ -404,21 +409,26 @@ let diveCounter = 0;
 let introTimer;
 
 let compRecordOne = 150;
-let creatorScoreOne = 232;
+const CREATOR_SCORE_ONE = 232;
 
 let compRecordTwo = 205;
-let creatorScoreTwo = 282;
+const CREATOR_SCORE_TWO = 282;
 
 let compRecordThree = 300;
-let creatorScoreThree = 392;
+const CREATOR_SCORE_THREE = 392;
 
 let compRecordFour = 440;
-let creatorScoreFour = 507;
+const CREATOR_SCORE_FOUR = 507;
 
+let poolAmbiance, mediumSplash, menuMusic, whistle;
+let noMusic, noSound, compSplash;
 
 function preload() {
   menuPool = loadImage("assets/menuimage.jpg");
-  // poolAmbiance = loadSound("assets/poolAmbiance.wav");
+  poolAmbiance = loadSound("assets/poolAmbiance.mp3");
+  mediumSplash = loadSound("assets/mediumSplash.wav");
+  menuMusic = loadSound("assets/menuTheme.mp3");
+  whistle = loadSound("assets/whistle.wav");
 }
 
 function setup() {
@@ -434,7 +444,7 @@ function setup() {
   //2 = Practice
   //3 = Competition menu
   //4 = Competition
-  //5 = Settings/How to play
+  //5 = Settings/How to play/Tutorial
 
   compListOne = ["101c", "201c", "401c", "202c", "301c", "103c"];
   ddListOne = [1.2, 1.5, 1.4, 1.5, 1.6, 1.6];
@@ -485,10 +495,17 @@ function draw() {
   else if (gameState === 4) {
     competition();
   }
-
 }
 
+//The gamstate Functions, and their funtions
+
 function mainMenu() {
+  if(noMusic !== false) {
+    menuMusic.setVolume(0.2);
+    menuMusic.loop();
+    noMusic = false;
+  }
+
   image(menuPool, 0, 0, width, height);
   textSize(width/9);
   fill(255, 20, 70);
@@ -496,7 +513,149 @@ function mainMenu() {
   drawStartButtons();
 }
 
+
+function drawStartButtons() {
+  fill(0);
+
+  textSize(width/40);
+  stroke(0);
+
+  //PRACTICE BUTTON
+  if(collidePointEllipse(mouseX, mouseY, width/3, height-height/4, width/5, height/5)) {
+    fill(255, 0, 0);
+    if(mouseIsPressed) {
+      gameState = 2;
+      menuMusic.stop();
+      noMusic = "";
+    }
+  }
+  else {
+    fill(255, 120, 0);
+  }
+  strokeWeight(3);
+  ellipse(width/3, height-height/4, width/5, height/5);
+
+
+  //COMPETITION BUTTON
+  if(collidePointEllipse(mouseX, mouseY, width/1.5, height-height/4, width/5, height/5)) {
+    fill(255, 0, 0);
+    if(mouseIsPressed) {
+      gameState = 3;
+      initTimeCompButton = millis();
+    }
+  }
+  else {
+    fill(255, 120, 0);
+  }
+
+  ellipse(width/1.5, height-height/4, width/5, height/5);
+
+  strokeWeight(2);
+  fill(255);
+  textAlign(CENTER, CENTER);
+  text("PRACTICE", width/3, height-height/4);
+  text("COMPETITION", width/1.5, height-height/4);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+function practice() {
+  if(noMusic !== false) {
+    poolAmbiance.setVolume(0.06);
+    poolAmbiance.loop();
+    noMusic = false;
+  }
+
+  background(255);
+  if (player.go) {
+    updatePlayer();
+  }
+  else {
+    switchBoardButton();
+  }
+  player.display();
+  drawPool();
+  displayButtons();
+  returnButton(1, 1, false);
+
+  if(finishedDive && !player.go) {
+    if(millis() < initTime + 5000) {
+      practiceDisplay();
+    }
+    else {
+      finishedDive = false;
+    }
+  }
+}
+
+//Allows the user to switch boards in practice mode.
+function switchBoardButton() {
+  // let buttonY = height/10;
+  if(collidePointCircle(mouseX, mouseY, width-300, buttonY, 90, 90)) {
+    fill(0, 255, 255);
+    if(mouseIsPressed) {
+      if(player.y !== 400) {
+        buttonY = height/10 * 4;
+        player.y = 400;
+        boardHeight = 400;
+      }
+      else {
+        buttonY = height/10;
+        player.y = 100;
+        boardHeight = 100;
+      }
+    }
+  }
+  else {
+    fill(255, 100, 50);
+  }
+  ellipse(width-300, buttonY, 90, 90);
+  fill(0);
+  textAlign(CENTER, CENTER);
+  textSize(width/70);
+  text("SWITCH", width-300, buttonY);
+}
+
+
+//Makes a display after each dive in practice
+function practiceDisplay() {
+
+  let boxWidth = width/4;
+  let boxHeight = height/6;
+  let boxY = height/2 - boxHeight/2;
+  let boxX = width/2 - boxWidth/2;
+
+  fill(156, 255, 255);
+  strokeWeight(4);
+  stroke(0);
+
+  rect(boxX, boxY, boxWidth, boxHeight);
+  line(boxX, boxY + boxHeight/2, boxX + boxWidth, boxY + boxHeight/2);
+
+  strokeWeight(1);
+
+  textSize(width/54);
+  let score = lastScores[0].toString();
+  fill(0);
+  textAlign(CENTER, CENTER);
+
+  text(translateDive(diveDone), boxX + boxWidth/2, boxY + boxHeight/4);
+  text("Average score: " + score, boxX + boxWidth/2, boxY + boxHeight/4 * 3);
+
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 function competitionMenu() {
+  if(noMusic !== false) {
+    menuMusic.setVolume(0.2);
+    menuMusic.loop();
+    noMusic = false;
+  }
+
   image(menuPool, 0, 0, width, height);
   //COMPETITION 1, 1m Prov
   if(collidePointCircle(mouseX, mouseY,width/3, height/4, width/6, width/6)) {
@@ -505,6 +664,9 @@ function competitionMenu() {
       compMode = 1;
       gameState = 4;
       introTimer = millis();
+      menuMusic.stop();
+      noMusic = "";
+      noSound = "";
     }
   }
   else {
@@ -519,6 +681,9 @@ function competitionMenu() {
       compMode = 2;
       gameState = 4;
       introTimer = millis();
+      menuMusic.stop();
+      noMusic = "";
+      noSound = "";
     }
   }
   else {
@@ -534,6 +699,9 @@ function competitionMenu() {
       compMode = 3;
       gameState = 4;
       introTimer = millis();
+      menuMusic.stop();
+      noMusic = "";
+      noSound = "";
     }
   }
   else {
@@ -549,6 +717,10 @@ function competitionMenu() {
       compMode = 4;
       gameState = 4;
       introTimer = millis();
+      menuMusic.stop();
+      noMusic = "";
+      noSound = "";
+
     }
   }
   else {
@@ -572,19 +744,29 @@ function competitionMenu() {
   text("Record: " + compRecordTwo + "pts", width/1.5, height/4 + 100);
 
   fill(0);
-  text("Creator record: " + creatorScoreOne + "pts", width/3, height/4 + 150);
-  text("Creator record: " + creatorScoreFour + "pts", width/1.5, height/4 * 3 + 150);
-  text("Creator record: " + creatorScoreThree + "pts", width/3, height/4 * 3 + 150);
-  text("Creator record: " + creatorScoreTwo + "pts", width/1.5, height/4 + 150);
+  text("Creator record: " + CREATOR_SCORE_ONE + "pts", width/3, height/4 + 150);
+  text("Creator record: " + CREATOR_SCORE_FOUR + "pts", width/1.5, height/4 * 3 + 150);
+  text("Creator record: " + CREATOR_SCORE_THREE + "pts", width/3, height/4 * 3 + 150);
+  text("Creator record: " + CREATOR_SCORE_TWO + "pts", width/1.5, height/4 + 150);
 
   fill(255, 255, 0);
   text("Last score: " + diverScore + "pts", width/2, height/2 + 50);
 
-  returnButton(1, 1);
+  returnButton(1, 1, true);
 }
 
-function competition() {
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function competition() {
+  if((compMode === 4 || compMode === 3) && player.go === false) {
+    player.tuckSpinSpeed = 1.8;
+  }
+  if(noMusic !== false) {
+    poolAmbiance.setVolume(0.01);
+    poolAmbiance.loop();
+    noMusic = false;
+  }
   if((compMode === 1 || compMode === 3) && temp !== false) {
     player.y = 400;
     boardHeight = 400;
@@ -604,13 +786,19 @@ function competition() {
     updatePlayer();
   }
 
-  drawPlayer();
+  player.display();
   drawPool();
   displayButtons();
-  returnButton(3, 3);
+  returnButton(3, 3, false);
 
 
   if(millis() < introTimer + 3000 && !player.go || !player.go && mouseIsPressed && !finishedDive) {
+    if(noSound !== false) {
+      whistle.setVolume(0.2);
+      whistle.play();
+      noSound = false;
+      compSplash = true;
+    }
     let boxWidth = width/4;
     let boxHeight = height/6;
     let boxY = height/2 - boxHeight/2;
@@ -633,8 +821,6 @@ function competition() {
   rect(0, height - height/8, width/6, height/8);
   fill(0);
   text("Total score " + diverScore, 0 + width/6/2, height-height/8/2);
-
-
 
   if(finishedDive) {
     if(millis() < initTime + 3000) {
@@ -674,14 +860,25 @@ function competition() {
     gameState -= 1;
     player.reset();
     lastScores = [];
-    // diverScore = 0;
   }
-
 }
 
+//Judges scorecards
+function displayScores() {
+  rectMode(CENTER);
+  for(let i = 0; i < lastScores.length; i++) {
+    fill(0);
+    rect(width * (i+1) * (1/(lastScores.length+1)), height-200, 100, 100);
+    fill(255);
+    textAlign(CENTER, CENTER);
+    text(lastScores[i].toString(), width * (i+1) * (1/(lastScores.length+1)), height-200);
+  }
+  rectMode(CORNER);
+}
+
+//Dive DD
 function calculateScore() {
   let threeScores;
-  // console.log(lastScores);
   if(lastScores.length > 3) {
     threeScores = sort(lastScores);
     threeScores.pop();
@@ -690,17 +887,91 @@ function calculateScore() {
   else {
     threeScores = lastScores;
   }
-  // console.log(threeScores);
 
   let totalScore = threeScores[0] + threeScores[1] + threeScores[2];
 
   totalScore = totalScore * compDds[compMode-1][diveCounter];
   totalScore = Math.round(totalScore * 100) / 100;
 
-  // totalScore = round(totalScore);
   return totalScore;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//Other funtions
+
+
+//All of the player updating during/after dives not within a class, defines reset, sound and button parameters
+function updatePlayer() {
+  if (player.y < height - 100) {
+    player.update();
+    if (tuckButton.on) {
+      player.position = "tuck";
+    }
+    else if (player.position !== "layout"){
+      player.position = "straight";
+    }
+  }
+
+  else {
+    if(noSound !== false || compSplash) {
+      if(boardHeight === 400) {
+        mediumSplash.setVolume(0.15);
+      }
+      else {
+        mediumSplash.setVolume(0.20);
+      }
+
+      mediumSplash.play();
+      noSound = false;
+      compSplash = false;
+    }
+    if (player.swim()) {
+      if(gameState === 2) {
+        player.didFail = false;
+        defineDive();
+        lastScores = score(1, player.didFail);
+        player.reset();
+
+        frontButton.selected = false;
+        backButton.selected = false;
+        reverseButton.selected = false;
+        inwardButton.selected = false;
+        tuckButton.available = false;
+
+        finishedDive = true;
+        initTime = millis();
+        noSound = "";
+      }
+
+      else if (gameState === 4){
+        defineDive();
+        if(diveDone !== compDives[compMode-1][diveCounter]) {
+          player.didFail = true;
+        }
+        if(compMode === 1 || compMode === 2) {
+          lastScores = score(3, player.didFail);
+        }
+        else {
+          lastScores = score(5, player.didFail);
+        }
+        player.reset();
+
+        frontButton.selected = false;
+        backButton.selected = false;
+        reverseButton.selected = false;
+        inwardButton.selected = false;
+        tuckButton.available = false;
+
+        finishedDive = true;
+        initTime = millis();
+        noSound = "";
+      }
+
+    }
+  }
+}
+
+//Translates dives from dive numbers to english, (practice & competition)
 function translateDive(diveToDo) {
   let translatedDive = "";
 
@@ -722,6 +993,7 @@ function translateDive(diveToDo) {
   rotations = diveToDo.charAt(2);
   rotations = parseInt(rotations, 10);
   rotations = rotations/2;
+
 
   if(rotations === 0.5) {
     translatedDive += "dive ";
@@ -757,119 +1029,7 @@ function translateDive(diveToDo) {
   return translatedDive;
 }
 
-function displayScores() {
-
-  rectMode(CENTER);
-  for(let i = 0; i < lastScores.length; i++) {
-    fill(0);
-    rect(width * (i+1) * (1/(lastScores.length+1)), height-200, 100, 100);
-    fill(255);
-    textAlign(CENTER, CENTER);
-    text(lastScores[i].toString(), width * (i+1) * (1/(lastScores.length+1)), height-200);
-  }
-  rectMode(CORNER);
-}
-
-function switchBoardButton() {
-  // let buttonY = height/10;
-  if(collidePointCircle(mouseX, mouseY, width-300, buttonY, 90, 90)) {
-    fill(0, 255, 255);
-    if(mouseIsPressed) {
-      if(player.y !== 400) {
-        buttonY = height/10 * 4;
-        player.y = 400;
-        boardHeight = 400;
-      }
-      else {
-        buttonY = height/10;
-        player.y = 100;
-        boardHeight = 100;
-      }
-    }
-  }
-  else {
-    fill(255, 100, 50);
-  }
-  ellipse(width-300, buttonY, 90, 90);
-  fill(0);
-  textAlign(CENTER, CENTER);
-  textSize(width/70);
-  text("SWITCH", width-300, buttonY);
-
-}
-
-function drawStartButtons() {
-  fill(0);
-
-  textSize(width/40);
-  stroke(0);
-
-  //PRACTICE BUTTON
-  if(collidePointEllipse(mouseX, mouseY, width/3, height-height/4, width/5, height/5)) {
-    fill(255, 0, 0);
-    if(mouseIsPressed) {
-      gameState = 2;
-    }
-  }
-  else {
-    fill(255, 120, 0);
-  }
-  strokeWeight(3);
-  ellipse(width/3, height-height/4, width/5, height/5);
-
-
-  //COMPETITION BUTTON
-  if(collidePointEllipse(mouseX, mouseY, width/1.5, height-height/4, width/5, height/5)) {
-    fill(255, 0, 0);
-    if(mouseIsPressed) {
-      gameState = 3;
-      initTimeCompButton = millis();
-    }
-  }
-  else {
-    fill(255, 120, 0);
-  }
-
-  ellipse(width/1.5, height-height/4, width/5, height/5);
-
-  strokeWeight(2);
-  fill(255);
-  textAlign(CENTER, CENTER);
-  text("PRACTICE", width/3, height-height/4);
-  text("COMPETITION", width/1.5, height-height/4);
-}
-
-function practice() {
-  // let noMusic;
-  // if(noMusic !== false) {
-  //   poolAmbiance.setVolume(0.01);
-  //   poolAmbiance.loop();
-  //   noMusic = false;
-  // }
-
-  background(255);
-  if (player.go) {
-    updatePlayer();
-  }
-  else {
-    switchBoardButton();
-  }
-  drawPlayer();
-  drawPool();
-  displayButtons();
-  returnButton(1, 1);
-
-  if(finishedDive && !player.go) {
-    if(millis() < initTime + 5000) {
-      practiceDisplay();
-    }
-    else {
-      finishedDive = false;
-    }
-  }
-}
-
-
+//Draws the water and pooldeck for all pool modes
 function drawPool() {
   strokeWeight(2);
   fill(0, 0, 100, 220);
@@ -888,71 +1048,12 @@ function drawPool() {
   stroke(0);
   fill(0, 255, 0);
 
-  //Diving board
+  //Diving boards
   rect(0, 110 * 1.5 - 11, width/3 + 10 + 3, 10);
   rect(0, 110 * 4.2 - 11, width/3 + 10 + 3, 10);
 }
 
-function drawPlayer() {
-  player.display();
-}
-
-function updatePlayer() {
-  if (player.y < height - 100) {
-    player.update();
-    if (tuckButton.on) {
-      player.position = "tuck";
-    }
-    else if (player.position !== "layout"){
-      player.position = "straight";
-    }
-  }
-
-  else {
-    if (player.swim()) {
-      if(gameState === 2) {
-        player.didFail = false;
-        defineDive();
-        lastScores = score(1, player.didFail);
-        player.reset();
-
-        frontButton.selected = false;
-        backButton.selected = false;
-        reverseButton.selected = false;
-        inwardButton.selected = false;
-        tuckButton.available = false;
-
-        finishedDive = true;
-        initTime = millis();
-      }
-
-      else if (gameState === 4){
-        defineDive();
-        if(diveDone !== compDives[compMode-1][diveCounter]) {
-          player.didFail = true;
-        }
-        if(compMode === 1 || compMode === 2) {
-          lastScores = score(3, player.didFail);
-        }
-        else {
-          lastScores = score(5, player.didFail);
-        }
-        player.reset();
-
-        frontButton.selected = false;
-        backButton.selected = false;
-        reverseButton.selected = false;
-        inwardButton.selected = false;
-        tuckButton.available = false;
-
-        finishedDive = true;
-        initTime = millis();
-      }
-
-    }
-  }
-}
-
+//Displays the tuck, go, direction buttons, for pool modes
 function displayButtons() {
   if(!player.go) {
     goButton.display();
@@ -967,32 +1068,8 @@ function displayButtons() {
   }
 }
 
-function practiceDisplay() {
 
-  let boxWidth = width/4;
-  let boxHeight = height/6;
-  let boxY = height/2 - boxHeight/2;
-  let boxX = width/2 - boxWidth/2;
-
-  fill(156, 255, 255);
-  strokeWeight(4);
-  stroke(0);
-
-  rect(boxX, boxY, boxWidth, boxHeight);
-  line(boxX, boxY + boxHeight/2, boxX + boxWidth, boxY + boxHeight/2);
-
-  strokeWeight(1);
-
-  textSize(width/54);
-  let score = lastScores[0].toString();
-  fill(0);
-  textAlign(CENTER, CENTER);
-
-  text(translateDive(diveDone), boxX + boxWidth/2, boxY + boxHeight/4);
-  text("Average score: " + score, boxX + boxWidth/2, boxY + boxHeight/4 * 3);
-
-}
-
+//Does all dive scoring depending on the diver angle of entry
 function score(judges, fail) {
   let score;
   let dive = round(player.angle/180) * 180;
@@ -1000,7 +1077,10 @@ function score(judges, fail) {
   for(let i = 0; i < judges; i++) {
     score = player.angle;
     score = abs(dive-score);
+    //Don't know why it was negative at points, so just abs it
+
     score = score/random(80, 100);
+    //Making a negligible amount of randomness to scoring so that not all scores are identical
     score = round(score*20)/2;
 
     if(!fail) {
@@ -1014,14 +1094,17 @@ function score(judges, fail) {
     }
 
     else {
+      //If they failed a dive, instant 0s
       score = 0;
       allScores.push(score);
     }
   }
+
   return allScores;
 }
 
-function returnButton(state, offset) {
+//The "backpage" button, changes gameState and resets Variables
+function returnButton(state, offset, compMenu) {
   if(collidePointCircle(mouseX, mouseY, 100, 100 * offset, 150, 150)) {
     fill(0, 255, 255);
     if(mouseIsPressed) {
@@ -1034,6 +1117,10 @@ function returnButton(state, offset) {
       diverScore = 0;
       initTime = millis();
 
+      poolAmbiance.stop();
+      if(!compMenu) {
+        noMusic = "";
+      }
     }
   }
   else {
@@ -1045,6 +1132,8 @@ function returnButton(state, offset) {
   text("Back", 100, 100 * offset);
 }
 
+
+//Creates the dive number for dives depending on angles
 function defineDive() {
   let diveNumber = "";
 
