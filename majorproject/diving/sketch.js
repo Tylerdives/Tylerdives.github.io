@@ -423,6 +423,8 @@ const CREATOR_SCORE_FOUR = 507;
 let poolAmbiance, mediumSplash, menuMusic, whistle;
 let noMusic, noSound, compSplash;
 
+let mute;
+
 function preload() {
   menuPool = loadImage("assets/menuimage.jpg");
   poolAmbiance = loadSound("assets/poolAmbiance.mp3");
@@ -439,6 +441,7 @@ function setup() {
   gameState = 1;
   buttonY = height/10;
   boardHeight = 100;
+  mute = false;
   //Guide to gameState
   //1 = Selection/Main menu
   //2 = Practice
@@ -479,6 +482,8 @@ function setup() {
 
 
 function draw() {
+  muting();
+
   //Main Menu
   if(gameState === 1) {
     mainMenu();
@@ -501,7 +506,7 @@ function draw() {
 
 function mainMenu() {
   if(noMusic !== false) {
-    menuMusic.setVolume(0.2);
+
     menuMusic.loop();
     noMusic = false;
   }
@@ -563,7 +568,6 @@ function drawStartButtons() {
 
 function practice() {
   if(noMusic !== false) {
-    poolAmbiance.setVolume(0.06);
     poolAmbiance.loop();
     noMusic = false;
   }
@@ -651,7 +655,6 @@ function practiceDisplay() {
 
 function competitionMenu() {
   if(noMusic !== false) {
-    menuMusic.setVolume(0.2);
     menuMusic.loop();
     noMusic = false;
   }
@@ -763,7 +766,7 @@ function competition() {
     player.tuckSpinSpeed = 1.8;
   }
   if(noMusic !== false) {
-    poolAmbiance.setVolume(0.01);
+
     poolAmbiance.loop();
     noMusic = false;
   }
@@ -794,7 +797,6 @@ function competition() {
 
   if(millis() < introTimer + 3000 && !player.go || !player.go && mouseIsPressed && !finishedDive) {
     if(noSound !== false) {
-      whistle.setVolume(0.2);
       whistle.play();
       noSound = false;
       compSplash = true;
@@ -860,6 +862,7 @@ function competition() {
     gameState -= 1;
     player.reset();
     lastScores = [];
+    noMusic = "";
   }
 }
 
@@ -899,7 +902,6 @@ function calculateScore() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Other funtions
 
-
 //All of the player updating during/after dives not within a class, defines reset, sound and button parameters
 function updatePlayer() {
   if (player.y < height - 100) {
@@ -914,17 +916,11 @@ function updatePlayer() {
 
   else {
     if(noSound !== false || compSplash) {
-      if(boardHeight === 400) {
-        mediumSplash.setVolume(0.15);
-      }
-      else {
-        mediumSplash.setVolume(0.20);
-      }
-
       mediumSplash.play();
       noSound = false;
       compSplash = false;
     }
+
     if (player.swim()) {
       if(gameState === 2) {
         player.didFail = false;
@@ -970,6 +966,7 @@ function updatePlayer() {
     }
   }
 }
+
 
 //Translates dives from dive numbers to english, (practice & competition)
 function translateDive(diveToDo) {
@@ -1146,4 +1143,42 @@ function defineDive() {
   diveNumber += "c";
 
   diveDone = diveNumber;
+}
+
+function keyPressed() {
+  if(key === "m" || key === "M") {
+    mute = !mute;
+  }
+}
+
+function deviceShaken() {
+  mute = !mute;
+}
+
+function muting() {
+  if(mute) {
+    menuMusic.setVolume(0);
+    poolAmbiance.setVolume(0);
+    whistle.setVolume(0);
+    mediumSplash.setVolume(0);
+  }
+  
+  else {
+    menuMusic.setVolume(0.2);
+    whistle.setVolume(0.2);
+
+    if(boardHeight === 400) {
+      mediumSplash.setVolume(0.15);
+    }
+    else {
+      mediumSplash.setVolume(0.20);
+    }
+
+    if(gameState === 4) {
+      poolAmbiance.setVolume(0.01);
+    }
+    else {
+      poolAmbiance.setVolume(0.06);
+    }
+  }
 }
