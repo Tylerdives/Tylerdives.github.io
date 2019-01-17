@@ -1162,7 +1162,7 @@ function muting() {
     whistle.setVolume(0);
     mediumSplash.setVolume(0);
   }
-  
+
   else {
     menuMusic.setVolume(0.2);
     whistle.setVolume(0.2);
