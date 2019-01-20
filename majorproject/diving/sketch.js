@@ -1343,7 +1343,7 @@ function tutorial() {
     fill(0);
     text("In a competition, there will be a display that tells you what dive to do. \n If you miss it, click anywhere on the screen to see it. \n After you do the dive, you will get scores, dives are scored from 0-10. \n The more vertical the dive, the better score you will recieve. \n Tucking multiple times will reduce your score significantly! \n Finally if the wrong dive is performed, it will be considered a fail dive with scores of 0.", width/2, height/2);
 
-    continueButton.display(-300);
+    continueButton.display(-400);
   }
 
   else if (tutorialState === 12) {
