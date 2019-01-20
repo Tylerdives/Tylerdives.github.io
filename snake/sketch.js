@@ -369,10 +369,17 @@ function hitSnake() {
   //If player one wins
   //Really long if statement incomming
   //Checks if snake1's x,y array includes the face coordinates of snake 2 OR if snake 2's face coordinates is in it's own array of squares
-  if (snake1.xValuesList.includes(snake2.xValuesList[0]) && snake1.yValuesList.includes(snake2.yValuesList[0]) || snake2.xValuesList.includes(snake2.xValuesList[0], 1) && snake2.yValuesList.includes(snake2.yValuesList[0], 1)) {
+  if (snake1.xValuesList.includes(snake2.xValuesList[0]) && snake1.yValuesList.includes(snake2.yValuesList[0])) {
     snake1.win = true;
     //This snake wins
     gameState = 4;
+  }
+  for(let i = 1; i < snake2.xValuesList.length-1; i++) {
+    if (snake2.xValuesList[0] === snake2.xValuesList[i] && snake2.yValuesList[0] === snake2.yValuesList[i]) {
+      snake1.win = true;
+      //This snake wins
+      gameState = 4;
+    }
   }
 
 
@@ -385,9 +392,17 @@ function hitSnake() {
   //If player 2 wins
   //Another long statement
   //Does the same thing as the prior if statement, except for the other snake
-  if (snake2.xValuesList.includes(snake1.xValuesList[0]) && snake2.yValuesList.includes(snake1.yValuesList[0]) || snake1.xValuesList.includes(snake1.xValuesList[0], 1) && snake1.yValuesList.includes(snake1.yValuesList[0], 1)) {
+  if (snake2.xValuesList.includes(snake1.xValuesList[0]) && snake2.yValuesList.includes(snake1.yValuesList[0])) {
     snake2.win = true;
     gameState  = 4;
+  }
+
+  for(let i = 1; i < snake1.xValuesList.length-1; i++) {
+    if (snake1.xValuesList[0] === snake1.xValuesList[i] && snake1.yValuesList[0] === snake1.yValuesList[i]) {
+      snake2.win = true;
+      //This snake wins
+      gameState = 4;
+    }
   }
   ////Future me note, fix head on collisions to be a tie
 }
