@@ -38,3 +38,9 @@
 - Competition mode
 - Dive translation (Diver -> English)
 - Back page button
+## January 16, 2019
+- Re-organised all code
+
+## January 19, 2019
+- tutorial
+- Rest of comments
