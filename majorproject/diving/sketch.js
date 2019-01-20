@@ -696,20 +696,24 @@ function drawStartButtons() {
   if(collidePointEllipse(mouseX, mouseY, width/2, height-height/7, width/10, width/10)) {
     fill(255, 0, 0);
     if(mouseIsPressed) {
+      //Go to tutorial
       gameState = 5;
     }
   }
+
   else {
     fill(255, 120, 0);
   }
-
   ellipse(width/2, height-height/7, width/10, width/10);
 
+  //Draw all text for buttons
   strokeWeight(2);
   fill(255);
   textAlign(CENTER, CENTER);
+
   text("PRACTICE", width/4, height-height/4);
   text("COMPETITION", width/4 * 3, height-height/4);
+
   textSize(width/70);
   text("HOW TO PLAY", width/2, height-height/7);
 }
@@ -719,25 +723,37 @@ function drawStartButtons() {
 
 
 function practice() {
+  //The diving practice gamemode
+
+  //Play the music if necessary
   if(noMusic !== false) {
     poolAmbiance.loop();
     noMusic = false;
   }
 
-  background(255);
+  background(255); // white background
+
+  //Update the player if the player is going
   if (player.go) {
     updatePlayer();
   }
+
   else {
+    //display this button only when the player isn't going
     switchBoardButton();
   }
+
+  //Draw the player, pool, and buttons
   player.display();
   drawPool();
   displayButtons();
+  //The backpage button
   returnButton(1, 1, false);
 
+  //If the dive is over, show a display of the score, etc
   if(finishedDive && !player.go) {
     if(millis() < initTime + 5000) {
+      //display for 5 seconds
       practiceDisplay();
     }
     else {
@@ -748,15 +764,17 @@ function practice() {
 
 //Allows the user to switch boards in practice mode.
 function switchBoardButton() {
-  // let switchButtonY = height/10;
   if(collidePointCircle(mouseX, mouseY, width-300, switchButtonY, 90, 90)) {
     fill(0, 255, 255);
     if(mouseIsPressed) {
+      //Swap the player Y, and the button positioning, or else the button is always active
       if(player.y !== 400) {
         switchButtonY = height/10 * 4;
         player.y = 400;
         boardHeight = 400;
       }
+
+      //Swapping the y and button position
       else {
         switchButtonY = height/10;
         player.y = 100;
@@ -764,11 +782,15 @@ function switchBoardButton() {
       }
     }
   }
+
   else {
     fill(255, 100, 50);
   }
+
+  //Draw the button and text
   ellipse(width-300, switchButtonY, 90, 90);
   fill(0);
+
   textAlign(CENTER, CENTER);
   textSize(width/80);
   text("SWITCH\nBOARDS", width-300, switchButtonY);
@@ -782,48 +804,58 @@ function practiceDisplay() {
   let boxHeight = height/6;
   let boxY = height/2 - boxHeight/2;
   let boxX = width/2 - boxWidth/2;
+  //Making variables because the positions get reused a bit
 
   fill(156, 255, 255);
   strokeWeight(4);
   stroke(0);
 
+  //Draw the box
   rect(boxX, boxY, boxWidth, boxHeight);
   line(boxX, boxY + boxHeight/2, boxX + boxWidth, boxY + boxHeight/2);
 
   strokeWeight(1);
 
+  //Acess the last score for the dive
   textSize(width/54);
   let score = lastScores[0].toString();
+
   fill(0);
   textAlign(CENTER, CENTER);
-
+  //Display the dive in english, and the score
   text(translateDive(diveDone), boxX + boxWidth/2, boxY + boxHeight/4);
   text("Average score: " + score, boxX + boxWidth/2, boxY + boxHeight/4 * 3);
-
 }
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//Displays the menu before competitions
 function competitionMenu() {
+  //music
   if(noMusic !== false) {
     menuMusic.loop();
     noMusic = false;
   }
-
+  //background image
   image(menuPool, 0, 0, width, height);
-  //COMPETITION 1, 1m Prov
+
+  //COMPETITION 1, 1m regional
   if(collidePointCircle(mouseX, mouseY,width/3, height/4, width/6, width/6)) {
     fill(0, 200, 100);
+
     if(mouseIsPressed) {
+      //Setting the compeittion mode and specific competition
       compMode = 1;
       gameState = 4;
       introTimer = millis();
       menuMusic.stop();
+      //reset music variables
       noMusic = "";
       noSound = "";
     }
   }
+
   else {
     fill(0, 255, 0);
   }
@@ -832,81 +864,94 @@ function competitionMenu() {
   //COMPETITION 2, 3m prov
   if(collidePointCircle(mouseX, mouseY, width/1.5, height/4, width/6, width/6)) {
     fill(0, 200, 100);
+
     if(mouseIsPressed) {
+      //Setting the compeittion mode and specific competition
       compMode = 2;
       gameState = 4;
       introTimer = millis();
+      //musics
       menuMusic.stop();
       noMusic = "";
       noSound = "";
     }
   }
+
   else {
     fill(0, 255, 0);
   }
-
   ellipse(width/1.5, height/4, width/6, width/6);
 
   //COMPETITION 3, 1m Nat
   if(collidePointCircle(mouseX, mouseY, width/3, height/4 * 3, width/6, width/6)) {
     fill(0, 200, 100);
     if(mouseIsPressed) {
+      //Setting the compeittion mode and specific competition
       compMode = 3;
       gameState = 4;
       introTimer = millis();
+      //music & sounds
       menuMusic.stop();
       noMusic = "";
       noSound = "";
     }
   }
+
   else {
     fill(0, 255, 0);
   }
-
   ellipse(width/3, height/4 * 3, width/6, width/6);
 
   //COMPETITION 4, 3m Nat
   if(collidePointCircle(mouseX, mouseY, width/1.5, height/4 * 3, width/6, width/6)) {
     fill(0, 200, 100);
     if(mouseIsPressed && !(millis() < initTimeCompButton + 1000)) {
+      //Having a 1 second delay before the button is available because it appears where the last button was clciked
+      //Setting the compeittion mode and specific competition
       compMode = 4;
       gameState = 4;
       introTimer = millis();
+      //sounds
       menuMusic.stop();
       noMusic = "";
       noSound = "";
-
     }
   }
+
   else {
     fill(0, 255, 0);
   }
-
   ellipse(width/1.5, height/4 * 3, width/6, width/6);
 
+  //All screen text
   textSize(width/40);
   fill(0);
   textAlign(CENTER, CENTER);
+  //Button text
   text("1m Regionals", width/3, height/4);
   text("3m International", width/1.5, height/4 * 3);
   text("1m Nationals", width/3, height/4 * 3);
   text("3m Provincials", width/1.5, height/4);
 
   fill(255);
+  //Base records or session records
   text("Record: " + compRecordOne + "pts", width/3, height/4 + 100);
   text("Record: " + compRecordFour + "pts", width/1.5, height/4 * 3 + 100);
   text("Record: " + compRecordThree + "pts", width/3, height/4 * 3 + 100);
   text("Record: " + compRecordTwo + "pts", width/1.5, height/4 + 100);
 
   fill(0);
+  //Creator record
   text("Creator record: " + CREATOR_SCORE_ONE + "pts", width/3, height/4 + 150);
   text("Creator record: " + CREATOR_SCORE_FOUR + "pts", width/1.5, height/4 * 3 + 150);
   text("Creator record: " + CREATOR_SCORE_THREE + "pts", width/3, height/4 * 3 + 150);
   text("Creator record: " + CREATOR_SCORE_TWO + "pts", width/1.5, height/4 + 150);
 
+  //The last score recorded
   fill(255, 255, 0);
   text("Last score: " + diverScore + "pts", width/2, height/2 + 50);
 
+  //display the back button
   returnButton(1, 1, true);
 }
 
@@ -914,20 +959,27 @@ function competitionMenu() {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function competition() {
+  //The competition layout for any compeittion
+
   if((compMode === 4 || compMode === 3) && player.go === false) {
+    //Adding a little more tuck speed for the hard competitions
     player.tuckSpinSpeed = 1.8;
   }
-  if(noMusic !== false) {
 
+  if(noMusic !== false) {
+    //play music
     poolAmbiance.loop();
     noMusic = false;
   }
+
+  //Setting the boardheight for the event the player is diving in
   if((compMode === 1 || compMode === 3) && temp !== false) {
     player.y = 400;
     boardHeight = 400;
     temp = false;
     diverScore = 0;
   }
+  //temp is to do this if statements once
   else if ((compMode === 2 || compMode === 4) && temp !== false) {
     player.y = 100;
     boardHeight = 100;
@@ -935,12 +987,14 @@ function competition() {
     diverScore = 0;
   }
 
-  background(255);
+  background(255); //white background
 
+  //update player when going
   if (player.go) {
     updatePlayer();
   }
 
+  //drawing pool, player, and buttons
   player.display();
   drawPool();
   displayButtons();
@@ -948,11 +1002,16 @@ function competition() {
 
 
   if(millis() < introTimer + 3000 && !player.go || !player.go && mouseIsPressed && !finishedDive) {
+    //Displays the dive for the player to do, for 3 seconds, or when the user clicks
     if(noSound !== false) {
+      //Play a whistle sound
       whistle.play();
       noSound = false;
+      //play the splash sound
       compSplash = true;
     }
+
+    //Similar to the practice display but different use
     let boxWidth = width/4;
     let boxHeight = height/6;
     let boxY = height/2 - boxHeight/2;
@@ -962,41 +1021,54 @@ function competition() {
     strokeWeight(4);
     stroke(0);
 
+    //making box
     rect(boxX, boxY, boxWidth, boxHeight);
     line(boxX, boxY + boxHeight/2, boxX + boxWidth, boxY + boxHeight/2);
 
     strokeWeight(1);
     fill(0);
+
+    //putting dive to do and dive number
     text(translateDive(compDives[compMode-1][diveCounter]), boxX + boxWidth/2, boxY + boxHeight/4);
     text(compDives[compMode-1][diveCounter], boxX + boxWidth/2, boxY + boxHeight/4 * 3);
   }
 
+  //Total score box
   fill(255);
   rect(0, height - height/8, width/6, height/8);
   fill(0);
   text("Total score " + diverScore, 0 + width/6/2, height-height/8/2);
 
   if(finishedDive) {
+    //Everything to do after the dive is done
     if(millis() < initTime + 3000) {
+      //show the judges scorecards
       displayScores();
+      //If all scores are 0s, the dive is a fail dive, so tell the user
       if(lastScores[0] + lastScores[1] + lastScores[2] === 0) {
         fill(0);
         text("FAIL DIVE", width/2, height/2);
       }
+      //user must watch
       goButton.available = false;
     }
+
     else {
+      //Add to player's score
       diverScore += calculateScore();
+      //move on to next dive
       diveCounter++;
       finishedDive = false;
       player.didFail = false;
 
-
+      //reset timer to redisplay the dive box
       introTimer = millis();
     }
   }
 
   if(diveCounter === compDives[compMode-1].length) {
+    //If the dive total is = to the number of dives in the list for the competition,end the competition
+    //Set a new score if the player beat the standard
     if(compMode === 1 && diverScore > compRecordOne) {
       compRecordOne = diverScore;
     }
@@ -1009,9 +1081,13 @@ function competition() {
     else if(compMode === 4 && diverScore > compRecordFour) {
       compRecordFour = diverScore;
     }
+
+    //reset all competition variables
     temp = "";
+    poolAmbiance.stop();
     diveCounter = 0;
     gameState -= 1;
+    //reset the player
     player.reset();
     lastScores = [];
     noMusic = "";
@@ -1021,20 +1097,28 @@ function competition() {
 //Judges scorecards
 function displayScores() {
   rectMode(CENTER);
+
   for(let i = 0; i < lastScores.length; i++) {
+    //display 1 rectangle for each score
     fill(0);
+    //Display a rectangle at each fraction + 1 of the total number of scores. Ex 3 scores, card at 1/4, 2/4 3/4, none are out
     rect(width * (i+1) * (1/(lastScores.length+1)), height-200, 100, 100);
+
     fill(255);
     textAlign(CENTER, CENTER);
+    //put the number in
     text(lastScores[i].toString(), width * (i+1) * (1/(lastScores.length+1)), height-200);
   }
+  //reset rects
   rectMode(CORNER);
 }
 
-//Dive DD
+//calculates the score of a dive with dd
 function calculateScore() {
+  //Dives are always calculated with the 3 middle scores
   let threeScores;
   if(lastScores.length > 3) {
+    //If there's 5, sort them, then cut the lowest and highest
     threeScores = sort(lastScores);
     threeScores.pop();
     threeScores.shift();
@@ -1044,81 +1128,105 @@ function calculateScore() {
   }
 
   let totalScore = threeScores[0] + threeScores[1] + threeScores[2];
-
+  // add them, then multiply by the dd
   totalScore = totalScore * compDds[compMode-1][diveCounter];
+  //Round, but doesn't work sometimes ?
   totalScore = Math.round(totalScore * 100) / 100;
 
   return totalScore;
 }
 
-function tutorial() {
-  background(255);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+function tutorial() {
+  //Do the interactive tutorial
+  background(255); //white background
+
+  //display the player and pool
   player.display();
   fill(0);
   textSize(width/60);
   drawPool();
+
+  //The tutorial is incremental, there is steps, and the user must hit the continue button to proceed
   if(tutorialState === 1) {
+    //intro
     fill(0);
-    text("Welcome to Dynamic Diving! Here is a quick tutorial for how the game works!", width/2, height/2);
+    text("Welcome to Dynamic Diving! Here is a quick tutorial for how the game works! Press 'm' to toggle sounds", width/2, height/2);
     continueButton.display(0);
   }
+
   else if(tutorialState === 2) {
+    //showing a dive
     fill(0);
     text("This is your diver.", player.x, player.y + 80);
+    //make the player keep going
     player.go = true;
 
+    //draw the pool and update the player
     drawPool();
     updatePlayer();
+
+    //shifting the continue button
     continueButton.display(height/6);
   }
+
   else if(tutorialState === 3) {
+    //explaining the direction buttons
     frontButton.available = false;
+    //Don't make the buttons useable
+
     frontButton.display();
     drawPool();
     fill(0);
     text("This is a direction button → \n it will change the diver's direction", frontButton.x - width/5, frontButton.y);
+
+    //shifting the continue button again
     continueButton.display(0);
   }
+
   else if(tutorialState === 4) {
+    //Explaining fronts and showing a dive
     frontButton.available = false;
-    // backButton.available = false;
-    // reverseButton.available = false;
-    // inwardButton.available = false;
-    // reverseButton.display();
-    // inwardButton.display();
-    // backButton.display();
     frontButton.display();
 
-
+    //update player movements
     player.direction = 1;
     player.go = true;
     player.layoutSpeed = 1;
+
     updatePlayer();
     drawPool();
     fill(0);
     text("This is the front button → \n the diver will face forwards \n and rotate forwards", frontButton.x - width/5, frontButton.y);
+
     continueButton.display(height/6);
   }
 
   else if(tutorialState === 5) {
+    //showing and explaining back dives
     frontButton.available = false;
     backButton.available = false;
 
     frontButton.display();
     backButton.display();
 
+    //update player movements
     player.direction = 2;
     player.go = true;
     player.layoutSpeed = 1;
+
     updatePlayer();
     drawPool();
     fill(0);
     text("This is the back button → \n the diver will face backwards \n and rotate backwards", backButton.x - width/5, backButton.y);
+
     continueButton.display(0);
   }
 
   else if(tutorialState === 6) {
+    //Explaining and showing reverse dives
     frontButton.available = false;
     backButton.available = false;
     reverseButton.available = false;
@@ -1127,17 +1235,21 @@ function tutorial() {
     backButton.display();
     reverseButton.display();
 
+    //update player movements
     player.go = true;
     player.layoutSpeed = -1;
     player.direction = 3;
+
     updatePlayer();
     drawPool();
     fill(0);
     text("This is the reverse button → \n the diver will face forwards \n and rotate backwards", reverseButton.x - width/5, reverseButton.y);
+
     continueButton.display(height/6);
   }
 
   else if(tutorialState === 7) {
+    //explaining and showing inward dives
     frontButton.available = false;
     backButton.available = false;
     reverseButton.available = false;
@@ -1148,21 +1260,28 @@ function tutorial() {
     reverseButton.display();
     inwardButton.display();
 
+    //update player movements
     player.direction = 4;
     player.go = true;
     player.layoutSpeed = -1;
+
     updatePlayer();
     drawPool();
     fill(0);
     text("This is the inward button → \n the diver will face backwards \n and rotate forwards", inwardButton.x - width/5, inwardButton.y);
+
     continueButton.display(0);
   }
 
   else if (tutorialState === 8) {
+    //Explain the go button and let the user try it
+
+    //similar to practice code but limited
     if(player.go) {
       updatePlayer();
       drawPool();
     }
+
     else {
       drawPool();
       frontButton.display();
@@ -1172,28 +1291,31 @@ function tutorial() {
       goButton.display();
     }
 
-    fill(0);
-    // drawPool();
-
 
     fill(125);
     text("Choose a direction button\n then press the go button → \n to make the diver jump", goButton.x - width/5, goButton.y - 10);
+
     continueButton.display(height/6);
   }
 
   else if (tutorialState === 9) {
+    //Explaining tucking and the button
+
+    //Drawing and updating
     if(player.go) {
       updatePlayer();
-
     }
+
     drawPool();
     displayButtons();
     fill(0);
     text("After the diver jumps \n a tuck button will appear here → \n click or hold click on it for the\n diver to tuck in the air \n they will spin faster than when straight", tuckButton.x - width/5, tuckButton.y);
+
     continueButton.display(0);
   }
 
   else if(tutorialState === 10) {
+    //All buttons are off, just explaining dives through text
     frontButton.available = false;
     backButton.available = false;
     reverseButton.available = false;
@@ -1204,10 +1326,12 @@ function tutorial() {
     displayButtons();
     fill(0);
     text("Dives are expressed as the amount of half rotations done by the diver \n For example: when the diver does 1 half rotation, it is called a dive \n If the diver does a whole rotation, it is called a flip \n If the diver does 1 and a half rotations, it is called a one and a half \n and so on... \n Finally the name of the position is added last, and for the game, it will be tuck", width/2, height/2);
+
     continueButton.display(height/6);
   }
 
   else if (tutorialState === 11) {
+    //Explaining compeititon in text, not interactive
     frontButton.available = false;
     backButton.available = false;
     reverseButton.available = false;
@@ -1218,10 +1342,12 @@ function tutorial() {
     displayButtons();
     fill(0);
     text("In a competition, there will be a display that tells you what dive to do. \n If you miss it, click anywhere on the screen to see it. \n After you do the dive, you will get scores, dives are scored from 0-10. \n The more vertical the dive, the better score you will recieve. \n Tucking multiple times will reduce your score significantly! \n Finally if the wrong dive is performed, it will be considered a fail dive with scores of 0.", width/2, height/2);
+
     continueButton.display(-300);
   }
 
   else if (tutorialState === 12) {
+    //Last screen before sent back to menu
     frontButton.available = false;
     backButton.available = false;
     reverseButton.available = false;
@@ -1232,47 +1358,71 @@ function tutorial() {
     displayButtons();
     fill(0);
     text("You are now ready to dive! Good luck!", width/2, height/2);
+
     continueButton.display(0);
   }
 
   else {
+    //Resets the player and variables
     player.reset();
+    //Sending to main menu
     gameState = 1;
 
     finishedDive = false;
+    //Alowing the player to do the tutorial again
     tutorialState = 1;
   }
+
+  //Allowing the user to exit the tutorial
   returnButton(1, 1, true);
 
 }
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Other funtions
 
 //All of the player updating during/after dives not within a class, defines reset, sound and button parameters
 function updatePlayer() {
+
   if (player.y < height - 100) {
+    //make the player fall and rotate until in the water
     player.update();
+
     if (tuckButton.on) {
+      //If the tuck button is pressed, make the player tuck
       player.position = "tuck";
     }
+
     else if (player.position !== "layout"){
+      //Other than tuck or layout, make the position straight
       player.position = "straight";
     }
   }
 
   else {
+    //Play the splash sound
     if((noSound !== false || compSplash) && gameState !== 5) {
       mediumSplash.play();
       noSound = false;
       compSplash = false;
     }
 
+    //After the player is offscreen, reset all diving variables and objects
     if (player.swim()) {
+
       if(gameState === 2) {
+        //In practice
+        //The player can't fail
         player.didFail = false;
+
+        //Get the dive number
         defineDive();
+
+        //Get 1 score
         lastScores = score(1, player.didFail);
+
+        //reset the rest
         player.reset();
 
         frontButton.selected = false;
@@ -1287,16 +1437,25 @@ function updatePlayer() {
       }
 
       else if (gameState === 4){
+        //in Competition
+        //get the dive number of the dive done
         defineDive();
+
+        //If the dive done, isn't the dive the diver should've done, they failed
         if(diveDone !== compDives[compMode-1][diveCounter]) {
           player.didFail = true;
         }
+
         if(compMode === 1 || compMode === 2) {
+          //In the small competitions, make 3 scores
           lastScores = score(3, player.didFail);
         }
+
         else {
+          //In larger competitions, add 5 scores
           lastScores = score(5, player.didFail);
         }
+        //reset the rest
         player.reset();
 
         frontButton.selected = false;
@@ -1320,8 +1479,10 @@ function updatePlayer() {
 
 //Translates dives from dive numbers to english, (practice & competition)
 function translateDive(diveToDo) {
+
   let translatedDive = "";
 
+  //Find the direction of the dive using the first number
   if(diveToDo.charAt(0) === "1") {
     translatedDive += "Front";
   }
@@ -1335,13 +1496,14 @@ function translateDive(diveToDo) {
     translatedDive += "Inward";
   }
 
+  // add a space
   translatedDive += " ";
   let rotations;
   rotations = diveToDo.charAt(2);
   rotations = parseInt(rotations, 10);
   rotations = rotations/2;
 
-
+  //Choose which rotational amount is performed accoring to the dive number
   if(rotations === 0.5) {
     translatedDive += "dive ";
   }
@@ -1369,26 +1531,33 @@ function translateDive(diveToDo) {
   else if (rotations === 4.5) {
     translatedDive += "four and a half ";
   }
+
+  //Couldn't figure this out in time
   // else{
   //   translatedDive = "unknown dive ";
   // }
+
+  //add a tuck
   translatedDive += "tuck";
   return translatedDive;
 }
 
 //Draws the water and pooldeck for all pool modes
 function drawPool() {
+  //Draws water
   strokeWeight(2);
   fill(0, 0, 100, 220);
   rect(0, height-100, width, 100);
-  fill(242, 242, 210);
 
+  //Pool deck
+  fill(242, 242, 210);
   rect(0, height-102, 50, 102);
   rect(width-50, height-102, 50, 102);
   stroke(242, 242, 210);
   rect(0, height-20, width, 20);
   stroke(0);
 
+  //Lines of the pool deck
   line(0, height-102, 0, height);
   line(50, height-21, width-50, height-21);
   strokeWeight(1);
@@ -1402,6 +1571,7 @@ function drawPool() {
 
 //Displays the tuck, go, direction buttons, for pool modes
 function displayButtons() {
+  //If the player hasn't gone show the direction and go buttons
   if(!player.go) {
     goButton.display();
     frontButton.display();
@@ -1411,6 +1581,7 @@ function displayButtons() {
   }
 
   else {
+    //When the diver goes, show the tuck button
     tuckButton.display();
   }
 }
@@ -1419,7 +1590,10 @@ function displayButtons() {
 //Does all dive scoring depending on the diver angle of entry
 function score(judges, fail) {
   let score;
+
+  //Figure out what dive the user tried to do
   let dive = round(player.angle/180) * 180;
+
   let allScores = [];
   for(let i = 0; i < judges; i++) {
     score = player.angle;
@@ -1429,14 +1603,18 @@ function score(judges, fail) {
     score = score/random(80, 100);
     //Making a negligible amount of randomness to scoring so that not all scores are identical
     score = round(score*20)/2;
+    // * 20 because in diving it's out of 10 with .5s, so just make it out of 20, then /2
 
+    //If the user didn't fail, finish the score
     if(!fail) {
       score = abs(10-score);
+      //If the user cannonballed or tucked more than once, take away points
       if(player.secondTuck || player.straightened === false) {
         if (score > 3.0) {
           score = score - 3;
         }
       }
+      //Add that score to the list
       allScores.push(score);
     }
 
@@ -1450,11 +1628,14 @@ function score(judges, fail) {
   return allScores;
 }
 
+
 //The "backpage" button, changes gameState and resets Variables
-function returnButton(state, offset, compMenu) {
+function returnButton(state, offset, sameSong) {
   if(collidePointCircle(mouseX, mouseY, 100, 100 * offset, 150, 150)) {
     fill(0, 255, 255);
+
     if(mouseIsPressed) {
+      //Resets any and all variables that will mess up when re-entering modes
       player.reset();
       gameState = state;
 
@@ -1465,16 +1646,23 @@ function returnButton(state, offset, compMenu) {
       initTime = millis();
       tutorialState = 1;
 
+      player.y = 100;
+      boardHeight = 100;
+
       poolAmbiance.stop();
-      if(!compMenu) {
+
+      if(!sameSong) {
+        //Avoiding playing 2 soundtracks at the same time on the same song pages
         noMusic = "";
       }
     }
   }
+
   else {
     fill(255, 100, 50);
   }
 
+  //Drawing the button
   ellipse(100, 100 * offset, 150, 150);
   fill(0);
   text("Back \n to menu", 100, 100 * offset);
@@ -1485,28 +1673,36 @@ function returnButton(state, offset, compMenu) {
 function defineDive() {
   let diveNumber = "";
 
+  //The direction is the first number
   diveNumber += player.direction;
+  //The second is a 0
   diveNumber += "0";
 
+  //Find out what dive the user tried or accidentially did
   let rotations = abs(round(player.angle/180));
+  //Add the closes amount of 1/2 rotations
   diveNumber += rotations.toString();
 
+  //Add a c for tuck
   diveNumber += "c";
 
   diveDone = diveNumber;
 }
 
 function keyPressed() {
+  //The m key will mute the site
   if(key === "m" || key === "M") {
     mute = !mute;
   }
 }
 
 function deviceTurned() {
+  //Trying to add muting that's mobile compatible
   mute = !mute;
 }
 
 function muting() {
+  //Turn off al volume on mutes
   if(mute) {
     menuMusic.setVolume(0);
     poolAmbiance.setVolume(0);
@@ -1515,9 +1711,11 @@ function muting() {
   }
 
   else {
+    //turn on all volume
     menuMusic.setVolume(0.1);
     whistle.setVolume(0.2);
 
+    //The splash is louder dependin on the height
     if(boardHeight === 400) {
       mediumSplash.setVolume(0.15);
     }
@@ -1525,6 +1723,7 @@ function muting() {
       mediumSplash.setVolume(0.20);
     }
 
+    //Competition is quieter
     if(gameState === 4) {
       poolAmbiance.setVolume(0.01);
     }
@@ -1533,3 +1732,5 @@ function muting() {
     }
   }
 }
+
+//THE END :)
