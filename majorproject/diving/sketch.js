@@ -1,17 +1,20 @@
 // Major PROJECT
 // Tyler Boechler
 // December 12th, 2018
-//
 
+// Because it is hard to notice in the code, I did implement the tap to do a dive mechanic in my need to have list
+// It is formatted as layout vs straight, layout occurs at an angle < 90 and the diver rotates very slowely
+// allowing the player to do a dive on a short click
 
 //Player & button classes
 
 class Player {
-  constructor(boardHeight, tuckSpeed) {
+  constructor(boardHeight) {
     this.boardHeight = boardHeight;
+    //Sets the preset board height 1m or 3m
 
+    //All movement variables
     this.initX = width/3;
-    // this.initY = 100;
     this.initY = 100;
 
     this.x = this.initX;
@@ -19,7 +22,7 @@ class Player {
 
     this.dx = 1.75;
     this.dy = -4;
-
+    //Starting with a negative dy to make a jump
 
     this.angle = 0;
     this.go = false;
@@ -29,6 +32,9 @@ class Player {
 
     this.layoutSpeed = 0.8;
     this.position = "layout";
+
+
+    //Scoring and logic variables
     this.straightened = false;
     this.secondTuck = false;
 
@@ -41,19 +47,28 @@ class Player {
   }
 
   update() {
+    //Updates the player with gravity and rotation
 
     if(this.direction === 1 || this.direction === 3) {
+      //Both front and reverse, the diver faces forwards
       this.facing = "forwards";
+
       if(this.direction === 3) {
+        //But for reverse the diver angle must increase negatively
         this.spin = "backwards";
       }
       else {
         this.spin = "forwards";
       }
+
     }
+
     else if(this.direction === 2 || this.direction === 4) {
+      //For both inward and back, the diver faces backwards
       this.facing = "backwards";
+
       if (this.direction === 4) {
+        //For inward the diver angle increases negatively
         this.spin = "backwards";
       }
       else {
@@ -62,47 +77,62 @@ class Player {
     }
 
     if(this.spin === "forwards" && this.tuckSpinSpeed < 0) {
+      //If the divers tuck spin speed is negative, and the diver is going to spin forwards, change the angles to be +
       this.tuckSpinSpeed = -1 * this.tuckSpinSpeed;
       this.layoutSpeed = -1 * this.layoutSpeed;
       this.tuckSpinIncrease = -1 * this.tuckSpinIncrease;
     }
+
     else if(this.spin === "backwards" && this.tuckSpinSpeed > 0) {
+      //If the divers tuck spin speed is positive, and the diver is going to spin backwards, change the angles to be -
       this.tuckSpinSpeed = -1 * this.tuckSpinSpeed;
       this.layoutSpeed = -1 * this.layoutSpeed;
       this.tuckSpinIncrease = -1 * this.tuckSpinIncrease;
     }
 
     if (this.position === "layout") {
+      //Increases the angle less on layout
       this.angle += this.layoutSpeed;
     }
+
     else if (this.position === "tuck") {
+      //Increases the angle by the greater than staight, tuck speed
       this.angle += this.tuckSpinSpeed;
       this.tuckSpinSpeed += this.tuckSpinIncrease;
+      //Make the tuck speed faster to have accelerated rotation
+
       if(this.straightened) {
-        // this.tuckSpinSpeed = this.tuckSpinSpeed/1.5;
+        //If the diver is in a tuck after they straightened, then they tucked atleast 2 times (affects scoring)
         this.secondTuck = true;
       }
     }
 
     else if (this.position === "straight") {
-      //Straight is after spinning
+      //Straight is after spinning in a tuck
       if(this.angle < 90 && this.angle > -90) {
+        //For dives to be possible, this is the tap to dive thing. If the diver is at less than a dive, make them spin slowely in the layout position
         this.position = "layout";
       }
 
       else {
         this.angle += this.tuckSpinSpeed/2.7;
+        //Increases the rotation by a fraction of the speed of the tuck
       }
+
       if (this.tuckSpinSpeed > 3) {
+        //Slows down the tuck speed incase the diver returns to a tuck, it makes it look more fluid
         this.tuckSpinSpeed -= 0.02;
       }
+
       this.straightened = true;
     }
 
-
+    //Adding gravity and horizontal displacement
     this.y += this.dy;
     this.dy += 0.080;
+    //This number worked well
     this.x += this.dx;
+
     //Makes it less like a parabola (looks better)
     if (this.dx > 0.1) {
       this.dx -= 0.01;
@@ -113,26 +143,30 @@ class Player {
   display() {
     //Pushing, then performing all transformations
     push();
+
     translate(this.x, this.y);
     if (this.go) {
       rotate(this.angle);
     }
 
+    //Drawing the players (4 different) depending on the position and direction
 
-    //Drawing the player
-    // fill(this.bodyColor);
-
+    //FRONT STRAIGHT
     if((this.direction === 1 || this.direction === 3) && player.position !== "tuck") {
+      //The straight when the diver faces forwards
+
+      //Drawing
       strokeWeight(7);
       //BODY
       line(0, -10, 0, 50);
+
       if(!this.go) {
-        //FEET
+        //Toe point
         line(0, 50, 10, 50);
 
       }
       else {
-        //FEET
+        //Toe point
         line(0, 50, 2, 60);
         //Hand grab
         point(2.5, -61);
@@ -150,7 +184,9 @@ class Player {
 
     }
 
+    //BACKWARDS STRAIGHT
     else if ((this.direction === 2 || this.direction === 4) && player.position !== "tuck") {
+      //The straight position when the diver faces backwards
       strokeWeight(7);
       line(0, -10, 0, 50);
       if(!this.go) {
@@ -237,7 +273,7 @@ class Player {
 
 
   reset() {
-    //RESETS most player vars
+    //RESETS most player variables
     this.x = this.initX;
     this.y = boardHeight;
 
@@ -266,12 +302,15 @@ class Player {
   }
 }
 
-//A class for the tuck, direction, and go button
+//A class for the tuck, direction, and go buttons
 class DivingButton {
   constructor(playerThing, changeTo, level, message) {
+    //The constructor takes in what the button changes, what it changes that thing to, it's height level and message
     this.radius = height/13;
+
     this.x = width - this.radius - 40;
     this.y = height - level * (height/5.5) - height/7;
+    //using height to make the buttons work on other screensizes
 
     //Three colors :D
     this.color = color(255, 0, 255);
@@ -286,7 +325,7 @@ class DivingButton {
     //The variable changes
 
     this.on = false;
-    //On as in button is "on"
+    //On as in button is "on" as in pressed currently
     this.selected = false;
 
     this.message = message;
@@ -297,31 +336,38 @@ class DivingButton {
 
     if(this.available) {
       if(collidePointCircle(mouseX, mouseY, this.x, this.y, this.radius*2)) {
+
         fill(this.hoveringColor);
         if(mouseIsPressed) {
-          fill(this.changeColor);
 
+          fill(this.changeColor);
+          //If the thing the button changes is the go variable,
           if(this.whatToChange === "go") {
             if(player.go !== true) {
+              //The button should only be available if the player hasn't went yet
               player.go = this.changeTo;
               this.on = true;
             }
+
             else {
+              //Don't have the buttons work when they can't/shouldn't be used
               this.available = false;
             }
           }
 
+          //Change the player position when the diver is in the air
           else if(this.whatToChange === "position") {
             if(player.go) {
               player.position = this.changeTo;
               this.on = true;
             }
+
             else {
               this.available = false;
             }
-
           }
 
+          //change the diver direction while they are on the board
           else if(this.whatToChange === "direction") {
             if(!player.go) {
               player.direction = this.changeTo;
@@ -331,18 +377,23 @@ class DivingButton {
               this.available = false;
             }
           }
-          // console.log(this.whatToChange, this.changeTo )
         }
+
         else {
+          //If the button isn't being pressed, turn it off
           this.on = false;
         }
       }
+
       else {
+        //If the mouse isn't over the button, turn it off
         this.on = false;
         fill(this.color);
       }
     }
+
     else {
+      //Availability rules for each type of button, some are available when the diver is on the board or in the air
       if(player.go === false && this.whatToChange === "go") {
         this.available = true;
       }
@@ -358,17 +409,64 @@ class DivingButton {
       else {
         this.available = false;
       }
+
+      //The non available color
       fill(160);
     }
 
     if(player.direction === this.changeTo) {
       fill(this.changeColor);
+      //If the button that controls the divers direction is selected, make it a diff color
     }
+
+    //Draw the button and it's message
     ellipse(this.x, this.y, this.radius*2, this.radius*2);
     fill(0);
     textSize(width/54);
     textAlign(CENTER, CENTER);
     text(this.message, this.x, this.y);
+  }
+}
+
+//A button used in the tutorial
+class ContinueButton {
+  constructor(x, y) {
+    //Position and size
+    this.x = x;
+    this.y = y;
+    this.width = width/8;
+    this.height = height/8;
+
+    this.color = color(255, 255, 0);
+    this.hoveringColor = color(0, 255, 0);
+
+    this.selected = false;
+  }
+
+  display(yChange) {
+    //Displays and checks mouse detection. yChange is used to move the button so the player isn't continuously pressing the next button
+    if(collidePointEllipse(mouseX, mouseY, this.x, this.y + yChange, this.width, this.height)) {
+      fill(this.hoveringColor);
+
+      if(mouseIsPressed) {
+        //Move the tutorial to the next slide
+        this.selected = true;
+        tutorialState ++;
+        player.reset();
+      }
+    }
+
+    else {
+      fill(this.color);
+    }
+
+    //Draw the button
+    rectMode(CENTER);
+    ellipse(this.x, this.y + yChange, this.width, this.height);
+    fill(0);
+    text("CONTINUE", this.x, this.y + yChange);
+    rectMode(CORNER);
+
   }
 }
 
@@ -379,26 +477,33 @@ class DivingButton {
 let gameState;
 
 let player;
-
+let boardHeight;
 
 let diveDone;
 let finishedDive;
 let lastScores;
 
+//Timing variables
 let initTime;
 let initTimeCompButton;
-let tuckButton, goButton;
 
+//A varaible for the switch board button
+let switchButtonY;
+
+//The diving buttons
 let frontButton, backButton, reverseButton, inwardButton;
-
-
+let tuckButton, goButton;
+let continueButton;
+//Images
 let menuPool;
-let buttonY;
 
-let boardHeight;
+//The competition and difficulty lists
 let compListOne, compListTwo, compListThree, compListFour;
 let ddListOne, ddListTwo, ddListThree, ddListFour;
+
+//There is 4 compmodes, one for each competition
 let compMode = 0;
+//A variable used temporarily for doing something once in the draw loop
 let temp;
 let diverScore = 0;
 
@@ -406,8 +511,10 @@ let compDives= [];
 let compDds = [];
 
 let diveCounter = 0;
+
 let introTimer;
 
+//Scores and records
 let compRecordOne = 150;
 const CREATOR_SCORE_ONE = 232;
 
@@ -420,12 +527,17 @@ const CREATOR_SCORE_THREE = 392;
 let compRecordFour = 440;
 const CREATOR_SCORE_FOUR = 507;
 
+//Sounds
 let poolAmbiance, mediumSplash, menuMusic, whistle;
 let noMusic, noSound, compSplash;
 
 let mute;
 
+let tutorialState = 1;
+
+
 function preload() {
+  //assets
   menuPool = loadImage("assets/menuimage.jpg");
   poolAmbiance = loadSound("assets/poolAmbiance.mp3");
   mediumSplash = loadSound("assets/mediumSplash.wav");
@@ -436,12 +548,18 @@ function preload() {
 function setup() {
   angleMode(DEGREES);
 
+
   createCanvas(windowWidth, windowHeight);
+
   finishedDive = false;
-  gameState = 1;
-  buttonY = height/10;
+
+  switchButtonY = height/10;
   boardHeight = 100;
+
+  //Default sound on
   mute = false;
+
+  gameState = 1;
   //Guide to gameState
   //1 = Selection/Main menu
   //2 = Practice
@@ -449,6 +567,7 @@ function setup() {
   //4 = Competition
   //5 = Settings/How to play/Tutorial
 
+  //The divers lists, used as a 2D array to be able to acess each list using numbers
   compListOne = ["101c", "201c", "401c", "202c", "301c", "103c"];
   ddListOne = [1.2, 1.5, 1.4, 1.5, 1.6, 1.6];
   compListTwo = ["103c", "201c", "302c", "403c", "303c", "404c"];
@@ -458,7 +577,6 @@ function setup() {
   ddListThree = [1.6, 1.5, 1.6, 1.4, 2.2, 2.2, 2.1, 2.2];
   compListFour =  ["105c", "204c", "303c", "404c", "106c", "205c", "306c", "405c"];
   ddListFour = [2.2, 1.9, 2.0, 2.4, 2.5, 2.8, 2.6, 2.7];
-
 
   compDives.push(compListOne);
   compDives.push(compListTwo);
@@ -470,6 +588,7 @@ function setup() {
   compDds.push(ddListThree);
   compDds.push(ddListFour);
 
+  //Making objects
   player = new Player(0, 0);
   goButton = new DivingButton("go", true, 0, "GO");
   tuckButton = new DivingButton("position", "tuck", 1, "Tuck");
@@ -478,21 +597,24 @@ function setup() {
   backButton = new DivingButton("direction", 2, 2, "Back");
   reverseButton = new DivingButton("direction", 3, 3, "Reverse");
   inwardButton = new DivingButton("direction", 4, 4, "Inward");
+
+  continueButton = new ContinueButton(width/2, height/1.5);
 }
 
 
 function draw() {
+  //Always check for audio
   muting();
 
-  //Main Menu
+  //Perform the game option depending on the state
   if(gameState === 1) {
     mainMenu();
   }
-  //Practice
+
   else if (gameState === 2) {
     practice();
   }
-  //Competition menu
+
   else if (gameState === 3) {
     competitionMenu();
   }
@@ -500,66 +622,96 @@ function draw() {
   else if (gameState === 4) {
     competition();
   }
+
+  else if (gameState === 5) {
+    tutorial();
+  }
 }
 
-//The gamstate Functions, and their funtions
+//The gamstate Functions, and the funtions they use unique to them
 
 function mainMenu() {
-  if(noMusic !== false) {
+  //Does all main menu things
 
+  //Play music if haven't already
+  if(noMusic !== false) {
     menuMusic.loop();
     noMusic = false;
   }
 
+  //Display background and title
   image(menuPool, 0, 0, width, height);
   textSize(width/9);
   fill(255, 20, 70);
   text("Dynamic Diving", width/2, 250);
+
+  //Draw and operate the staring option buttons
   drawStartButtons();
 }
 
 
 function drawStartButtons() {
+  //Draws the buttons for the game options, practice, competition or tutorial
   fill(0);
 
   textSize(width/40);
   stroke(0);
 
   //PRACTICE BUTTON
-  if(collidePointEllipse(mouseX, mouseY, width/3, height-height/4, width/5, height/5)) {
+  if(collidePointEllipse(mouseX, mouseY, width/4, height-height/4, width/5, height/5)) {
     fill(255, 0, 0);
     if(mouseIsPressed) {
+      //Move to practice screen
       gameState = 2;
+      //Stop the music and allow new music
       menuMusic.stop();
       noMusic = "";
     }
   }
+
   else {
     fill(255, 120, 0);
   }
   strokeWeight(3);
-  ellipse(width/3, height-height/4, width/5, height/5);
+  ellipse(width/4, height-height/4, width/5, height/5);
 
 
   //COMPETITION BUTTON
-  if(collidePointEllipse(mouseX, mouseY, width/1.5, height-height/4, width/5, height/5)) {
+  if(collidePointEllipse(mouseX, mouseY, width/4 * 3, height-height/4, width/5, height/5)) {
     fill(255, 0, 0);
     if(mouseIsPressed) {
+      //Go to the competition menu
       gameState = 3;
+      //Use a timer, because a new button spawns at the location of this button, using a timer to not "double click"
       initTimeCompButton = millis();
+    }
+  }
+
+  else {
+    fill(255, 120, 0);
+  }
+  ellipse(width/4 * 3, height-height/4, width/5, height/5);
+
+  //HOW TO PLAY BUTTON
+  if(collidePointEllipse(mouseX, mouseY, width/2, height-height/7, width/10, width/10)) {
+    fill(255, 0, 0);
+    if(mouseIsPressed) {
+      gameState = 5;
     }
   }
   else {
     fill(255, 120, 0);
   }
 
-  ellipse(width/1.5, height-height/4, width/5, height/5);
+  ellipse(width/2, height-height/7, width/10, width/10);
 
   strokeWeight(2);
   fill(255);
   textAlign(CENTER, CENTER);
-  text("PRACTICE", width/3, height-height/4);
-  text("COMPETITION", width/1.5, height-height/4);
+  text("PRACTICE", width/4, height-height/4);
+  text("COMPETITION", width/4 * 3, height-height/4);
+  textSize(width/70);
+  text("HOW TO PLAY", width/2, height-height/7);
 }
 
 
@@ -596,17 +748,17 @@ function practice() {
 
 //Allows the user to switch boards in practice mode.
 function switchBoardButton() {
-  // let buttonY = height/10;
-  if(collidePointCircle(mouseX, mouseY, width-300, buttonY, 90, 90)) {
+  // let switchButtonY = height/10;
+  if(collidePointCircle(mouseX, mouseY, width-300, switchButtonY, 90, 90)) {
     fill(0, 255, 255);
     if(mouseIsPressed) {
       if(player.y !== 400) {
-        buttonY = height/10 * 4;
+        switchButtonY = height/10 * 4;
         player.y = 400;
         boardHeight = 400;
       }
       else {
-        buttonY = height/10;
+        switchButtonY = height/10;
         player.y = 100;
         boardHeight = 100;
       }
@@ -615,11 +767,11 @@ function switchBoardButton() {
   else {
     fill(255, 100, 50);
   }
-  ellipse(width-300, buttonY, 90, 90);
+  ellipse(width-300, switchButtonY, 90, 90);
   fill(0);
   textAlign(CENTER, CENTER);
-  textSize(width/70);
-  text("SWITCH", width-300, buttonY);
+  textSize(width/80);
+  text("SWITCH\nBOARDS", width-300, switchButtonY);
 }
 
 
@@ -899,6 +1051,201 @@ function calculateScore() {
   return totalScore;
 }
 
+function tutorial() {
+  background(255);
+
+  player.display();
+  fill(0);
+  textSize(width/60);
+  drawPool();
+  if(tutorialState === 1) {
+    fill(0);
+    text("Welcome to Dynamic Diving! Here is a quick tutorial for how the game works!", width/2, height/2);
+    continueButton.display(0);
+  }
+  else if(tutorialState === 2) {
+    fill(0);
+    text("This is your diver.", player.x, player.y + 80);
+    player.go = true;
+
+    drawPool();
+    updatePlayer();
+    continueButton.display(height/6);
+  }
+  else if(tutorialState === 3) {
+    frontButton.available = false;
+    frontButton.display();
+    drawPool();
+    fill(0);
+    text("This is a direction button → \n it will change the diver's direction", frontButton.x - width/5, frontButton.y);
+    continueButton.display(0);
+  }
+  else if(tutorialState === 4) {
+    frontButton.available = false;
+    // backButton.available = false;
+    // reverseButton.available = false;
+    // inwardButton.available = false;
+    // reverseButton.display();
+    // inwardButton.display();
+    // backButton.display();
+    frontButton.display();
+
+
+    player.direction = 1;
+    player.go = true;
+    player.layoutSpeed = 1;
+    updatePlayer();
+    drawPool();
+    fill(0);
+    text("This is the front button → \n the diver will face forwards \n and rotate forwards", frontButton.x - width/5, frontButton.y);
+    continueButton.display(height/6);
+  }
+
+  else if(tutorialState === 5) {
+    frontButton.available = false;
+    backButton.available = false;
+
+    frontButton.display();
+    backButton.display();
+
+    player.direction = 2;
+    player.go = true;
+    player.layoutSpeed = 1;
+    updatePlayer();
+    drawPool();
+    fill(0);
+    text("This is the back button → \n the diver will face backwards \n and rotate backwards", backButton.x - width/5, backButton.y);
+    continueButton.display(0);
+  }
+
+  else if(tutorialState === 6) {
+    frontButton.available = false;
+    backButton.available = false;
+    reverseButton.available = false;
+
+    frontButton.display();
+    backButton.display();
+    reverseButton.display();
+
+    player.go = true;
+    player.layoutSpeed = -1;
+    player.direction = 3;
+    updatePlayer();
+    drawPool();
+    fill(0);
+    text("This is the reverse button → \n the diver will face forwards \n and rotate backwards", reverseButton.x - width/5, reverseButton.y);
+    continueButton.display(height/6);
+  }
+
+  else if(tutorialState === 7) {
+    frontButton.available = false;
+    backButton.available = false;
+    reverseButton.available = false;
+    inwardButton.available = false;
+
+    frontButton.display();
+    backButton.display();
+    reverseButton.display();
+    inwardButton.display();
+
+    player.direction = 4;
+    player.go = true;
+    player.layoutSpeed = -1;
+    updatePlayer();
+    drawPool();
+    fill(0);
+    text("This is the inward button → \n the diver will face backwards \n and rotate forwards", inwardButton.x - width/5, inwardButton.y);
+    continueButton.display(0);
+  }
+
+  else if (tutorialState === 8) {
+    if(player.go) {
+      updatePlayer();
+      drawPool();
+    }
+    else {
+      drawPool();
+      frontButton.display();
+      backButton.display();
+      reverseButton.display();
+      inwardButton.display();
+      goButton.display();
+    }
+
+    fill(0);
+    // drawPool();
+
+
+    fill(125);
+    text("Choose a direction button\n then press the go button → \n to make the diver jump", goButton.x - width/5, goButton.y - 10);
+    continueButton.display(height/6);
+  }
+
+  else if (tutorialState === 9) {
+    if(player.go) {
+      updatePlayer();
+
+    }
+    drawPool();
+    displayButtons();
+    fill(0);
+    text("After the diver jumps \n a tuck button will appear here → \n click or hold click on it for the\n diver to tuck in the air \n they will spin faster than when straight", tuckButton.x - width/5, tuckButton.y);
+    continueButton.display(0);
+  }
+
+  else if(tutorialState === 10) {
+    frontButton.available = false;
+    backButton.available = false;
+    reverseButton.available = false;
+    inwardButton.available = false;
+    goButton.available = false;
+
+    drawPool();
+    displayButtons();
+    fill(0);
+    text("Dives are expressed as the amount of half rotations done by the diver \n For example: when the diver does 1 half rotation, it is called a dive \n If the diver does a whole rotation, it is called a flip \n If the diver does 1 and a half rotations, it is called a one and a half \n and so on... \n Finally the name of the position is added last, and for the game, it will be tuck", width/2, height/2);
+    continueButton.display(height/6);
+  }
+
+  else if (tutorialState === 11) {
+    frontButton.available = false;
+    backButton.available = false;
+    reverseButton.available = false;
+    inwardButton.available = false;
+    goButton.available = false;
+
+    drawPool();
+    displayButtons();
+    fill(0);
+    text("In a competition, there will be a display that tells you what dive to do. \n If you miss it, click anywhere on the screen to see it. \n After you do the dive, you will get scores, dives are scored from 0-10. \n The more vertical the dive, the better score you will recieve. \n Tucking multiple times will reduce your score significantly! \n Finally if the wrong dive is performed, it will be considered a fail dive with scores of 0.", width/2, height/2);
+    continueButton.display(-300);
+  }
+
+  else if (tutorialState === 12) {
+    frontButton.available = false;
+    backButton.available = false;
+    reverseButton.available = false;
+    inwardButton.available = false;
+    goButton.available = false;
+
+    drawPool();
+    displayButtons();
+    fill(0);
+    text("You are now ready to dive! Good luck!", width/2, height/2);
+    continueButton.display(0);
+  }
+
+  else {
+    player.reset();
+    gameState = 1;
+
+    finishedDive = false;
+    tutorialState = 1;
+  }
+  returnButton(1, 1, true);
+
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Other funtions
 
@@ -915,7 +1262,7 @@ function updatePlayer() {
   }
 
   else {
-    if(noSound !== false || compSplash) {
+    if((noSound !== false || compSplash) && gameState !== 5) {
       mediumSplash.play();
       noSound = false;
       compSplash = false;
@@ -961,6 +1308,9 @@ function updatePlayer() {
         finishedDive = true;
         initTime = millis();
         noSound = "";
+      }
+      else {
+        player.reset();
       }
 
     }
@@ -1113,6 +1463,7 @@ function returnButton(state, offset, compMenu) {
       diveCounter = 0;
       diverScore = 0;
       initTime = millis();
+      tutorialState = 1;
 
       poolAmbiance.stop();
       if(!compMenu) {
@@ -1126,7 +1477,7 @@ function returnButton(state, offset, compMenu) {
 
   ellipse(100, 100 * offset, 150, 150);
   fill(0);
-  text("Back", 100, 100 * offset);
+  text("Back \n to menu", 100, 100 * offset);
 }
 
 
@@ -1151,7 +1502,7 @@ function keyPressed() {
   }
 }
 
-function deviceShaken() {
+function deviceTurned() {
   mute = !mute;
 }
 
@@ -1164,7 +1515,7 @@ function muting() {
   }
 
   else {
-    menuMusic.setVolume(0.2);
+    menuMusic.setVolume(0.1);
     whistle.setVolume(0.2);
 
     if(boardHeight === 400) {

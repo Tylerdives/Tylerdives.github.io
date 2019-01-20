@@ -447,5 +447,6 @@ module.exports = {
       //p5js 2d collide globals
       "collidePointCircle": true,
       "collidePointEllipse": true,
+      "collidePointRect": true,
   },
 }
