@@ -6,6 +6,7 @@
 // It is formatted as layout vs straight, layout occurs at an angle < 90 and the diver rotates very slowely
 // allowing the player to do a dive on a short click
 
+
 //Player & button classes
 
 class Player {
