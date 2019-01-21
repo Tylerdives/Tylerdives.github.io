@@ -1153,7 +1153,7 @@ function tutorial() {
   if(tutorialState === 1) {
     //intro
     fill(0);
-    text("Welcome to Dynamic Diving! Here is a quick tutorial for how the game works! Press 'm' to toggle sounds", width/2, height/2);
+    text("Welcome to Dynamic Diving! Here is a quick tutorial for how the game works! Press 'm' to mute sounds", width/2, height/2);
     continueButton.display(0);
   }
 
