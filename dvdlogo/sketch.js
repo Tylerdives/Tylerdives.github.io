@@ -33,7 +33,7 @@ function moveDVD() {
     dx = dx * -1;
     tint(random(255), random(255), random(255));
   }
-  if (y >= windowHeight - dvd.height || y <= 0){
+  if (y >= windowHeight - dvd.height+30 || y <= -50){
     dy = dy * -1;
     tint(random(255), random(255), random(255));
   }
