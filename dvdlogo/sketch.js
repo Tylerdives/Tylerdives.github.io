@@ -45,6 +45,6 @@ function moveDVD() {
 }
 
 function displayDVD() {
-  background(15);
+  background(0);
   image(dvd, x, y);
 }
